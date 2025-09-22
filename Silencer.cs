@@ -5,6 +5,10 @@
 // Assembly location: D:\SteamLibrary\steamapps\common\Grand Theft Auto V\scripts\GTAExpansion.dll
 
 using GTA;
+using GTA.Native;
+using System;
+using System.Drawing;
+using System.Xml.Linq;
 
 
 namespace GTAExpansion
@@ -24,5 +28,70 @@ namespace GTAExpansion
       WeaponComponentHash.AtSrSupp03,
       WeaponComponentHash.CeramicPistolSupp
         };
+        public static bool HasPedBoughtSilencer(Ped ped)
+        {
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+            if (Common.doc.Element((XName)"WeaponList").Element((XName)name) == null)
+                Common.doc.Element((XName)"WeaponList").Add((object)new XElement((XName)name));
+            XElement xelement = Common.doc.Element((XName)"WeaponList").Element((XName)name);
+            return xelement.Attribute((XName)"Silencer") != null && xelement.Attribute((XName)"Silencer").Value == "true";
+        }
+        public static void SilencerToXML()
+        {
+            string name = ((PedHash)Game.Player.Character.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+            if (Common.doc.Element((XName)"WeaponList").Element((XName)name) == null)
+                Common.doc.Element((XName)"WeaponList").Add((object)new XElement((XName)name));
+            if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer") == null)
+            {
+                Common.doc.Element((XName)"WeaponList").Element((XName)name).Add((object)new XAttribute((XName)"Silencer", (object)true));
+                Common.saveDoc();
+                Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)true);
+                Common.saveDoc();
+            }
+            else
+            {
+                Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)true);
+                Common.saveDoc();
+            }
+
+        }
+       public static void SilencerXMLRemoval()
+        {
+            string name = ((PedHash)Game.Player.Character.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+            if (Common.doc.Element((XName)"WeaponList").Element((XName)name) == null)
+                Common.doc.Element((XName)"WeaponList").Add((object)new XElement((XName)name));
+            if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer") == null)
+            {
+                Common.doc.Element((XName)"WeaponList").Element((XName)name).Add((object)new XAttribute((XName)"Silencer", (object)false));
+                Common.saveDoc();
+                Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)false);
+                Common.saveDoc();
+            }
+            else
+            {
+                Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)false);
+                Common.saveDoc();
+            }
+
+
+        }
+        public static void silencercheck()
+        {
+            foreach (WeaponComponentHash silencer in Silencer.silencers)
+            {
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)silencer))
+                {
+                    SilencerToXML();
+                    break;
+                }
+            }
+        }
     }
 }

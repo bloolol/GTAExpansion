@@ -16,7 +16,7 @@ namespace GTAExpansion
     public static class WeaponJamming
     {
         public static bool jammingModeIsActive = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<bool>("WEAPON_JAMMING", "WEAPON_JAMMING_MODE_ACTIVE", true);
-        public static int fix_weapon_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("WEAPON_JAMMING", "CHECK_WEAPON_BTN", 51);
+        public static int fix_weapon_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("WEAPON_JAMMING", "CHECK_WEAPON_BTN", 246);
         public static int clean_weapon_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("WEAPON_JAMMING", "CLEAN_WEAPON_BTN", 75);
         public static int drop_weapon_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("WEAPON_JAMMING", "DROP_WEAPON_BTN", 56);
         public static string briefcase_model = "prop_security_case_01";

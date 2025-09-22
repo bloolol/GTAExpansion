@@ -17,6 +17,7 @@ namespace GTAExpansion
 {
     public static class WeaponHolster
     {
+        public static int weapon_menu_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("WEAPON_MENU", "WEAPON_MENU_BTN", 244);
         public static bool holsted_big_weapons_module_active = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<bool>("HOLSTED_BIG_WEAPONS", "HOLSTED_BIG_WEAPONS_MODULE_ACTIVE", true);
         public static int toggle_holsted_weapon_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HOLSTED_BIG_WEAPONS", "TOGGLE_VISIBILITY_HOLSTED_WEAPONS_BTN", 172);
         public static int toggle_holsted_weapon_position = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HOLSTED_BIG_WEAPONS", "CHANGE_HOLSTED_WEAPON_POSITION", 173);

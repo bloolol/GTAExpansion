@@ -87,6 +87,7 @@ namespace GTAExpansion
         public static bool inProcessBag = false;
         public static bool trash_cleared = false;
         public static WeaponHash[] allWeaponHashes = (WeaponHash[])Enum.GetValues(typeof(WeaponHash));
+        public static Prop[] AuxillaryProps = new Prop[2];
         public static WeaponComponentHash[] allComponentsHashes = (WeaponComponentHash[])Enum.GetValues(typeof(WeaponComponentHash));
         public static WeaponTint[] allTintHashes = (WeaponTint[])Enum.GetValues(typeof(WeaponTint));
         public static PedHash[] allPedHashes = (PedHash[])Enum.GetValues(typeof(PedHash));
@@ -113,8 +114,11 @@ namespace GTAExpansion
         };
         public static HPhoneApp IFruit = new HPhoneApp();
         public static HPhoneContact callContact;
-        
-        
+
+        public static bool IsAnimPlay(this Ped ped, string animDict, string animName)
+        {
+            return Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)ped, (InputArgument)animDict, (InputArgument)animName, (InputArgument)3);
+        }
         public static void ContactAnsweredDate(HPhoneContact contact)
         {
             Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
@@ -152,7 +156,7 @@ namespace GTAExpansion
             return true;
         }
 
-
+        // Weapon capacity   
         public static int AllWeaponsCount(Ped ped)
         {
             int num = 0;
@@ -169,15 +173,221 @@ namespace GTAExpansion
             return num;
         }
 
-        public static void MaximumWeaponCapacity2()
+        public static int bigWeaponsCount(Ped ped)
         {
-            if (Function.Call<bool>(Hash.IS_CUTSCENE_PLAYING, Array.Empty<InputArgument>()) || Game.IsCutsceneActive || AllWeaponsCount(Game.Player.Character) <= 1)
+            int num = 0;
+            foreach (BigWeapons bigWeapons in Enum.GetValues(typeof(BigWeapons)))
+            {
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON, new InputArgument[3]
+                {
+        (InputArgument) ped.Handle,
+        (InputArgument) bigWeapons.GetHashCode(),
+        (InputArgument) false
+                }))
+                    ++num;
+            }
+            return num;
+
+        }
+
+        public static int smallWeaponsCount(Ped ped)
+        {
+            int num = 0;
+            foreach (SmallWeapons smallWeapons in Enum.GetValues(typeof(SmallWeapons)))
+            {
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON, new InputArgument[3]
+                {
+        (InputArgument) ped.Handle,
+        (InputArgument) smallWeapons.GetHashCode(),
+        (InputArgument) false
+                }))
+                    ++num;
+            }
+            return num;
+
+        }
+
+        public static int ExplosivesCount(Ped ped)
+        {
+            int num = 0;
+            foreach (Explosives explosives in Enum.GetValues(typeof(Explosives)))
+            {
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON, new InputArgument[3]
+                {
+        (InputArgument) ped.Handle,
+        (InputArgument) explosives.GetHashCode(),
+        (InputArgument) false
+                }))
+                    ++num;
+            }
+            return num;
+
+        }
+
+        public static int BigMeleeCount(Ped ped)
+        {
+            int num = 0;
+            foreach (BigMelee bigMelee in Enum.GetValues(typeof(BigMelee)))
+            {
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON, new InputArgument[3]
+                {
+        (InputArgument) ped.Handle,
+        (InputArgument) bigMelee.GetHashCode(),
+        (InputArgument) false
+                }))
+                    ++num;
+            }
+            return num;
+
+        }
+
+
+        public static void MaximumWeaponCapacity()
+        {
+            if (Function.Call<bool>(Hash.IS_CUTSCENE_PLAYING, Array.Empty<InputArgument>()) || Game.IsCutsceneActive ||AllWeaponsCount(Game.Player.Character) <= 1)
                 return;
-            Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
-            Screen.ShowHelpText("~BLIP_INFO_ICON~ You need a dufflebag to carry big weapons", 5000);
-            Script.Wait(1000);
+            if (Game.Player.Character.Armor == 0)
+            {
+                Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
+                Screen.ShowHelpText("~BLIP_INFO_ICON~ You need a dufflebag to carry big weapons", 5000);
+                Script.Wait(1000);
+            }
+            else if (Game.Player.Character.Armor > 0)
+            {
+                if (bigWeaponsCount(Game.Player.Character) > 1)
+                {
+                    if (Game.Player.Character.Weapons.Current.Group == WeaponGroup.AssaultRifle)
+                        Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
+                    Script.Wait(1000);
+                }
+                if (smallWeaponsCount(Game.Player.Character) > 1)
+                {
+                    if (Game.Player.Character.Weapons.Current.Group == WeaponGroup.Pistol)
+                        Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
+                    Script.Wait(1000);
+                }
+                if (ExplosivesCount(Game.Player.Character) > 4)
 
+                {
+                    if (Game.Player.Character.Weapons.Current.Group == WeaponGroup.Thrown)
+                        Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
+                    Script.Wait(1000);
+                }
+                if (BigMeleeCount(Game.Player.Character) > 1)
+                {
+                    if (Game.Player.Character.Weapons.Current.Group == WeaponGroup.Melee)
+                        Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
+                    Script.Wait(1000);
+                }
+                
+            }
 
+        }
+
+        private enum BigWeapons : uint
+        {
+            SniperRifle = 100416529, // 0x05FC3C11
+            CompactLauncher = 125959754, // 0x0781FE4A
+            CombatPDW = 171789620, // 0x0A3D4D34
+            HeavySniperMKII = 177293209, // 0x0A914799
+            HeavySniper = 205991906, // 0x0C472FE2
+            SweeperShotgun = 317205821, // 0x12E82D3D
+            MicroSMG = 324215364, // 0x13532244
+            PumpShotgun = 487013001, // 0x1D073A89
+            SMG = 736523883, // 0x2BE6766B
+            AssaultRifleMKII = 961495388, // 0x394F415C
+            HeavyShotgun = 984333226, // 0x3AABBBAA
+            Minigun = 1119849093, // 0x42BF8A85
+            RayCarbine = 1198256469, // 0x476BF155
+            GrenadeLauncherSmoke = 1305664598, // 0x4DD2DC56
+            PumpShotgunMKII = 1432025498, // 0x555AF99A
+            Gusenberg = 1627465347, // 0x61012683
+            CompactRifle = 1649403952, // 0x624FE830
+            HomingLauncher = 1672152130, // 0x63AB0442
+            MarksManRifleMKII = 1785463520, // 0x6A6C02E0
+            Railgun = 1834241177, // 0x6D544C99
+            SawnOffShotgun = 2017895192, // 0x7846A318
+            SmgMKII = 2024373456, // 0x78A97CD0
+            BullpupRifle = 2132975508, // 0x7F229F94
+            Firework = 2138347493, // 0x7F7497E5
+            CombatMG = 2144741730, // 0x7FD62962
+            CarbineRifle = 2210333304, // 0x83BF0278
+            BullupRifleMKII = 2228681469, // 0x84D6FAFD
+            SpecialCarbineMKII = 2526821735, // 0x969C3D67
+            MG = 2634544996, // 0x9D07F764
+            BullpupShotgun = 2640438543, // 0x9D61E50F
+            GrenadeLauncher = 2726580491, // 0xA284510B
+            Musket = 2828843422, // 0xA89CB99E
+            AdvancedRifle = 2937143193, // 0xAF113F99
+            RPG = 2982836145, // 0xB1CA77B1
+            WidowMaker = 3056410471, // 0xB62D1F67
+            MiniSMG = 3173288789, // 0xBD248B55
+            AssaultRifle = 3220176749, // 0xBFEFFF6D
+            SpecialCarbine = 3231910285, // 0xC0A3098D
+            MarksmanRifle = 3342088282, // 0xC734385A
+            CombatMGMKII = 3686625920, // 0xDBBD7280
+            AssaultShotgun = 3800352039, // 0xE284C527
+            DoubleBarrelShotgun = 4019527611, // 0xEF951FBB
+            AssaultSMG = 4024951519, // 0xEFE7E2DF
+            CarbineRifleMKII = 4208062921, // 0xFAD1F1C9
+            Hatchet = 4191993645,
+            TacticalSmg = 0x14E5AFD5,
+            TacticalRifle = 0xD1D5F52B,
+            MilitaryRifle = 3249783761,
+            CandyCane = 0x6589186A,
+            PrecisionRifle = 0x6E7DDDEC,
+            HeavyRifle = 0xC78D71B4,
+            BattleRifle = 0x72B66B11,
+        }
+
+        private enum Explosives : uint
+        {
+            Cocktail = 615608432, // 0x24B17070
+            StickyBomb = 741814745, // 0x2C3731D9
+            Grenade = 2481070269, // 0x93E220BD
+            BZ = 2694266206, // 0xA0973D5E
+            ProximityMine = 2874559379, // 0xAB564B93
+            PipeBomb = 3125143736, // 0xBA45E8B8
+            TearGas = 4256991824, // 0xFDBC8A50
+        }
+
+        private enum BigMelee : uint
+        {
+            PipeWrench = 419712736, // 0x19044EE0
+            StoneHatchet = 940833800, // 0x3813FC08
+            GolfClub = 1141786504, // 0x440E4788
+            Hammer = 1317494643, // 0x4E875F73
+            NightStick = 1737195953, // 0x678B81B1
+            CrowBar = 2227010557, // 0x84BD7BFD
+            PoolCue = 2484171525, // 0x94117305
+            Bat = 2508868239, // 0x958A4A8F
+            BattleAxe = 3441901897, // 0xCD274149
+            Machete = 3713923289, // 0xDD5DF8D9
+            Hatchet = 4191993645, // 0xF9DCBF2D
+        }
+        private enum SmallWeapons : uint
+        {
+            VintagePistol = 137902532, // 0x083839C4
+            Pistol = 453432689, // 0x1B06D571
+            APPistol = 584646201, // 0x22D8FE39
+                                  // JerryCan = 883325847 0x34A67B97
+            StunGun = 911657153, // 0x3656C8C1
+            FlareGun = 1198879012, // 0x47757124
+            CombatPistol = 1593441988, // 0x5EF9FEC4
+            SnsPistolMKII = 2285322324, // 0x88374054
+            DoubleActionRevolver = 2548703416, // 0x97EA20B8
+            Pistol50 = 2578377531, // 0x99AEEB3B
+            RayPistol = 2939590305, // 0xAF3696A1
+            SNSPistol = 3218215474, // 0xBFD21232
+            PistolMKII = 3219281620, // 0xBFE256D4
+            Revolver = 0xC1B3C3D1, // 0xC1B3C3D1
+            HeavyRevolverMKII = 3415619887, // 0xCB96392F
+            HeavyPistol = 3523564046, // 0xD205520E
+            MachinePistol = 3675956304, // 0xDB1AA450
+            MarksmanPistol = 3696079510, // 0xDC4DB296
+            PericoPistol = 0x57A4368C,
+            CeramicPistol = 0x2B5EF5EC,
+            NavyRevolver = 0x917F6C8C,
         }
 
         private enum AllWeapons : uint
@@ -275,7 +485,10 @@ namespace GTAExpansion
 
         }
 
-        
+        //
+
+
+
 
 
         public static void followCameraCreateFunc(Ped ped, Entity follow_object)
@@ -562,9 +775,17 @@ namespace GTAExpansion
                             array = ((IEnumerable<InstructionBtn>)array).Append<InstructionBtn>(Common.common_btns[index2]).ToArray<InstructionBtn>();
                             ++index2;
                         }
-                        Common.common_btns[index2] = Main.setBtn(Common.common_btns[index2], (Control)WeaponJamming.drop_weapon_btn, "Drop weapon");
+                         Common.common_btns[index2] = Main.setBtn(Common.common_btns[index2], (Control)Scope.scope_toggle_btn, "Scope");
                         source = ((IEnumerable<InstructionBtn>)array).Append<InstructionBtn>(Common.common_btns[index2]).ToArray<InstructionBtn>();
                         index1 = index2 + 1;
+
+                        Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Flashlight.flashlight_toggle_btn, "Flashlight");
+                        source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                        ++index1;
+                        
+                        Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Grip.grip_toggle_btn, "Grip");
+                        source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                        ++index1;
                     }
                     if (silencerModeActiveParam)
                     {
@@ -572,15 +793,10 @@ namespace GTAExpansion
                         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                         ++index1;
                     }
-                    if (cameraModuleParam)
-                    {
-                        Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)ShoulderCameraSwitch.switch_shoulder_camera_btn, "Switch shoulder");
-                        source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
-                        ++index1;
-                    }
+
                     if (laserSightModuleParam & canUseLaserSightParam)
                     {
-                        Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)LaserSight.laser_sight_toggle_btn, "Laser sight");
+                        Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)LaserSight.laser_sight_toggle_btn, "Laser-sight");
                         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                         ++index1;
                     }
@@ -590,12 +806,19 @@ namespace GTAExpansion
                         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                         ++index1;
                     }
+                    if (cameraModuleParam)
+                    {
+                        Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)ShoulderCameraSwitch.switch_shoulder_camera_btn, "Switch shoulder");
+                        source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                        ++index1;
+                    }
                     if (aimingStyleModeActiveParam & canSwitchAimingStyleParam)
                     {
                         Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)AimingStyle.aiming_style_btn, "Aim style");
                         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                         ++index1;
                     }
+                    
                 }
                 else if (weaponJamningModuleParam)
                 {
@@ -691,6 +914,25 @@ namespace GTAExpansion
                     index1 = index4 + 1;
                     if (action_page == 0)
                     {
+                        if (((IEnumerable<WeaponGroup>)WeaponHolster._bigWeaponGroups).Contains<WeaponGroup>(Game.Player.Character.Weapons.Current.Group))
+                        {
+                            Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)WeaponHolster.weapon_menu_btn, "Weapon menu");
+                            source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                            ++index1;
+
+
+
+                        }
+
+
+                        if (Game.Player.Character.Armor > 0 || Vest.armortakenoff )
+                        {
+                            Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
+                            source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                            ++index1;
+                        }
+
+                        // if (
                         if (WeaponHolster.holster_module_active & hasHolster)
                         {
                             Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)WeaponHolster.holster_toggle_btn, "Holster");

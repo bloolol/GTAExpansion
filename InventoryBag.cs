@@ -1808,7 +1808,7 @@ namespace GTAExpansion
             if ((int)InventoryBag.prevWeapon == (int)Function.Call<uint>(Hash.GET_SELECTED_PED_WEAPON, (InputArgument)(Entity)ped))
                 return;
             InventoryBag.prevWeapon = Function.Call<uint>(Hash.GET_SELECTED_PED_WEAPON, (InputArgument)(Entity)ped);
-            ped.Task.PlayAnimation("mp_arrest_paired", "cop_p1_rf_right_0", 8f, 500, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
+            //ped.Task.PlayAnimation("mp_arrest_paired", "cop_p1_rf_right_0", 8f, 500, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
             Main.soundFX(ped, "holdStrap.wav", Common.assetFolder);
         }
 

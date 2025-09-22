@@ -40,12 +40,17 @@
     <Reference Include="NAudio">
       <HintPath>G:\SteamLibrary\steamapps\common\Grand Theft Auto V\scripts\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="Peeking, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Peeking\bin\Debug\Peeking.dll</HintPath>
+    </Reference>
     <Reference Include="ScriptHookVDotNet3">
       <HintPath>G:\SteamLibrary\steamapps\common\Grand Theft Auto V\ScriptHookVDotNet3.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,7 +63,9 @@
     <Compile Include="Crouch.cs" />
     <Compile Include="ExpansionEnums.cs" />
     <Compile Include="FastWardrobe.cs" />
+    <Compile Include="Flashlight.cs" />
     <Compile Include="FocusMode.cs" />
+    <Compile Include="Grip.cs" />
     <Compile Include="GTAExpansion.cs" />
     <Compile Include="Helmet.cs" />
     <Compile Include="HungerSystem.cs" />
@@ -67,8 +74,10 @@
     <Compile Include="AimingStyle.cs" />
     <Compile Include="LaserSight.cs" />
     <Compile Include="OnFootRadio.cs" />
+    <Compile Include="Scope.cs" />
     <Compile Include="ShoulderCameraSwitch.cs" />
     <Compile Include="Silencer.cs" />
+    <Compile Include="Vest.cs" />
     <Compile Include="Wallet.cs" />
     <Compile Include="WeaponHolster.cs" />
     <Compile Include="WeaponJamming.cs" />
