@@ -114,7 +114,7 @@ namespace GTAExpansion
         };
         public static HPhoneApp IFruit = new HPhoneApp();
         public static HPhoneContact callContact;
-
+        
         public static bool IsAnimPlay(this Ped ped, string animDict, string animName)
         {
             return Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)ped, (InputArgument)animDict, (InputArgument)animName, (InputArgument)3);
@@ -242,47 +242,6 @@ namespace GTAExpansion
         }
 
 
-        public static void MaximumWeaponCapacity()
-        {
-            if (Function.Call<bool>(Hash.IS_CUTSCENE_PLAYING, Array.Empty<InputArgument>()) || Game.IsCutsceneActive ||AllWeaponsCount(Game.Player.Character) <= 1)
-                return;
-            if (Game.Player.Character.Armor == 0)
-            {
-                Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
-                Screen.ShowHelpText("~BLIP_INFO_ICON~ You need a dufflebag to carry big weapons", 5000);
-                Script.Wait(1000);
-            }
-            else if (Game.Player.Character.Armor > 0)
-            {
-                if (bigWeaponsCount(Game.Player.Character) > 1)
-                {
-                    if (Game.Player.Character.Weapons.Current.Group == WeaponGroup.AssaultRifle)
-                        Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
-                    Script.Wait(1000);
-                }
-                if (smallWeaponsCount(Game.Player.Character) > 1)
-                {
-                    if (Game.Player.Character.Weapons.Current.Group == WeaponGroup.Pistol)
-                        Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
-                    Script.Wait(1000);
-                }
-                if (ExplosivesCount(Game.Player.Character) > 4)
-
-                {
-                    if (Game.Player.Character.Weapons.Current.Group == WeaponGroup.Thrown)
-                        Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
-                    Script.Wait(1000);
-                }
-                if (BigMeleeCount(Game.Player.Character) > 1)
-                {
-                    if (Game.Player.Character.Weapons.Current.Group == WeaponGroup.Melee)
-                        Function.Call(Hash.SET_PED_DROPS_WEAPON, Game.Player.Character);
-                    Script.Wait(1000);
-                }
-                
-            }
-
-        }
 
         private enum BigWeapons : uint
         {

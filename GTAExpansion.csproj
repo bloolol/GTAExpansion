@@ -40,9 +40,8 @@
     <Reference Include="NAudio">
       <HintPath>G:\SteamLibrary\steamapps\common\Grand Theft Auto V\scripts\NAudio.dll</HintPath>
     </Reference>
-    <Reference Include="Peeking, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Peeking\bin\Debug\Peeking.dll</HintPath>
+    <Reference Include="Peeking">
+      <HintPath>D:\SteamLibrary\steamapps\common\Grand Theft Auto V\scripts\Peeking.dll</HintPath>
     </Reference>
     <Reference Include="ScriptHookVDotNet3">
       <HintPath>G:\SteamLibrary\steamapps\common\Grand Theft Auto V\ScriptHookVDotNet3.dll</HintPath>

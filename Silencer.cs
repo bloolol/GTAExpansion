@@ -53,7 +53,7 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)true);
                 Common.saveDoc();
             }
-            else
+            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").Value == (object)false)
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)true);
                 Common.saveDoc();
@@ -74,19 +74,27 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)false);
                 Common.saveDoc();
             }
-            else
+            else if ((Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").Value == (object)true))
+
             {
-                Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)false);
-                Common.saveDoc();
+                
+                    Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Silencer").SetValue((object)false);
+                    Common.saveDoc();
+                
             }
 
 
         }
         public static void silencercheck()
         {
+
+            var player = Game.Player.Character;
+            var weaponHash = player.Weapons.Current.Hash;
+
+
             foreach (WeaponComponentHash silencer in Silencer.silencers)
             {
-                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)silencer))
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)player, (InputArgument)(Enum)weaponHash, (InputArgument)(Enum)silencer))
                 {
                     SilencerToXML();
                     break;

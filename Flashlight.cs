@@ -46,7 +46,7 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").SetValue((object)true);
                 Common.saveDoc();
             }
-            else
+            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").Value == (object)false)
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").SetValue((object)true);
                 Common.saveDoc();
@@ -67,8 +67,9 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").SetValue((object)false);
                 Common.saveDoc();
             }
-            else
+            else if ((Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").Value == (object)true))
             {
+                
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").SetValue((object)false);
                 Common.saveDoc();
             }
@@ -77,9 +78,11 @@ namespace GTAExpansion
         }
         public static void flashlightcheck()
         {
+            var player = Game.Player.Character;
+            var weaponHash = player.Weapons.Current.Hash;
             foreach (WeaponComponentHash flashlight in Flashlight.flashlights)
             {
-                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)flashlight))
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)player, (InputArgument)(Enum)weaponHash, (InputArgument)(Enum)flashlight))
                 {
                     FlashlightToXML();
                     break;

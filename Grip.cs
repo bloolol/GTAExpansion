@@ -43,7 +43,7 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").SetValue((object)true);
                 Common.saveDoc();
             }
-            else
+            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").Value == (object)false)
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").SetValue((object)true);
                 Common.saveDoc();
@@ -64,20 +64,23 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").SetValue((object)false);
                 Common.saveDoc();
             }
-            else
+            else if ((Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").Value == (object)true))
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").SetValue((object)false);
                 Common.saveDoc();
             }
-
+            return;
 
         }
 
         public static void gripcheck()
         {
+            var player = Game.Player.Character;
+            var weaponHash = player.Weapons.Current.Hash;
+
             foreach (WeaponComponentHash Grip in Grip.grips)
             {
-                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)Grip))
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)player, (InputArgument)(Enum)weaponHash, (InputArgument)(Enum)Grip))
                 {
                     GripToXML();
                     break;

@@ -28,12 +28,11 @@ C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectT
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\bin\Debug\GTAExpansion.pdb
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\bin\Debug\HTools.dll
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\bin\Debug\NativeUI.dll
-C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\bin\Debug\Peeking.dll
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\bin\Debug\NAudio.Core.dll
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\bin\Debug\NativeUI.xml
-C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\bin\Debug\Peeking.pdb
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\obj\Debug\GTAExpansion.csproj.AssemblyReference.cache
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\obj\Debug\GTAExpansion.csproj.CoreCompileInputs.cache
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\obj\Debug\GTAExpan.8598C7E5.Up2Date
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\obj\Debug\GTAExpansion.dll
 C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\obj\Debug\GTAExpansion.pdb
+C:\Users\clope\OneDrive\Documents\GTA V Modding\repos\repos\GTAV_CorrectProjectType\GTAExpansion\bin\Debug\Peeking.dll

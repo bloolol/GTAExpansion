@@ -59,7 +59,7 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Scope").SetValue((object)true);
                 Common.saveDoc();
             }
-            else
+            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Scope").Value == (object)false)
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Scope").SetValue((object)true);
                 Common.saveDoc();
@@ -81,8 +81,10 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Scope").SetValue((object)false);
                 Common.saveDoc();
             }
-            else
+            else if ((Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Scope").Value == (object)true))
             {
+                
+
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Scope").SetValue((object)false);
                 Common.saveDoc();
             }
@@ -91,9 +93,11 @@ namespace GTAExpansion
         }
         public static void scopecheck()
         {
+            var player = Game.Player.Character;
+            var weaponHash = player.Weapons.Current.Hash;
             foreach (WeaponComponentHash scope in Scope.scopes)
             {
-                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)scope))
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)player, (InputArgument)(Enum)weaponHash, (InputArgument)(Enum)scope))
                 {
                     ScopeToXML();
                     break;

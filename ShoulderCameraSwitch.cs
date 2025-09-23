@@ -134,7 +134,7 @@ namespace GTAExpansion
             Function.Call(Hash.RENDER_SCRIPT_CAMS, (InputArgument)false, (InputArgument)false, (InputArgument)0, (InputArgument)true, (InputArgument)false);
             currentOffset = 0.0f;
         }
-
+        /*
         public static float fCameraPositionX()
         {
             float num = 0.0f;
@@ -152,7 +152,8 @@ namespace GTAExpansion
                     return num;
             }
         }
-
+        */
+        /*
         public static float fCameraRotationY()
         {
             float num = 0.0f;
@@ -170,5 +171,6 @@ namespace GTAExpansion
                     return num;
             }
         }
+        */
     }
 }

@@ -1626,6 +1626,9 @@ namespace GTAExpansion
             if (Game.Player.Character.IsDead && (Entity)WeaponHolster.holster != (Entity)null && WeaponHolster.holster.Exists())
             {
                 WeaponHolster.holster.Delete();
+                WeaponHolster.DeleteHolster(Game.Player.Character);
+               
+
 
             }
             int num3 = FastWardrobe.mask_module_active ? 1 : 0;
@@ -2225,7 +2228,7 @@ namespace GTAExpansion
             {
                 Silencer.silencercheck();
                 Scope.scopecheck();
-                Flashlight.flashlightcheck();
+               Flashlight.flashlightcheck();
                 Grip.gripcheck();
             }
             if (Common.AllWeaponsCount(Game.Player.Character) == 0)
@@ -2695,63 +2698,7 @@ namespace GTAExpansion
                     ShoulderCameraSwitch.ShoulderCameraActive = false;
                 }
             }
-            if (Crouch.CrouchModeActive)
-            {
-                if (Game.Player.CanControlCharacter)
-                {
-                    if (Game.Player.Character.IsOnFoot && Game.IsControlJustPressed(Control.Duck))
-                    {
-                        if (!Crouch.crouched)
-                        {
-                            Crouch.crouchBtnPressTimer.Start();
-                        }
-                        else
-                        {
-                            Crouch.crouched = false;
-                            Function.Call(Hash.RESET_PED_MOVEMENT_CLIPSET, (InputArgument)(Entity)Game.Player.Character, (InputArgument)0.0f);
-                            Function.Call(Hash.RESET_PED_STRAFE_CLIPSET, (InputArgument)(Entity)Game.Player.Character);
-                            Function.Call(Hash.RESET_PED_WEAPON_MOVEMENT_CLIPSET, (InputArgument)(Entity)Game.Player.Character);
-                            Game.Player.Character.Task.ClearAll();
-                        }
-                    }
-                    if (Game.Player.Character.IsOnFoot && Game.IsControlPressed(Control.Duck))
-                    {
-                        if (!Crouch.crouched && Crouch.crouchBtnPressTimer.ElapsedMilliseconds >= 350L)
-                        {
-                            Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
-                            Crouch.crouched = true;
-                            Function.Call(Hash.RESET_PED_MOVEMENT_CLIPSET, (InputArgument)(Entity)Game.Player.Character, (InputArgument)0.0f);
-                            Function.Call(Hash.RESET_PED_STRAFE_CLIPSET, (InputArgument)(Entity)Game.Player.Character);
-                            Function.Call(Hash.RESET_PED_WEAPON_MOVEMENT_CLIPSET, (InputArgument)(Entity)Game.Player.Character);
-                            Game.Player.Character.Task.ClearAllImmediately();
-                            Function.Call(Hash.SET_PED_WEAPON_MOVEMENT_CLIPSET, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_weapon@rifle@generic");
-                            Function.Call(Hash.SET_PED_MOVEMENT_CLIPSET, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_ped_crouched", (InputArgument)1048576000);
-                            Function.Call(Hash.SET_PED_STRAFE_CLIPSET, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_ped_crouched_strafing");
-                            Game.Player.Character.Task.ClearAll();
-                            Game.Player.Character.IsDucking = true;
-
-                            Crouch.crouchBtnPressTimer.Stop();
-                            Crouch.crouchBtnPressTimer.Reset();
-
-                        }
-                    }
-                    else if (Crouch.crouchBtnPressTimer.IsRunning)
-                    {
-                        Crouch.crouchBtnPressTimer.Stop();
-                        Crouch.crouchBtnPressTimer.Reset();
-                    }
-                }
-                if (Crouch.crouched)
-                {
-                    if (!Game.Player.Character.IsRunning && !Game.Player.Character.IsSprinting && ((IEnumerable<WeaponGroup>)WeaponHolster._bigWeaponGroups).Contains<WeaponGroup>(Game.Player.Character.Weapons.Current.Group) && (WeaponHash)Game.Player.Character.Weapons.Current != WeaponHash.MicroSMG && (WeaponHash)Game.Player.Character.Weapons.Current != WeaponHash.MiniSMG && !Game.IsControlPressed(Control.Aim) && !Game.Player.Character.IsInCover)
-                    {
-                        if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_weapon@rifle@generic", (InputArgument)"idle_crouch", (InputArgument)3))
-                            Game.Player.Character.Task.PlayAnimation("move_weapon@rifle@generic", "idle_crouch", 4f, -1, AnimationFlags.StayInEndFrame | AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
-                    }
-                    else if (Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_weapon@rifle@generic", (InputArgument)"idle_crouch", (InputArgument)3))
-                        Function.Call(Hash.STOP_ENTITY_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"idle_crouch", (InputArgument)"move_weapon@rifle@generic", (InputArgument)0.0f);
-                }
-            }
+            
             int index3;
             if (WeaponJamming.jammingModeIsActive)
             {
@@ -3308,7 +3255,7 @@ namespace GTAExpansion
                         Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"bag").SetValue((object)false);
                         Common.saveDoc();
                     }
-                    Common.curPlayer = Game.Player.Character;
+                    //Common.curPlayer = Game.Player.Character;
                     Common.update_inventory_status(Game.Player.Character);
                     Common.clearTrash();
                 }
