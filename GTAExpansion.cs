@@ -22,10 +22,13 @@ namespace GTAExpansion
 {
     public class GTAExpansion : Script
     {
+
         public GTAExpansion() => this.Tick += new EventHandler(this.OnTick);
 
         private void OnTick(object sender, EventArgs e)
         {
+            if (Game.IsPaused)
+                return;
             while (Game.IsLoading)
                 Script.Wait(10000);
             if (!Common.loaded)
@@ -1623,11 +1626,13 @@ namespace GTAExpansion
                     }
                 }
             }
-            if (Game.Player.Character.IsDead && (Entity)WeaponHolster.holster != (Entity)null && WeaponHolster.holster.Exists())
+            if (Game.Player.Character.IsDead && WeaponHolster.doesPedHasHolster(Game.Player.Character))
             {
+                if (WeaponHolster.holster.IsAttached() && WeaponHolster.holster.Exists() && WeaponHolster.holster != null)
                 WeaponHolster.holster.Delete();
                 WeaponHolster.DeleteHolster(Game.Player.Character);
-               
+               if (WeaponHolster.HolstedPistol != null && WeaponHolster.HolstedPistol.Exists() && WeaponHolster.HolstedPistol.IsAttached())
+                    WeaponHolster.HolstedPistol.Delete();
 
 
             }
@@ -3233,12 +3238,15 @@ namespace GTAExpansion
                 Grip.GripXMLRemoval();
                 Flashlight.FlaghlightXMLRemoval();
 
-                if ((Entity)InventoryBag.cur_bag != (Entity)null)
+                if (InventoryBag.doesPedHasInventoryBag(Game.Player.Character ))
                 {
                     //InventoryBag.ClearInventoryData(Game.Player.Character);
                     //Script.Wait(5000);
                     //InventoryBag.ClearInventoryData(Game.Player.Character);
-                    InventoryBag.cur_bag.Delete();
+                    if ((Entity)InventoryBag.cur_bag != (Entity)null && InventoryBag.cur_bag.IsAttached() && InventoryBag.cur_bag.IsAttached())
+                        InventoryBag.cur_bag.Delete();
+                    else if ((Entity)InventoryBag.prev_bag != (Entity)null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
+                        InventoryBag.prev_bag.Delete();
                     string name = ((PedHash)Game.Player.Character.Model).ToString();
                     if (char.IsDigit(name[0]))
                         name = "CustomPed_" + name;
@@ -3250,12 +3258,12 @@ namespace GTAExpansion
                         Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"bag").SetValue((object)false);
                         Common.saveDoc();
                     }
-                    else
+                    else 
                     {
-                        Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"bag").SetValue((object)false);
+                            Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"bag").SetValue((object)false);
                         Common.saveDoc();
                     }
-                    //Common.curPlayer = Game.Player.Character;
+                    Common.curPlayer = Game.Player.Character;
                     Common.update_inventory_status(Game.Player.Character);
                     Common.clearTrash();
                 }

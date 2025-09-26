@@ -884,12 +884,12 @@ namespace GTAExpansion
                         }
 
 
-                        if (Game.Player.Character.Armor > 0 || Vest.armortakenoff )
-                        {
-                            Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
-                            source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
-                            ++index1;
-                        }
+                    //    if (Game.Player.Character.Armor > 0 || Vest.armortakenoff )
+                    //    {
+                  //          Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
+                   //         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                 //           ++index1;
+                 //       }
 
                         // if (
                         if (WeaponHolster.holster_module_active & hasHolster)

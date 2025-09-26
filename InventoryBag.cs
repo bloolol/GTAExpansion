@@ -1350,6 +1350,7 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Element((XName)"place").RemoveAll();
                 Common.saveDoc();
             }
+            /*
             if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster") == null)
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Add((object)new XAttribute((XName)"holster", (object)false));
@@ -1361,7 +1362,7 @@ namespace GTAExpansion
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster").SetValue((object)false);
                 Common.saveDoc();
-            }
+            }*/
             InventoryBag.ClearInventoryData(ped);
             Screen.ShowHelpTextThisFrame("~BLIP_INFO_ICON~ ~r~You've lost~w~ your gear");
             Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)0, (InputArgument)100);

@@ -76,7 +76,6 @@
     <Compile Include="Scope.cs" />
     <Compile Include="ShoulderCameraSwitch.cs" />
     <Compile Include="Silencer.cs" />
-    <Compile Include="Vest.cs" />
     <Compile Include="Wallet.cs" />
     <Compile Include="WeaponHolster.cs" />
     <Compile Include="WeaponJamming.cs" />
