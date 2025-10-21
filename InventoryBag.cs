@@ -196,7 +196,7 @@ namespace GTAExpansion
                 Common.clearTrash();
             }
             if (showNotification)
-                Notification.Show("GTAExpansion: Dufflebag attach positions ~g~updated~s~");
+                Notification.Show("~r~Dufflebag~y~ position ~r~u~b~p~y~d~g~a~b~t~y~e~g~d");
             Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument) (- 1), (InputArgument)"OTHER_TEXT", (InputArgument)"HUD_AWARDS");
         }
 
@@ -1208,6 +1208,56 @@ namespace GTAExpansion
             }
         }
 
+        public static void RemoveInventoryBag()
+        {
+            var ped = Game.Player.Character;
+            if (ped == null || !ped.Exists()) return;
+
+            if (!InventoryBag.doesPedHasInventoryBag(ped) || !InventoryBag.doesPedWearingBag(ped))
+                return;
+
+            // Delete current or previous bag if attached
+            if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.IsAttached())
+            {
+                InventoryBag.cur_bag.Delete();
+            }
+            else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
+            {
+                InventoryBag.prev_bag.Delete();
+            }
+
+            // Normalize ped name
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+            // Ensure WeaponList exists
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null)
+            {
+                weaponList = new XElement("WeaponList");
+                Common.doc.Add(weaponList);
+            }
+
+            // Ensure ped element exists
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            // Safely set bag attribute to false
+            var bagAttr = pedElement.Attribute("bag");
+            if (bagAttr == null || (bool.TryParse(bagAttr.Value, out var hasBag) && hasBag))
+            {
+                pedElement.SetAttributeValue("bag", false);
+            }
+
+            Common.saveDoc();
+            Common.curPlayer = ped;
+            Common.update_inventory_status(ped);
+            Common.clearTrash();
+        }
         public static void bagSet(string bagModelSend, Ped ped)
         {
             Prop[] nearbyProps = World.GetNearbyProps(ped.Position, 2f, (Model)Main.GetHashKey(bagModelSend));
@@ -1350,6 +1400,7 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Element((XName)"place").RemoveAll();
                 Common.saveDoc();
             }
+            /*
             if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster") == null)
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Add((object)new XAttribute((XName)"holster", (object)false));
@@ -1361,7 +1412,7 @@ namespace GTAExpansion
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster").SetValue((object)false);
                 Common.saveDoc();
-            }
+            }*/
             InventoryBag.ClearInventoryData(ped);
             Screen.ShowHelpTextThisFrame("~BLIP_INFO_ICON~ ~r~You've lost~w~ your gear");
             Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)0, (InputArgument)100);

@@ -10,6 +10,8 @@ using GTA.Native;
 using GTA.UI;
 using HTools;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 
@@ -335,11 +337,31 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster").SetValue((object)true);
                 Common.saveDoc();
             }
-            else
+            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster").Value == "false")
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster").SetValue((object)true);
                 Common.saveDoc();
             }
+        }
+        public static bool doesPedWearingHolster(Ped ped)
+        {
+            return (Entity)WeaponHolster.Holster(ped) != (Entity)null;
+        }
+        public static Prop Holster(Ped ped)
+        {
+            Prop[] nearbyProps2 = World.GetNearbyProps(ped.Position, 2f, (Model)Main.GetHashKey(WeaponHolster.holster.ToString()));
+            Prop prop1 = (Prop)null;
+            if (((IEnumerable<Prop>)nearbyProps2).Count<Prop>() > 0)
+            {
+                foreach (Prop prop2 in nearbyProps2)
+                {
+                    if ((Entity)prop2 != (Entity)null && prop2.IsAttachedTo((Entity)ped))
+                        prop1 = prop2;
+                }
+            }
+            else
+                prop1 = (Prop)null;
+            return prop1;
         }
 
         public static bool doesPedHasHolster(Ped ped)
@@ -355,20 +377,33 @@ namespace GTAExpansion
 
         public static void DeleteHolster(Ped ped)
         {
+            if (ped == null || !ped.Exists()) return;
+
+            // Normalize ped name
             string name = ((PedHash)ped.Model).ToString();
-            if (char.IsDigit(name[0]))
-                name = "CustomPed_" + name;
-            if (Common.doc.Element((XName)"WeaponList").Element((XName)name) == null)
-                Common.doc.Element((XName)"WeaponList").Add((object)new XElement((XName)name));
-            if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster") == null)
+            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+            // Ensure WeaponList exists
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null)
             {
-                Common.doc.Element((XName)"WeaponList").Element((XName)name).Add((object)new XAttribute((XName)"holster", (object)false));
-                Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster").SetValue((object)false);
-                Common.saveDoc();
+                weaponList = new XElement("WeaponList");
+                Common.doc.Add(weaponList);
             }
-            else
+
+            // Ensure ped element exists
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null)
             {
-                Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"holster").SetValue((object)false);
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            // Safely set holster attribute to false
+            var holsterAttr = pedElement.Attribute("holster");
+            if (holsterAttr == null || (bool.TryParse(holsterAttr.Value, out var hasHolster) && hasHolster))
+            {
+                pedElement.SetAttributeValue("holster", false);
                 Common.saveDoc();
             }
         }

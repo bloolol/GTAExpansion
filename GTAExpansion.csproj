@@ -61,6 +61,7 @@
     <Compile Include="Common.cs" />
     <Compile Include="Crouch.cs" />
     <Compile Include="ExpansionEnums.cs" />
+    <Compile Include="ExtendedMagazine.cs" />
     <Compile Include="FastWardrobe.cs" />
     <Compile Include="Flashlight.cs" />
     <Compile Include="FocusMode.cs" />

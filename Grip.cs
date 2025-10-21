@@ -43,7 +43,7 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").SetValue((object)true);
                 Common.saveDoc();
             }
-            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").Value == (object)false)
+            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").Value == "false")
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Grip").SetValue((object)true);
                 Common.saveDoc();
@@ -82,7 +82,7 @@ namespace GTAExpansion
             {
                 if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)player, (InputArgument)(Enum)weaponHash, (InputArgument)(Enum)Grip))
                 {
-                    GripToXML();
+                    Common.UpdateAttachment("Grip", true);
                     break;
                 }
             }

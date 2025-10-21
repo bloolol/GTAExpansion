@@ -22,6 +22,7 @@ namespace GTAExpansion
 {
     public static class Common
     {
+        private static readonly AllWeapons[] CachedWeaponHashes = (AllWeapons[])Enum.GetValues(typeof(Common.AllWeapons));
         public static string assetFolder = "Expansion/";
         public static ScriptSettings config = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini");
         public static bool showHints = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<bool>("SETTINGS", "HINT_TOGGLE", true);
@@ -159,18 +160,15 @@ namespace GTAExpansion
         // Weapon capacity   
         public static int AllWeaponsCount(Ped ped)
         {
-            int num = 0;
-            foreach (AllWeapons allWeapons in Enum.GetValues(typeof(AllWeapons)))
+            int count = 0;
+            foreach (AllWeapons weapon in CachedWeaponHashes)
             {
-                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON, new InputArgument[3]
+                if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON, ped.Handle, (uint)weapon, false))
                 {
-        (InputArgument) ped.Handle,
-        (InputArgument) allWeapons.GetHashCode(),
-        (InputArgument) false
-                }))
-                    ++num;
+                    count++;
+                }
             }
-            return num;
+            return count;
         }
 
         public static int bigWeaponsCount(Ped ped)
@@ -349,7 +347,7 @@ namespace GTAExpansion
             NavyRevolver = 0x917F6C8C,
         }
 
-        private enum AllWeapons : uint
+        public enum AllWeapons : uint
         {
             SniperRifle = 100416529, // 0x05FC3C11
             CompactLauncher = 125959754, // 0x0781FE4A
@@ -884,12 +882,12 @@ namespace GTAExpansion
                         }
 
 
-                        if (Game.Player.Character.Armor > 0 || Vest.armortakenoff )
-                        {
-                            Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
-                            source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
-                            ++index1;
-                        }
+                    //    if (Game.Player.Character.Armor > 0 || Vest.armortakenoff )
+                    //    {
+                  //          Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
+                   //         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                 //           ++index1;
+                 //       }
 
                         // if (
                         if (WeaponHolster.holster_module_active & hasHolster)
@@ -967,6 +965,7 @@ namespace GTAExpansion
                     }
                     if (action_page == 3)
                     {
+                        /*
                         Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)WeaponHolster.toggle_holsted_weapon_btn, "Toggle weapons visibility mode");
                         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                         ++index1;
@@ -976,6 +975,7 @@ namespace GTAExpansion
                             source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                             ++index1;
                         }
+                        */
                     }
                     if (action_page == 4)
                     {
@@ -1061,6 +1061,7 @@ namespace GTAExpansion
                 WeaponJamming.cleaningToolsCount = Common.getSupplies(Game.Player.Character, "weapon_tools");
                 if (WeaponJamming.cleaningToolsCount <= WeaponJamming.cleaningToolsMax)
                 {
+                    Function.Call(Hash.DISABLE_CONTROL_ACTION, (InputArgument)0, (InputArgument)26, (InputArgument)true);
                     Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], Control.LookBehind, "Buy cleaning kit (" + WeaponJamming.weaponToolsPrice.ToString() + "$)");
                     source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                     ++index1;
@@ -1143,6 +1144,28 @@ namespace GTAExpansion
                 xelement.Element((XName)elem).Element((XName)"Count").SetValue((object)num);
                 Common.saveDoc();
             }
+        }
+
+        public static void DeleteSupplies(Ped ped)
+        {
+            if (ped == null || !ped.Exists()) return;
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null) return;
+
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null) return;
+
+            var suppliesElement = pedElement.Element("Supplies");
+            if (suppliesElement == null) return;
+
+            // Remove all child elements under <Supplies>
+            suppliesElement.RemoveAll();
+            Common.saveDoc();
         }
 
         public static void saveDoc(XDocument _doc = null)
@@ -1452,6 +1475,174 @@ namespace GTAExpansion
                     blip.Delete();
             }
         }
+        public static void RemoveAllAttachments()
+        {
+            var ped = Game.Player.Character;
+            if (ped == null || !ped.Exists()) return;
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+            // Ensure WeaponList exists
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null)
+            {
+                weaponList = new XElement("WeaponList");
+                Common.doc.Add(weaponList);
+            }
+
+            // Ensure ped element exists
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            // Safely set attachment attributes to false
+            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight" };
+            foreach (var attachment in attachments)
+            {
+                var attr = pedElement.Attribute(attachment);
+                if (attr == null || (bool.TryParse(attr.Value, out var hasAttachment) && hasAttachment))
+                {
+                    pedElement.SetAttributeValue(attachment, false);
+                }
+            }
+
+            Common.saveDoc();
+            return;
+        }
+
+        public static void ClearItemsWhenDead()
+        {
+            var ped = Game.Player.Character;
+            if (ped == null || !ped.Exists()) return;
+
+            // Remove current or previous inventory bag
+            if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.Exists() && InventoryBag.cur_bag.IsAttached())
+            {
+                InventoryBag.cur_bag.Delete();
+            }
+            else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
+            {
+                InventoryBag.prev_bag.Delete();
+            }
+
+            // Remove holster object
+            if (WeaponHolster.holster != null && WeaponHolster.holster.Exists() && WeaponHolster.holster.IsAttached())
+            {
+                WeaponHolster.holster.Delete();
+            }
+
+            // Remove holster metadata
+            WeaponHolster.DeleteHolster(ped);
+
+            // Remove holstered pistol
+            if (WeaponHolster.HolstedPistol != null && WeaponHolster.HolstedPistol.Exists() && WeaponHolster.HolstedPistol.IsAttached())
+            {
+                WeaponHolster.HolstedPistol.Delete();
+            }
+
+            // Remove previously holstered pistol
+            if (WeaponHolster.HolstedPistolPrev != null && WeaponHolster.HolstedPistolPrev.Exists() && WeaponHolster.HolstedPistolPrev.IsAttached())
+            {
+                WeaponHolster.HolstedPistolPrev.Delete();
+            }
+        }
+        public static void ClearedItemsWhenDeadXML()
+        {
+            var ped = Game.Player.Character;
+            if (ped == null || !ped.Exists()) return;
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+            // Ensure WeaponList and ped element exist
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null)
+            {
+                weaponList = new XElement("WeaponList");
+                Common.doc.Add(weaponList);
+            }
+
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            // Remove attachments
+            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight" };
+            foreach (var attachment in attachments)
+            {
+                var attr = pedElement.Attribute(attachment);
+                if (attr == null || (bool.TryParse(attr.Value, out var hasAttachment) && hasAttachment))
+                {
+                    pedElement.SetAttributeValue(attachment, false);
+                }
+            }
+
+            // Remove inventory bag
+            if (InventoryBag.doesPedHasInventoryBag(ped) && InventoryBag.doesPedWearingBag(ped))
+            {
+                if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.IsAttached())
+                {
+                    InventoryBag.cur_bag.Delete();
+                }
+                else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
+                {
+                    InventoryBag.prev_bag.Delete();
+                }
+
+                var bagAttr = pedElement.Attribute("bag");
+                if (bagAttr == null || (bool.TryParse(bagAttr.Value, out var hasBag) && hasBag))
+                {
+                    pedElement.SetAttributeValue("bag", false);
+                }
+
+                Common.curPlayer = ped;
+                Common.update_inventory_status(ped);
+                Common.clearTrash();
+            }
+
+            // Remove holster
+            var holsterAttr = pedElement.Attribute("holster");
+            if (holsterAttr == null || (bool.TryParse(holsterAttr.Value, out var hasHolster) && hasHolster))
+            {
+                pedElement.SetAttributeValue("holster", false);
+            }
+
+            Common.saveDoc();
+        }
+
+        public static void UpdateAttachment(string attachmentName, bool state)
+        {
+            var ped = Game.Player.Character;
+            if (ped == null || !ped.Exists()) return;
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null)
+            {
+                weaponList = new XElement("WeaponList");
+                Common.doc.Add(weaponList);
+            }
+
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            pedElement.SetAttributeValue(attachmentName, state);
+            Common.saveDoc();
+        }
+
 
         public static void clearTrash()
         {

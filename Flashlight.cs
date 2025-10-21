@@ -46,7 +46,7 @@ namespace GTAExpansion
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").SetValue((object)true);
                 Common.saveDoc();
             }
-            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").Value == (object)false)
+            else if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").Value == "false")
             {
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").SetValue((object)true);
                 Common.saveDoc();
@@ -69,12 +69,12 @@ namespace GTAExpansion
             }
             else if ((Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").Value == (object)true))
             {
-                
+
                 Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"Flashlight").SetValue((object)false);
                 Common.saveDoc();
             }
 
-
+            return;
         }
         public static void flashlightcheck()
         {
@@ -84,7 +84,7 @@ namespace GTAExpansion
             {
                 if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)player, (InputArgument)(Enum)weaponHash, (InputArgument)(Enum)flashlight))
                 {
-                    FlashlightToXML();
+                    Common.UpdateAttachment("Flashlight", true);
                     break;
                 }
             }

@@ -22,10 +22,13 @@ namespace GTAExpansion
 {
     public class GTAExpansion : Script
     {
+
         public GTAExpansion() => this.Tick += new EventHandler(this.OnTick);
 
         private void OnTick(object sender, EventArgs e)
         {
+            if (Game.IsPaused)
+                return;
             while (Game.IsLoading)
                 Script.Wait(10000);
             if (!Common.loaded)
@@ -435,6 +438,7 @@ namespace GTAExpansion
                             Common.inMainMenu = false;
                             InventoryBag.checkEquipedGear(Game.Player.Character);
                             InventoryBag.updateDuffleBagAttachPos(Game.Player.Character);
+                            Game.Player.Character.Task.ClearAll();
                         }
                         if (InventoryBag.hasBag)
                         {
@@ -911,6 +915,7 @@ namespace GTAExpansion
             label_286:
                 if (Common.cur_action_page == 3)
                 {
+                    /*
                     if (WeaponHolster.holsted_big_weapons_module_active && Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponHolster.toggle_holsted_weapon_position))
                     {
                         Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
@@ -937,6 +942,7 @@ namespace GTAExpansion
                         Game.Player.Character.Task.ClearAll();
                         Screen.ShowHelpText("~BLIP_INFO_ICON~ Bag position changed and saved ~g~successfully~w~", 4000);
                     }
+                    
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponHolster.toggle_holsted_weapon_btn))
                     {
                         Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
@@ -959,6 +965,7 @@ namespace GTAExpansion
                         InventoryBag.checkEquipedGear(Game.Player.Character);
                         Game.Player.Character.Task.ClearAll();
                     }
+                    */
                 }
                 if (Common.cur_action_page == 4)
                 {
@@ -1326,8 +1333,11 @@ namespace GTAExpansion
             if (InventoryBag.timeReference < Game.GameTime)
             {
                 InventoryBag.timeReference = Game.GameTime + 1000;
-                Ped[] nearbyPeds = World.GetNearbyPeds(Game.Player.Character, 5f, (Model)PedHash.Ammucity01SMY);
-                if (nearbyPeds.Length != 0)
+                Model[] gundudes = new Model[2]
+                {(Model)PedHash.Ammucity01SMY, (Model)PedHash.AmmuCountrySMM };
+                Ped[] nearbyPeds = World.GetNearbyPeds(Game.Player.Character, 5f, gundudes);
+        
+                if (nearbyPeds.Length != 0 )
                 {
                     vector3_1 = Game.Player.Character.Position;
                     if ((double)vector3_1.DistanceTo(nearbyPeds[0].Position) <= 4.0 && Function.Call<bool>(Hash.IS_PED_FACING_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Entity)nearbyPeds[0], (InputArgument)15f) && !nearbyPeds[0].IsFleeing && nearbyPeds[0].IsOnScreen)
@@ -1425,7 +1435,7 @@ namespace GTAExpansion
                     Game.Player.Character.HealthFloat -= 0.5f;
                     if (!HungerSystem.isHungry)
                     {
-                        Main.Notify("You're ~r~starving~w~.~n~Eat some food using main menu", "Health report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
+                        Main.Notify("You're ~r~starving~w~.~n~Eat some food using the ~b~Main ~y~Menu~w~", "Health Report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
                         Main.startBleeding(Game.Player.Character, false, -1, false);
                     }
                     HungerSystem.isHungry = true;
@@ -1623,14 +1633,7 @@ namespace GTAExpansion
                     }
                 }
             }
-            if (Game.Player.Character.IsDead && (Entity)WeaponHolster.holster != (Entity)null && WeaponHolster.holster.Exists())
-            {
-                WeaponHolster.holster.Delete();
-                WeaponHolster.DeleteHolster(Game.Player.Character);
-               
 
-
-            }
             int num3 = FastWardrobe.mask_module_active ? 1 : 0;
             if (OnFootRadio.earRadioTimer < Game.GameTime)
             {
@@ -2233,10 +2236,7 @@ namespace GTAExpansion
             }
             if (Common.AllWeaponsCount(Game.Player.Character) == 0)
             {
-                Grip.GripXMLRemoval();
-                Scope.ScopeXMLRemoval();
-                Silencer.SilencerXMLRemoval();
-                Flashlight.FlaghlightXMLRemoval();
+                Common.RemoveAllAttachments();
 
             }
             if (Scope.toggleScope)
@@ -3228,37 +3228,10 @@ namespace GTAExpansion
             }
             if(Game.Player.Character.IsDead)
             {
-                Silencer.SilencerXMLRemoval();
-                Scope.ScopeXMLRemoval();
-                Grip.GripXMLRemoval();
-                Flashlight.FlaghlightXMLRemoval();
-
-                if ((Entity)InventoryBag.cur_bag != (Entity)null)
-                {
-                    //InventoryBag.ClearInventoryData(Game.Player.Character);
-                    //Script.Wait(5000);
-                    //InventoryBag.ClearInventoryData(Game.Player.Character);
-                    InventoryBag.cur_bag.Delete();
-                    string name = ((PedHash)Game.Player.Character.Model).ToString();
-                    if (char.IsDigit(name[0]))
-                        name = "CustomPed_" + name;
-                    
-                    if (Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"bag") == null)
-                    {
-                        Common.doc.Element((XName)"WeaponList").Element((XName)name).Add((object)new XAttribute((XName)"bag", (object)false));
-                        Common.saveDoc();
-                        Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"bag").SetValue((object)false);
-                        Common.saveDoc();
-                    }
-                    else
-                    {
-                        Common.doc.Element((XName)"WeaponList").Element((XName)name).Attribute((XName)"bag").SetValue((object)false);
-                        Common.saveDoc();
-                    }
-                    //Common.curPlayer = Game.Player.Character;
-                    Common.update_inventory_status(Game.Player.Character);
-                    Common.clearTrash();
-                }
+                Common.ClearedItemsWhenDeadXML();
+                Common.ClearItemsWhenDead();
+                Common.clearTrash();
+                Common.DeleteSupplies(Game.Player.Character);
             }
 
             if (InventoryBag.bag_module_active)
