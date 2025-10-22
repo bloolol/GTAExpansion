@@ -743,6 +743,10 @@ namespace GTAExpansion
                         Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Grip.grip_toggle_btn, "Grip");
                         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                         ++index1;
+
+                        Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)ExtendedMagazine.extendedmagazine_toggle_btn, "Extended Magazine");
+                        source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                        ++index1;
                     }
                     if (silencerModeActiveParam)
                     {
@@ -1500,7 +1504,7 @@ namespace GTAExpansion
             }
 
             // Safely set attachment attributes to false
-            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight" };
+            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
             foreach (var attachment in attachments)
             {
                 var attr = pedElement.Attribute(attachment);
@@ -1574,7 +1578,7 @@ namespace GTAExpansion
             }
 
             // Remove attachments
-            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight" };
+            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
             foreach (var attachment in attachments)
             {
                 var attr = pedElement.Attribute(attachment);
