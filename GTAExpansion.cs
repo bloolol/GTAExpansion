@@ -2233,12 +2233,84 @@ namespace GTAExpansion
                 Scope.scopecheck();
                Flashlight.flashlightcheck();
                 Grip.gripcheck();
+                ExtendedMagazine.CheckExtendedMagazine();
             }
             if (Common.AllWeaponsCount(Game.Player.Character) == 0)
             {
                 Common.RemoveAllAttachments();
 
             }
+            
+            if (ExtendedMagazine.toggleExtendedMagazine)
+            {
+                Main.DisableControlsFunc(true);
+                if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action", (InputArgument)3))
+                {
+                    if (!Game.Player.Character.IsInCover && Game.Player.Character.IsOnFoot && Game.Player.CanControlCharacter)
+                    {
+                        bool flag1 = false;
+                        foreach ((_, WeaponComponentHash extendedmagazine) in ExtendedMagazine.extendedmagazines)
+                        {
+
+                            if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)(WeaponComponentHash)extendedmagazine))
+                            {
+                                flag1 = true;
+                                break;
+                            }
+                        }
+                        if (flag1)
+                        {
+                            if (ExtendedMagazine.HasPedBoughtExtendedMagazine(Game.Player.Character))
+                            {
+                                Game.Player.Character.Task.PlayAnimation("move_action@p_m_one@armed@2h_short@trans@a", "idle2action", 4f, -1, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
+                                Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                                bool flag2 = false;
+                                foreach ((_, WeaponComponentHash extendedmagazine) in ExtendedMagazine.extendedmagazines)
+                                {
+
+                                    if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)extendedmagazine))
+                                    {
+                                        flag2 = true;
+                                        Function.Call(Hash.REMOVE_WEAPON_COMPONENT_FROM_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)extendedmagazine);
+                                        break;
+                                    }
+                                }
+                                if (!flag2)
+                                {
+                                    foreach ((_, WeaponComponentHash extendedmagazine) in ExtendedMagazine.extendedmagazines)
+                                    {
+
+                                        if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)extendedmagazine))
+                                        {
+                                            Function.Call(Hash.GIVE_WEAPON_COMPONENT_TO_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)extendedmagazine);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Screen.ShowHelpText("~BLIP_INFO_ICON~ ~r~Extended Magazine~w~ hasn't been ~r~purchased", 5000);
+                                ExtendedMagazine.toggleExtendedMagazine = false;
+                            }
+                        }
+                        else
+                        {
+                            Screen.ShowHelpText("~BLIP_INFO_ICON~ ~r~Extended Magazine can't be attached to this weapon", 5000);
+                            ExtendedMagazine.toggleExtendedMagazine = false;
+                        }
+                    }
+                    else
+                            ExtendedMagazine.toggleExtendedMagazine = false;
+                }
+                else if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action") >= 0.949999988079071)
+                {
+                    Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                    ExtendedMagazine.toggleExtendedMagazine = false;
+                }
+
+            }
+            
             if (Scope.toggleScope)
             {
                 Main.DisableControlsFunc(true);
@@ -2791,6 +2863,7 @@ namespace GTAExpansion
                                         Main.soundFX(Game.Player.Character, "draw2.wav", Common.assetFolder, 15f);
                                 }
                             }
+
                         }
                         else
                         {
@@ -2908,7 +2981,10 @@ namespace GTAExpansion
                             Flashlight.toggleFlashlight = true;
                             if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)Grip.grip_toggle_btn))
                                 Grip.toggleGrip = true;
-                            if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponJamming.clean_weapon_btn) && WeaponJamming.cleaningRequired)
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)ExtendedMagazine.extendedmagazine_toggle_btn))
+                            ExtendedMagazine.toggleExtendedMagazine = true;
+
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponJamming.clean_weapon_btn) && WeaponJamming.cleaningRequired)
                         {
                             if (Game.Player.CanControlCharacter && Game.Player.Character.IsOnFoot && !Game.Player.Character.IsInCombat && Game.Player.WantedLevel <= 0)
                             {
@@ -3228,10 +3304,10 @@ namespace GTAExpansion
             }
             if(Game.Player.Character.IsDead)
             {
-                Common.ClearedItemsWhenDeadXML();
-                Common.ClearItemsWhenDead();
-                Common.clearTrash();
-                Common.DeleteSupplies(Game.Player.Character);
+                Common.ClearedItemsWhenDeadXML(); //weapon attachments
+                Common.ClearItemsWhenDead();      //physical props
+                Common.clearTrash();              //inventory bag prop removal by original author. reassures no bag prop left behind.
+                Common.DeleteSupplies(Game.Player.Character); //deletes any items the player has bought.
             }
 
             if (InventoryBag.bag_module_active)

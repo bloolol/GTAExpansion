@@ -10,12 +10,11 @@ namespace GTAExpansion
         public static bool ModeActive = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini")
             .GetValue("EXTENDEDMAGAZINE_MODE", "EXTENDEDMAGAZINE_MODE_ACTIVE", true);
 
-        public static int ToggleButton = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini")
-            .GetValue("EXTENDEDMAGAZINE_MODE", "EXTENDEDMAGAZINE_TOGGLE_BTN", 47);
+        public static int extendedmagazine_toggle_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini")
+            .GetValue("EXTENDEDMAGAZINE_MODE", "EXTENDEDMAGAZINE_TOGGLE_BTN", 197);
 
-        public static bool ToggleState = false;
-
-        public static readonly (WeaponHash weapon, WeaponComponentHash component)[] ExtendedMagazines = new[]
+        public static bool toggleExtendedMagazine = false;
+        public static readonly (WeaponHash weapon, WeaponComponentHash component)[] extendedmagazines = new[]
         {
             // Pistols
             (WeaponHash.Pistol, WeaponComponentHash.PistolClip02),
@@ -73,7 +72,7 @@ namespace GTAExpansion
             Ped player = Game.Player.Character;
             WeaponHash currentWeapon = player.Weapons.Current.Hash;
 
-            foreach (var (weapon, component) in ExtendedMagazines)
+            foreach (var (weapon, component) in extendedmagazines)
             {
                 if (currentWeapon == weapon &&
                     Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, player, weapon, component))
