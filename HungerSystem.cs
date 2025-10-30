@@ -16,12 +16,16 @@ namespace GTAExpansion
     public static class HungerSystem
     {
         public static bool hungerModuleActive = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<bool>("HUNGER_SETTINGS", "HUNGER_MODE_ACTIVE", true);
-        public static int hunger_lvl_max = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HUNGER_SETTINGS", "MAX_LVL", 1000);
-        public static int criticalHungerLvl = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HUNGER_SETTINGS", "MIN_CRITICAL_LVL", 10);
+        public static int hunger_lvl_max = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HUNGER_SETTINGS", "HUNGER_LVL_MAX", 1000);
+        public static int thirst_lvl_max = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HUNGER_SETTINGS", "THIRST_LVL_MAX", 1000);
+        public static int criticalHungerLvl = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HUNGER_SETTINGS", "MIN_CRITICAL_HUNGER_LVL", 10);
+        public static int criticalThirstLvl = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HUNGER_SETTINGS", "MIN_CRITICAL_THIRST_LVL", 10);
         public static int eat_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HUNGER_SETTINGS", "EAT_BTN", 45);
         public static int drink_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("HUNGER_SETTINGS", "DRINK_BTN", 52);
         public static bool isHungry = false;
+        public static bool isThirsty = false;
         public static bool isVeryHungry = false;
+        public static bool isVeryThirsty = false;
         public static bool isEating = false;
         public static bool isDrinking = false;
         public static int drinkSipsLeft = 0;
@@ -33,10 +37,13 @@ namespace GTAExpansion
         public static float eatingAnimTime = 0.5f;
         public static int hungerTimeRef = 0;
         public static int hungerTimeRef2 = 0;
+        public static int thirstTimeRef = 0;
+        public static int thirstTimeRef2 = 0;
         public static Prop _drink = (Prop)null;
         public static bool _buyingSnacks = false;
         public static int foodCost = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("PRICES", "FOOD_PRICE", 10);
         public static int curHungerLvl = 0;
+        public static int curThirstLvl = 0;
         public static string _curPedsFood = "";
         public static string _curPedsDrink = "";
         public static string foodModel = "prop_choc_meto";
@@ -63,6 +70,46 @@ namespace GTAExpansion
         public static string pedDrinkingAnimDict = "amb@prop_human_seat_chair_drink@male@generic@idle_a";
         public static string pedDrinkingAnimName = "idle_a";
         public static CBar hungerBar = new CBar("Hunger lvl");
+        public static CBar thirstBar = new CBar("Thirst lvl");
+
+
+        public static int getPedThirstLvl(Ped ped, XDocument _doc)
+        {
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+            if (_doc.Element((XName)"WeaponList").Element((XName)name) == null)
+                _doc.Element((XName)"WeaponList").Add((object)new XElement((XName)name));
+            XElement xelement1 = _doc.Element((XName)"WeaponList").Element((XName)name);
+            if (xelement1.Element((XName)"thirst") == null)
+                xelement1.Add((object)new XElement((XName)"thirst"));
+            XElement xelement2 = xelement1.Element((XName)"thirst");
+            if (xelement2.Element((XName)"level") == null)
+                xelement2.Add((object)new XElement((XName)"level", (object)0));
+            return Main.TryToConvertInt32(xelement2.Element((XName)"level").Value);
+        }
+
+        public static int savePedThirstLvl(Ped ped, int lvl, int max_lvl, XDocument _doc)
+        {
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+            if (_doc.Element((XName)"WeaponList").Element((XName)name) == null)
+                _doc.Element((XName)"WeaponList").Add((object)new XElement((XName)name));
+            XElement xelement1 = _doc.Element((XName)"WeaponList").Element((XName)name);
+            if (xelement1.Element((XName)"thirst") == null)
+                xelement1.Add((object)new XElement((XName)"thirst"));
+            XElement xelement2 = xelement1.Element((XName)"thirst");
+            if (xelement2.Element((XName)"level") == null)
+                xelement2.Add((object)new XElement((XName)"level"));
+            int convertInt32_1 = Main.TryToConvertInt32(lvl.ToString());
+            xelement2.Element((XName)"level").Value = convertInt32_1 > 0 ? convertInt32_1.ToString() : 0.ToString();
+            if (Main.TryToConvertInt32(xelement2.Element((XName)"level").Value) > max_lvl)
+                xelement2.Element((XName)"level").Value = max_lvl.ToString();
+            int convertInt32_2 = Main.TryToConvertInt32(xelement2.Element((XName)"level").Value);
+            Common.saveDoc(_doc);
+            return convertInt32_2;
+        }
 
         public static int getPedHungerLvl(Ped ped, XDocument _doc)
         {
