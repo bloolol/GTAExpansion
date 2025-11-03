@@ -62,7 +62,7 @@ namespace GTAExpansion
         public static int purchaseSum = 0;
         public static bool purchaseProcess = false;
         public static List<Vector3> Store_Locations = new List<Vector3>();
-        public static bool showBlips = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<bool>("SETTUBGS", "SHOP_STORE_BLIPS", true);
+        public static bool showBlips = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<bool>("SETTINGS", "SHOP_STORE_BLIPS", true);
         public static int actionTimer = 0;
         public static bool pedIsNearShopkeeper = false;
         public static bool pedIsNearGunDealer = false;
@@ -101,7 +101,9 @@ namespace GTAExpansion
         private static InstructionBtn btn7 = new InstructionBtn("");
         private static InstructionBtn btn8 = new InstructionBtn("");
         private static InstructionBtn btn9 = new InstructionBtn("");
-        private static InstructionBtn[] common_btns = new InstructionBtn[9]
+        private static InstructionBtn btn10 = new InstructionBtn("");
+        private static InstructionBtn btn11 = new InstructionBtn("");
+        private static InstructionBtn[] common_btns = new InstructionBtn[11]
         {
       Common.btn1,
       Common.btn2,
@@ -111,10 +113,13 @@ namespace GTAExpansion
       Common.btn6,
       Common.btn7,
       Common.btn8,
-      Common.btn9
+      Common.btn9,
+            Common.btn10,
+            Common.btn11
         };
         public static HPhoneApp IFruit = new HPhoneApp();
         public static HPhoneContact callContact;
+        
         
         public static bool IsAnimPlay(this Ped ped, string animDict, string animName)
         {
@@ -122,6 +127,9 @@ namespace GTAExpansion
         }
         public static void ContactAnsweredDate(HPhoneContact contact)
         {
+           
+
+            Common.IFruit.Close2(2000);
             Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
             Common.update_inventory_status(Game.Player.Character);
             if (Common.deal && !Common.payed)
@@ -132,6 +140,8 @@ namespace GTAExpansion
             }
             else
                 Common.findSellerOption = true;
+
+            
         }
 
         public static void update_inventory_status(Ped ped)
@@ -741,6 +751,10 @@ namespace GTAExpansion
                         ++index1;
                         
                         Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Grip.grip_toggle_btn, "Grip");
+                        source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                        ++index1;
+
+                        Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)ExtendedMagazine.extendedmagazine_toggle_btn, "Extended Magazine");
                         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                         ++index1;
                     }
@@ -1500,7 +1514,7 @@ namespace GTAExpansion
             }
 
             // Safely set attachment attributes to false
-            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight" };
+            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
             foreach (var attachment in attachments)
             {
                 var attr = pedElement.Attribute(attachment);
@@ -1550,6 +1564,8 @@ namespace GTAExpansion
                 WeaponHolster.HolstedPistolPrev.Delete();
             }
         }
+
+
         public static void ClearedItemsWhenDeadXML()
         {
             var ped = Game.Player.Character;
@@ -1574,7 +1590,100 @@ namespace GTAExpansion
             }
 
             // Remove attachments
-            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight" };
+            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
+            foreach (var attachment in attachments)
+            {
+                var attr = pedElement.Attribute(attachment);
+                if (attr == null || (bool.TryParse(attr.Value, out var hasAttachment) && hasAttachment))
+                {
+                    pedElement.SetAttributeValue(attachment, false);
+                }
+            }
+
+            // Remove inventory bag
+            if (InventoryBag.doesPedHasInventoryBag(ped) && InventoryBag.doesPedWearingBag(ped))
+            {
+                if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.IsAttached())
+                {
+                    InventoryBag.cur_bag.Delete();
+                }
+                else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
+                {
+                    InventoryBag.prev_bag.Delete();
+                }
+
+                var bagAttr = pedElement.Attribute("bag");
+                if (bagAttr == null || (bool.TryParse(bagAttr.Value, out var hasBag) && hasBag))
+                {
+                    pedElement.SetAttributeValue("bag", false);
+                }
+
+                Common.curPlayer = ped;
+                Common.update_inventory_status(ped);
+                Common.clearTrash();
+            }
+
+            // Remove holster
+            var holsterAttr = pedElement.Attribute("holster");
+            if (holsterAttr == null || (bool.TryParse(holsterAttr.Value, out var hasHolster) && hasHolster))
+            {
+                pedElement.SetAttributeValue("holster", false);
+            }
+
+            var weaponsConditions = pedElement.Element("WeaponsConditions");
+            if (weaponsConditions != null)
+            {
+                foreach (var weapon in weaponsConditions.Elements())
+                {
+                    weapon.SetAttributeValue("shots", 0);
+                }
+            }
+            var hungerElement = pedElement.Element("hunger");
+            if (hungerElement != null)
+            {
+                var foodElement = hungerElement.Element("food");
+                if (foodElement != null)
+                {
+                    foodElement.RemoveNodes(); // removes all child elements of <food>
+                }
+
+                var drinksElement = hungerElement.Element("drinks");
+                if (drinksElement != null)
+                {
+                    drinksElement.RemoveNodes(); // removes all child elements of <drinks>
+                }
+            }
+
+
+            Common.saveDoc();
+        }
+
+        /*
+        public static void ClearedItemsWhenDeadXML()
+        {
+            var ped = Game.Player.Character;
+            if (ped == null || !ped.Exists()) return;
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+            // Ensure WeaponList and ped element exist
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null)
+            {
+                weaponList = new XElement("WeaponList");
+                Common.doc.Add(weaponList);
+            }
+
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            // Remove attachments
+            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
             foreach (var attachment in attachments)
             {
                 var attr = pedElement.Attribute(attachment);
@@ -1616,7 +1725,7 @@ namespace GTAExpansion
 
             Common.saveDoc();
         }
-
+        */
         public static void UpdateAttachment(string attachmentName, bool state)
         {
             var ped = Game.Player.Character;

@@ -1,8 +1,8 @@
 ﻿// Decompiled with JetBrains decompiler
 // Type: GTAExpansion.GTAExpansion
 // Assembly: GTAExpansion, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 57B8053D-C566-4641-A84B-F5EB537251F0
-// Assembly location: C:\Users\Chris-No Internet\Desktop\GTAExpansion.dll
+// MVID: 2A8F9920-188B-4EED-A081-9078B93D2DDF
+// Assembly location: D:\SteamLibrary\steamapps\common\Grand Theft Auto V\scripts\GTAExpansion.dll
 
 using GTA;
 using GTA.Math;
@@ -16,13 +16,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace GTAExpansion
 {
     public class GTAExpansion : Script
     {
-
         public GTAExpansion() => this.Tick += new EventHandler(this.OnTick);
 
         private void OnTick(object sender, EventArgs e)
@@ -95,8 +93,6 @@ namespace GTAExpansion
                     Common.clearTrash();
                 }
                 InventoryBag.updateDuffleBagAttachPos(Game.Player.Character, false);
-                //for (int index = 0; index < Common.allWeaponModels.Length; ++index)
-                  // WeaponHolster.checkPistolAfterScriptReloadByModel(Game.Player.Character, Common.allWeaponModels[index].Hash, (Prop)null, (Prop)null);
                 if (WeaponHolster.weaponPositionType == 0)
                 {
                     WeaponHolster.holstedWeaponAttachPos = WeaponHolster.holstedWeaponAttachPos1;
@@ -113,11 +109,11 @@ namespace GTAExpansion
                 {
                     if (!WeaponHolster.useHipHolster)
                     {
-                        if (Function.Call<bool>(Hash.IS_MODEL_VALID, (InputArgument)Main.GetHashKey("prop_pistol_holster")) && !Function.Call<bool>(Hash.HAS_MODEL_LOADED, (InputArgument)Main.GetHashKey("prop_pistol_holster")))
-                            Function.Call(Hash.REQUEST_MODEL, (InputArgument)Main.GetHashKey("prop_pistol_holster"));
+                        if (Function.Call<bool>(Hash.IS_MODEL_VALID, (InputArgument)HTools.Main.GetHashKey("prop_pistol_holster")) && !Function.Call<bool>(Hash.HAS_MODEL_LOADED, (InputArgument)HTools.Main.GetHashKey("prop_pistol_holster")))
+                            Function.Call(Hash.REQUEST_MODEL, (InputArgument)HTools.Main.GetHashKey("prop_pistol_holster"));
                     }
-                    else if (Function.Call<bool>(Hash.IS_MODEL_VALID, (InputArgument)Main.GetHashKey("prop_holster_01")) && !Function.Call<bool>(Hash.HAS_MODEL_LOADED, (InputArgument)Main.GetHashKey("prop_holster_01")))
-                        Function.Call(Hash.REQUEST_MODEL, (InputArgument)Main.GetHashKey("prop_holster_01"));
+                    else if (Function.Call<bool>(Hash.IS_MODEL_VALID, (InputArgument)HTools.Main.GetHashKey("prop_holster_01")) && !Function.Call<bool>(Hash.HAS_MODEL_LOADED, (InputArgument)HTools.Main.GetHashKey("prop_holster_01")))
+                        Function.Call(Hash.REQUEST_MODEL, (InputArgument)HTools.Main.GetHashKey("prop_holster_01"));
                 }
                 Game.Player.Character.CanWearHelmet = false;
                 if (HungerSystem.hungerModuleActive)
@@ -173,7 +169,7 @@ namespace GTAExpansion
                 if (Common.showHints)
                     Screen.ShowHelpText("To use ~y~focus mode~w~ you need to select firearms (pistols, smgs, shotguns, assaultrifles, sniperrifles) and make sure your ~y~special abillity~w~ bar is full.~n~Press ~" + ((IEnumerable<string>)Enum.GetNames(typeof(Inputs))).ElementAt<string>(FocusMode.focus_mode_btn) + "~ button rapidly ~o~x5 times~w~ to enter focus mode. If your special abilities bar is not filled yet, pressing this button rapidly will fill it up.~n~If your ~y~special abilities~w~ bar is not filled yet, pressing ~" + ((IEnumerable<string>)Enum.GetNames(typeof(Inputs))).ElementAt<string>(FocusMode.focus_mode_btn) + "~ button rapidly will fill it up.", 10000);
                 int num = 0;
-                while (Common.IFruit  == null)
+                while (Common.IFruit == null)
                 {
                     ++num;
                     if (num <= 1000)
@@ -190,11 +186,11 @@ namespace GTAExpansion
                     Common.callContact.Icon = ContactIcon.Ammunation;
                     Common.callContact.Bold = false;
                     Common.IFruit.Contacts.Add(Common.callContact);
-                    
-                    
                 }
                 HungerSystem.hungerBar.BackgroundColor = Color.Black;
                 HungerSystem.hungerBar.ForegroundColor = Color.WhiteSmoke;
+                HungerSystem.thirstBar.BackgroundColor = Color.Black;
+                HungerSystem.thirstBar.ForegroundColor = Color.WhiteSmoke;
                 Common.loaded = true;
                 WeaponJamming.createWeaponConditionStructure(Game.Player.Character, Common.doc);
             }
@@ -202,17 +198,17 @@ namespace GTAExpansion
             {
                 if (CigsAndPills.startSmoke)
                 {
-                    if (!Main.isOccupiedNative(Game.Player.Character) && (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Unarmed && !Common.inMainMenu && !InventoryBag.inMenu && Game.Player.CanControlCharacter)
+                    if (!HTools.Main.isOccupiedNative(Game.Player.Character) && (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Unarmed && !Common.inMainMenu && !InventoryBag.inMenu && Game.Player.CanControlCharacter)
                         CigsAndPills.StartSmokeFunc(Game.Player.Character, 0);
                 }
-                else if (CigsAndPills.smoke == 1 && !Main.isOccupiedNative(Game.Player.Character) && (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Unarmed && !Common.inMainMenu && !InventoryBag.inMenu && !WeaponJamming.isCleaningJammedGun && !Game.Player.Character.IsSprinting && !Game.Player.Character.IsWalking && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@code_human_in_car_mp_actions@first_person@smoke@std@ds@base", (InputArgument)"exit", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_smoking@male@male_a@exit", (InputArgument)"exit", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_leaning@female@smoke@exit", (InputArgument)"exit", (InputArgument)3))
+                else if (CigsAndPills.smoke == 1 && !HTools.Main.isOccupiedNative(Game.Player.Character) && (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Unarmed && !Common.inMainMenu && !InventoryBag.inMenu && !WeaponJamming.isCleaningJammedGun && !Game.Player.Character.IsSprinting && !Game.Player.Character.IsWalking && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@code_human_in_car_mp_actions@first_person@smoke@std@ds@base", (InputArgument)"exit", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_smoking@male@male_a@exit", (InputArgument)"exit", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_leaning@female@smoke@exit", (InputArgument)"exit", (InputArgument)3))
                 {
                     Common.Draw(9);
                     Game.DisableControlThisFrame(Control.Cover);
                     Game.DisableControlThisFrame(Control.ContextSecondary);
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)44))
                     {
-                        Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusOut", (InputArgument)"HintCamSounds");
+                        Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument) (- 1), (InputArgument)"FocusOut", (InputArgument)"HintCamSounds");
                         CigsAndPills.smoke = 0;
                     }
                 }
@@ -221,7 +217,7 @@ namespace GTAExpansion
             if (Common.GameTimeRef < Game.GameTime)
             {
                 Common.GameTimeRef = Game.GameTime + 1000;
-                Main.is_busy = Common.inMainMenu || CigsAndPills.smoking || WeaponJamming.isCleaningJammedGun || WeaponJamming.isFixingJammedGun;
+                HTools.Main.is_busy = Common.inMainMenu || CigsAndPills.smoking || WeaponJamming.isCleaningJammedGun || WeaponJamming.isFixingJammedGun;
                 if (Game.Player.Character.IsSittingInVehicle())
                 {
                     Common.main_menu_btn = Common.main_menu_btn_in_vehicle;
@@ -256,7 +252,7 @@ namespace GTAExpansion
                     else
                         CigsAndPills.cigsAndPillsCounter = 0;
                 }
-                if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_smoking@male@male_a@idle_a", (InputArgument)"idle_c", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_leaning@female@smoke@idle_a", (InputArgument)"idle_b", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_smoking@male@male_b@idle_a", (InputArgument)"idle_a", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_smoking@female@idle_a", (InputArgument)"idle_b", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@code_human_in_car_mp_actions@first_person@smoke@std@ds@base", (InputArgument)"idle_a", (InputArgument)3) && CigsAndPills.smoke != -1 && !CigsAndPills.startSmoke && 0 + 1 > 100)
+                if ((Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_smoking@male@male_a@idle_a", (InputArgument)"idle_c", (InputArgument)3) || Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_leaning@female@smoke@idle_a", (InputArgument)"idle_b", (InputArgument)3) || Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_smoking@male@male_b@idle_a", (InputArgument)"idle_a", (InputArgument)3) || Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@world_human_smoking@female@idle_a", (InputArgument)"idle_b", (InputArgument)3) || Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"amb@code_human_in_car_mp_actions@first_person@smoke@std@ds@base", (InputArgument)"idle_a", (InputArgument)3) || CigsAndPills.smoke == -1 || CigsAndPills.startSmoke) && false)
                 {
                     CigsAndPills.smoke = -1;
                     CigsAndPills.startSmoke = true;
@@ -266,9 +262,9 @@ namespace GTAExpansion
                         CigsAndPills.cig = (Prop)null;
                     }
                 }
-                if (CigsAndPills.smoke != 1 && (Entity)CigsAndPills.cig == (Entity)null && Function.Call<bool>(Hash.DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)0))
+                if (CigsAndPills.smoke != 1 && (Entity)CigsAndPills.cig == (Entity)null && Function.Call<bool>(Hash.DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)0))
                 {
-                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                     if (Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character))
                     {
                         if ((Entity)CigsAndPills.cig == (Entity)null)
@@ -277,9 +273,9 @@ namespace GTAExpansion
                         CigsAndPills.startSmoke = false;
                     }
                 }
-                if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
+                if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
                 {
-                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                     if ((Entity)prop != (Entity)CigsAndPills.cig && Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character) && prop.Exists())
                         prop.Delete();
                 }
@@ -289,7 +285,7 @@ namespace GTAExpansion
                     switch (CigsAndPills.smoke)
                     {
                         case 0:
-                            if (!Main.isOccupiedNative(Game.Player.Character) && (Game.Player.Character.IsSittingInVehicle() || !Game.Player.Character.IsSittingInVehicle() && (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Unarmed) && !Common.inMainMenu && Game.Player.CanControlCharacter)
+                            if (!HTools.Main.isOccupiedNative(Game.Player.Character) && (Game.Player.Character.IsSittingInVehicle() || !Game.Player.Character.IsSittingInVehicle() && (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Unarmed) && !Common.inMainMenu && Game.Player.CanControlCharacter)
                             {
                                 CigsAndPills.StopSmokeFunc(Game.Player.Character, type);
                                 break;
@@ -316,7 +312,7 @@ namespace GTAExpansion
                             }
                             if ((Entity)CigsAndPills.cig != (Entity)null && !CigsAndPills.startSmoke)
                             {
-                                if (!Main.isOccupiedNative(Game.Player.Character) && (Game.Player.Character.IsSittingInVehicle() || !Game.Player.Character.IsSittingInVehicle() && (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Unarmed) && !Game.IsControlJustPressed(Control.VehicleHandbrake) && !Game.IsControlJustPressed(Control.VehicleHorn) && !Game.IsControlJustPressed(Control.VehicleHeadlight) && !Game.IsControlJustPressed(Control.Enter) && !Game.IsControlJustPressed(Control.VehicleExit) && Game.Player.CanControlCharacter && !Common.inMainMenu && !InventoryBag.inMenu && !HungerSystem.isEating && !HungerSystem.isDrinking && !Game.Player.Character.IsSprinting && !Game.Player.Character.IsWalking)
+                                if (!HTools.Main.isOccupiedNative(Game.Player.Character) && (Game.Player.Character.IsSittingInVehicle() || !Game.Player.Character.IsSittingInVehicle() && (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Unarmed) && !Game.IsControlJustPressed(Control.VehicleHandbrake) && !Game.IsControlJustPressed(Control.VehicleHorn) && !Game.IsControlJustPressed(Control.VehicleHeadlight) && !Game.IsControlJustPressed(Control.Enter) && !Game.IsControlJustPressed(Control.VehicleExit) && Game.Player.CanControlCharacter && !Common.inMainMenu && !InventoryBag.inMenu && !HungerSystem.isEating && !HungerSystem.isDrinking && !Game.Player.Character.IsSprinting && !Game.Player.Character.IsWalking)
                                 {
                                     if (CigsAndPills.cig_durability > 0)
                                         CigsAndPills.SmokeLoopFunc(Game.Player.Character, type);
@@ -391,11 +387,17 @@ namespace GTAExpansion
                 Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
                 Common.inMainMenu = true;
                 Game.Player.Character.Weapons.Select(WeaponHash.Unarmed);
+                if (!HTools.Main.barPool.ToList().Contains(HungerSystem.thirstBar))
+                    HTools.Main.barPool.Add(HungerSystem.thirstBar);
+                if (!HTools.Main.barPool.ToList().Contains(HungerSystem.hungerBar))
+                    HTools.Main.barPool.Add(HungerSystem.hungerBar);
+
+
             }
             Model model;
             if (Common.inMainMenu)
             {
-                Main.DisableControlsFunc(true);
+                HTools.Main.DisableControlsFunc(true);
                 if (Common.curVehicleIsCar(Game.Player.Character) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@scripted@heist@ig1_table_grab@gold@male@", (InputArgument)"enter", (InputArgument)3))
                 {
                     Prop prop = InventoryBag.bagModelReturn(Game.Player.Character);
@@ -423,6 +425,10 @@ namespace GTAExpansion
                     Common.inMainMenu = false;
                     Game.Player.Character.Task.ClearAll();
                     InventoryBag.checkEquipedGear(Game.Player.Character);
+                    if (HTools.Main.barPool.ToList().Contains(HungerSystem.thirstBar))
+                        HTools.Main.barPool.Remove(HungerSystem.thirstBar);
+                    if (HTools.Main.barPool.ToList().Contains(HungerSystem.hungerBar))
+                        HTools.Main.barPool.Remove(HungerSystem.hungerBar);
                 }
                 if (Common.cur_action_page == 0)
                 {
@@ -492,9 +498,9 @@ namespace GTAExpansion
                                 string str = "prop_holster_01";
                                 if (!WeaponHolster.useHipHolster)
                                     str = "prop_pistol_holster";
-                                if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey(str), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
+                                if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey(str), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
                                 {
-                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey(str), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey(str), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                                     if (Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character))
                                     {
                                         WeaponHolster.holster = prop;
@@ -514,26 +520,26 @@ namespace GTAExpansion
                     if (!Function.Call<bool>(Hash.IS_PED_RUNNING_MOBILE_PHONE_TASK, (InputArgument)(Entity)Game.Player.Character) && !Function.Call<bool>(Hash.IS_PED_RUNNING_RAGDOLL_TASK, (InputArgument)(Entity)Game.Player.Character) && !Function.Call<bool>(Hash.IS_PED_DOING_DRIVEBY, (InputArgument)(Entity)Game.Player.Character) && !Function.Call<bool>(Hash.IS_PLAYER_FREE_AIMING, (InputArgument)Game.Player))
                     {
                         model = Game.Player.Character.Model;
-                        if (model.Hash != Main.GetHashKey("mp_m_freemode_01"))
+                        if (model.Hash != HTools.Main.GetHashKey("mp_m_freemode_01"))
                         {
                             model = Game.Player.Character.Model;
-                            if (model.Hash != Main.GetHashKey("mp_f_freemode_01"))
+                            if (model.Hash != HTools.Main.GetHashKey("mp_f_freemode_01"))
                             {
                                 model = Game.Player.Character.Model;
-                                if (model.Hash != Main.GetHashKey("PLAYER_ZERO"))
+                                if (model.Hash != HTools.Main.GetHashKey("PLAYER_ZERO"))
                                 {
                                     model = Game.Player.Character.Model;
-                                    if (model.Hash != Main.GetHashKey("PLAYER_ONE"))
+                                    if (model.Hash != HTools.Main.GetHashKey("PLAYER_ONE"))
                                     {
                                         model = Game.Player.Character.Model;
-                                        if (model.Hash != Main.GetHashKey("PLAYER_TWO"))
-                                            goto label_171;
+                                        if (model.Hash != HTools.Main.GetHashKey("PLAYER_TWO"))
+                                            goto label_195;
                                     }
                                 }
                             }
                         }
                         OnFootRadio.headset = Function.Call<int>(Hash.GET_PED_PROP_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2) == 0;
-                    label_171:
+                    label_195:
                         if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)OnFootRadio.earphone_toggle_btn))
                         {
                             Common.inMainMenu = false;
@@ -548,7 +554,7 @@ namespace GTAExpansion
                             }
                             else if (!Game.Player.Character.IsSittingInVehicle() && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@cellphone@in_car@ds", (InputArgument)"cellphone_text_to_call", (InputArgument)3))
                                 Function.Call(Hash.TASK_PLAY_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@cellphone@in_car@ds", (InputArgument)"cellphone_text_to_call", (InputArgument)45f, (InputArgument)(-12.0), (InputArgument)(-1), (InputArgument)48, (InputArgument)0.0f, (InputArgument)0, (InputArgument)0, (InputArgument)0);
-                            Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder, 10f);
+                            HTools.Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
                             if (!OnFootRadio.headset)
                             {
                                 Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
@@ -597,11 +603,11 @@ namespace GTAExpansion
                                     Function.Call(Hash.SET_RADIO_TO_STATION_INDEX, (InputArgument)OnFootRadio.prevStation);
                                 else
                                     Function.Call(Hash.SET_RADIO_TO_STATION_INDEX, (InputArgument)0);
-                                Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder, 10f);
+                                HTools.Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
                             }
                             else
                             {
-                                Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder, 10f);
+                                HTools.Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
                                 OnFootRadio.prevStation = Function.Call<int>(Hash.GET_PLAYER_RADIO_STATION_INDEX);
                                 Function.Call(Hash.SET_RADIO_TO_STATION_INDEX, (InputArgument)(int)byte.MaxValue);
                                 Function.Call(Hash.SET_MOBILE_RADIO_ENABLED_DURING_GAMEPLAY, (InputArgument)false);
@@ -628,33 +634,33 @@ namespace GTAExpansion
                                     if (Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"mp_arrest_paired", (InputArgument)"cop_p1_rf_right_0", (InputArgument)3))
                                         Game.Player.Character.Task.ClearAnimation("mp_arrest_paired", "cop_p1_rf_right_0");
                                 }
-                                Main.soundFX(Game.Player.Character, "grab.wav", Common.assetFolder, 10f);
+                                HTools.Main.soundFX(Game.Player.Character, "grab.wav", Common.assetFolder);
                                 Wallet.wallet = World.CreateProp((Model)"prop_ld_wallet_02", Game.Player.Character.Position, true, false);
                                 Wallet.walletOpened = World.CreateProp((Model)"prop_ld_wallet_pickup", Game.Player.Character.Position, true, false);
                                 Function.Call(Hash.SET_ENTITY_NO_COLLISION_ENTITY, (InputArgument)(Entity)Wallet.wallet, (InputArgument)(Entity)Game.Player.Character, (InputArgument)true);
                                 int num1 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)36029);
                                 int num2 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)6286);
-                                if ((Entity)Wallet.wallet == (Entity)null && Function.Call<bool>(Hash.DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)0))
+                                if ((Entity)Wallet.wallet == (Entity)null && Function.Call<bool>(Hash.DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)0))
                                 {
-                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                                     if (Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character) && (Entity)Wallet.wallet == (Entity)null)
                                         Wallet.wallet = prop;
                                 }
-                                if ((Entity)Wallet.walletOpened == (Entity)null && Function.Call<bool>(Hash.DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)0))
+                                if ((Entity)Wallet.walletOpened == (Entity)null && Function.Call<bool>(Hash.DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)0))
                                 {
-                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                                     if (Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character) && (Entity)Wallet.walletOpened == (Entity)null)
                                         Wallet.walletOpened = prop;
                                 }
-                                if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
+                                if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
                                 {
-                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                                     if ((Entity)prop != (Entity)Wallet.wallet && Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character) && prop.Exists())
                                         prop.Delete();
                                 }
-                                if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
+                                if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
                                 {
-                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                                    Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                                     if ((Entity)prop != (Entity)Wallet.walletOpened && Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character) && prop.Exists())
                                         prop.Delete();
                                 }
@@ -690,8 +696,8 @@ namespace GTAExpansion
                                     case -1:
                                     case 0:
                                         Function.Call(Hash.SET_CURRENT_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2725352035U, (InputArgument)true);
-                                        if (Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false)))
-                                            Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false).Delete();
+                                        if (Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false)))
+                                            Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey(CigsAndPills.smokeType), (InputArgument)true, (InputArgument)false, (InputArgument)false).Delete();
                                         if (!Common.MaskIsOn)
                                         {
                                             CigsAndPills.cigReady = false;
@@ -788,7 +794,7 @@ namespace GTAExpansion
                         Game.Player.Character.Task.ClearAll();
                         Function.Call(Hash.SET_CURRENT_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2725352035U, (InputArgument)true);
                         Script.Wait(100);
-                        Main.soundFX(Game.Player.Character, "noise.wav", Common.assetFolder, 10f);
+                        HTools.Main.soundFX(Game.Player.Character, "noise.wav", Common.assetFolder);
                         string animDic = "anim@mp_player_intupperface_palm";
                         string animName = "exit";
                         if (!Game.Player.Character.IsSittingInVehicle())
@@ -797,24 +803,24 @@ namespace GTAExpansion
                             animName = "try_glasses_positive_a";
                         }
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_ZERO"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_ZERO"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "MICHAELES GLASSES", 2, animDic, animName, 1000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_ONE"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_ONE"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "FRANKLINS GLASSES", 2, animDic, animName, 1000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_TWO"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_TWO"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "TREVORS GLASSES", 2, animDic, animName, 1000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash != Main.GetHashKey("mp_m_freemode_01"))
+                        if (model.Hash != HTools.Main.GetHashKey("mp_m_freemode_01"))
                         {
                             model = Game.Player.Character.Model;
-                            if (model.Hash != Main.GetHashKey("mp_f_freemode_01"))
-                                goto label_252;
+                            if (model.Hash != HTools.Main.GetHashKey("mp_f_freemode_01"))
+                                goto label_290;
                         }
                         FastWardrobe.PropsControlFunc(Game.Player.Character, "MPS GLASSES", 2, animDic, animName, 1000);
                     }
-                label_252:
+                label_290:
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)FastWardrobe.gloves_toggle_btn))
                     {
                         Common.inMainMenu = false;
@@ -822,28 +828,28 @@ namespace GTAExpansion
                         Game.Player.Character.Task.ClearAll();
                         Function.Call(Hash.SET_CURRENT_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2725352035U, (InputArgument)true);
                         Script.Wait(100);
-                        Main.soundFX(Game.Player.Character, "noise.wav", Common.assetFolder, 10f);
+                        HTools.Main.soundFX(Game.Player.Character, "noise.wav", Common.assetFolder);
                         string animDic = "switch@michael@closet";
                         string animName = "closet_c";
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_ZERO"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_ZERO"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "MICHAELES GLOVES", 1, animDic, animName, 2000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_ONE"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_ONE"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "FRANKLINS GLOVES", 1, animDic, animName, 2000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_TWO"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_TWO"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "TREVORS GLOVES", 1, animDic, animName, 2000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash != Main.GetHashKey("mp_m_freemode_01"))
+                        if (model.Hash != HTools.Main.GetHashKey("mp_m_freemode_01"))
                         {
                             model = Game.Player.Character.Model;
-                            if (model.Hash != Main.GetHashKey("mp_f_freemode_01"))
-                                goto label_262;
+                            if (model.Hash != HTools.Main.GetHashKey("mp_f_freemode_01"))
+                                goto label_300;
                         }
                         FastWardrobe.PropsControlFunc(Game.Player.Character, "MPS GLOVES", 1, animDic, animName, 2000);
                     }
-                label_262:
+                label_300:
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)FastWardrobe.hat_toggle_btn))
                     {
                         Common.inMainMenu = false;
@@ -851,7 +857,7 @@ namespace GTAExpansion
                         Game.Player.Character.Task.ClearAll();
                         Function.Call(Hash.SET_CURRENT_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2725352035U, (InputArgument)true);
                         Script.Wait(100);
-                        Main.soundFX(Game.Player.Character, "noise.wav", Common.assetFolder, 10f);
+                        HTools.Main.soundFX(Game.Player.Character, "noise.wav", Common.assetFolder);
                         string animDic = "anim@mp_player_intupperface_palm";
                         string animName = "exit";
                         if (Game.Player.Character.IsSittingInVehicle() && !Function.Call<bool>(Hash.IS_THIS_MODEL_A_QUADBIKE, (InputArgument)Function.Call<int>(Hash.GET_ENTITY_MODEL, (InputArgument)(Entity)Game.Player.Character.CurrentVehicle)) && !Function.Call<bool>(Hash.IS_THIS_MODEL_A_BICYCLE, (InputArgument)Function.Call<int>(Hash.GET_ENTITY_MODEL, (InputArgument)(Entity)Game.Player.Character.CurrentVehicle)) && !Function.Call<bool>(Hash.IS_PED_ON_ANY_BIKE, (InputArgument)(Entity)Game.Player.Character))
@@ -860,24 +866,24 @@ namespace GTAExpansion
                             animName = "exit";
                         }
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_ZERO"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_ZERO"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "MICHAELES HAT", 2, animDic, animName, 2000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_ONE"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_ONE"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "FRANKLINS HAT", 2, animDic, animName, 2000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_TWO"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_TWO"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "TREVORS HAT", 2, animDic, animName, 2000);
                         model = Game.Player.Character.Model;
-                        if (model.Hash != Main.GetHashKey("mp_m_freemode_01"))
+                        if (model.Hash != HTools.Main.GetHashKey("mp_m_freemode_01"))
                         {
                             model = Game.Player.Character.Model;
-                            if (model.Hash != Main.GetHashKey("mp_f_freemode_01"))
-                                goto label_274;
+                            if (model.Hash != HTools.Main.GetHashKey("mp_f_freemode_01"))
+                                goto label_312;
                         }
                         FastWardrobe.PropsControlFunc(Game.Player.Character, "MPS HAT", 2, animDic, animName, 2000);
                     }
-                label_274:
+                label_312:
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)FastWardrobe.mask_toggle_btn))
                     {
                         Common.inMainMenu = false;
@@ -885,7 +891,7 @@ namespace GTAExpansion
                         Game.Player.Character.Task.ClearAll();
                         Function.Call(Hash.SET_CURRENT_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2725352035U, (InputArgument)true);
                         Script.Wait(100);
-                        Main.soundFX(Game.Player.Character, "noise.wav", Common.assetFolder, 10f);
+                        HTools.Main.soundFX(Game.Player.Character, "noise.wav", Common.assetFolder);
                         string animDic = "anim@mp_player_intupperface_palm";
                         string animName = "exit";
                         if (Game.Player.Character.IsSittingInVehicle() && !Function.Call<bool>(Hash.IS_THIS_MODEL_A_QUADBIKE, (InputArgument)Function.Call<int>(Hash.GET_ENTITY_MODEL, (InputArgument)(Entity)Game.Player.Character.CurrentVehicle)) && !Function.Call<bool>(Hash.IS_THIS_MODEL_A_BICYCLE, (InputArgument)Function.Call<int>(Hash.GET_ENTITY_MODEL, (InputArgument)(Entity)Game.Player.Character.CurrentVehicle)) && !Function.Call<bool>(Hash.IS_PED_ON_ANY_BIKE, (InputArgument)(Entity)Game.Player.Character))
@@ -894,79 +900,27 @@ namespace GTAExpansion
                             animName = "exit";
                         }
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_ZERO"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_ZERO"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "MICHAELES MASK", 1, animDic, animName, 2000, Common.config.GetValue<bool>("MICHAELES MASK", "HIDE_HAIRS", true), true);
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_ONE"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_ONE"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "FRANKLINS MASK", 1, animDic, animName, 2000, Common.config.GetValue<bool>("FRANKLINS MASK", "HIDE_HAIRS", true), true);
                         model = Game.Player.Character.Model;
-                        if (model.Hash == Main.GetHashKey("PLAYER_TWO"))
+                        if (model.Hash == HTools.Main.GetHashKey("PLAYER_TWO"))
                             FastWardrobe.PropsControlFunc(Game.Player.Character, "TREVORS MASK", 1, animDic, animName, 2000, Common.config.GetValue<bool>("TREVORS MASK", "HIDE_HAIRS", true), true);
                         model = Game.Player.Character.Model;
-                        if (model.Hash != Main.GetHashKey("mp_m_freemode_01"))
+                        if (model.Hash != HTools.Main.GetHashKey("mp_m_freemode_01"))
                         {
                             model = Game.Player.Character.Model;
-                            if (model.Hash != Main.GetHashKey("mp_f_freemode_01"))
-                                goto label_286;
+                            if (model.Hash != HTools.Main.GetHashKey("mp_f_freemode_01"))
+                                goto label_325;
                         }
                         FastWardrobe.PropsControlFunc(Game.Player.Character, "MPS MASK", 1, animDic, animName, 2000, Common.config.GetValue<bool>("MPS MASK", "HIDE_HAIRS", true), true);
                     }
                 }
-            label_286:
-                if (Common.cur_action_page == 3)
-                {
-                    /*
-                    if (WeaponHolster.holsted_big_weapons_module_active && Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponHolster.toggle_holsted_weapon_position))
-                    {
-                        Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
-                        if (WeaponHolster.weaponPositionType == 0)
-                        {
-                            WeaponHolster.weaponPositionType = 1;
-                            WeaponHolster.holstedWeaponAttachPos = WeaponHolster.holstedWeaponAttachPos2;
-                            WeaponHolster.holstedWeaponAttachRot = WeaponHolster.holstedWeaponAttachRot2;
-                            WeaponHolster.holstedWeaponAttachBone = WeaponHolster.holstedWeaponAttachBone2;
-                        }
-                        else
-                        {
-                            WeaponHolster.weaponPositionType = 0;
-                            WeaponHolster.holstedWeaponAttachPos = WeaponHolster.holstedWeaponAttachPos1;
-                            WeaponHolster.holstedWeaponAttachRot = WeaponHolster.holstedWeaponAttachRot1;
-                            WeaponHolster.holstedWeaponAttachBone = WeaponHolster.holstedWeaponAttachBone1;
-                        }
-                        Common.config.SetValue<int>("HOLSTED_BIG_WEAPONS", "HOLSTED_BIG_WEAPONS_DEFAULT_POSITION", WeaponHolster.weaponPositionType);
-                        Common.config.Save();
-                        WeaponHolster.weaponNonPistolInHands = true;
-                        Game.Player.Character.Weapons.Select((WeaponHash)WeaponHolster.choosenNonPistolWeapon);
-                        Common.inMainMenu = false;
-                        InventoryBag.checkEquipedGear(Game.Player.Character);
-                        Game.Player.Character.Task.ClearAll();
-                        Screen.ShowHelpText("~BLIP_INFO_ICON~ Bag position changed and saved ~g~successfully~w~", 4000);
-                    }
-                    
-                    if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponHolster.toggle_holsted_weapon_btn))
-                    {
-                        Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
-                        WeaponHolster.holsted_big_weapons_module_active = !WeaponHolster.holsted_big_weapons_module_active;
-                        if (!WeaponHolster.holsted_big_weapons_module_active)
-                        {
-                            Screen.ShowHelpText("~BLIP_INFO_ICON~ Visible big weapons module ~r~disabled~w~", 4000);
-                          //  for (int index = 0; index < Common.allWeaponModels.Length; ++index)
-                            //    WeaponHolster.checkPistolAfterScriptReloadByModel(Game.Player.Character, Common.allWeaponModels[index].Hash, WeaponHolster.HolstedPistol, (Prop)null);
-                        }
-                        else
-                        {
-                            Screen.ShowHelpText("~BLIP_INFO_ICON~ Visible big weapons module ~g~enabled~w~", 4000);
-                            if (WeaponHolster.worldNonPistolWeaponModel != 0)
-                                WeaponHolster.HolstedNonPistolWeapon = WeaponHolster.checkPistolFunc(Game.Player.Character, (Prop)null, WeaponHolster.weaponNonPistolInHands, (WeaponHash)WeaponHolster.choosenNonPistolWeapon, WeaponHolster.worldNonPistolWeaponModel, WeaponHolster.HolstedNonPistolWeapon, WeaponHolster.useHipHolster, true, WeaponHolster.holstedWeaponAttachPos, WeaponHolster.holstedWeaponAttachRot, WeaponHolster.holstedWeaponAttachBone, true, WeaponHolster.weaponPositionType);
-                        }
-                        Common.config.SetValue<bool>("HOLSTED_BIG_WEAPONS", "HOLSTED_BIG_WEAPONS_MODULE_ACTIVE", WeaponHolster.holsted_big_weapons_module_active);
-                        Common.config.Save();
-                        Common.inMainMenu = false;
-                        InventoryBag.checkEquipedGear(Game.Player.Character);
-                        Game.Player.Character.Task.ClearAll();
-                    }
-                    */
-                }
+            label_325:
+                if (Common.cur_action_page != 3)
+                    ;
                 if (Common.cur_action_page == 4)
                 {
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)HungerSystem.eat_btn) && HungerSystem.hungerModuleActive)
@@ -974,7 +928,7 @@ namespace GTAExpansion
                         HungerSystem._curPedsFood = HungerSystem.getPedsFood(Game.Player.Character, Common.doc);
                         if (HungerSystem._curPedsFood != "")
                         {
-                            if (!Main.isOccupiedNative(Game.Player.Character) && Game.Player.CanControlCharacter && Common.curVehicleIsCar(Game.Player.Character))
+                            if (!HTools.Main.isOccupiedNative(Game.Player.Character) && Game.Player.CanControlCharacter && Common.curVehicleIsCar(Game.Player.Character))
                             {
                                 HungerSystem.foodModel = HungerSystem.getFoodModelByTyoe(HungerSystem._curPedsFood);
                                 Common.inMainMenu = false;
@@ -1000,7 +954,7 @@ namespace GTAExpansion
                         HungerSystem._curPedsDrink = HungerSystem.getPedsDrinks(Game.Player.Character, Common.doc);
                         if (HungerSystem._curPedsDrink != "")
                         {
-                            if (!Main.isOccupiedNative(Game.Player.Character) && Game.Player.CanControlCharacter && Common.curVehicleIsCar(Game.Player.Character))
+                            if (!HTools.Main.isOccupiedNative(Game.Player.Character) && Game.Player.CanControlCharacter && Common.curVehicleIsCar(Game.Player.Character))
                             {
                                 HungerSystem.drinkModel = HungerSystem.getDrinksModelByTyoe(HungerSystem._curPedsDrink);
                                 Common.inMainMenu = false;
@@ -1010,6 +964,7 @@ namespace GTAExpansion
                                 HungerSystem.isDrinking = true;
                                 HungerSystem.drinkSipsLeft = 500;
                                 HungerSystem.drinkingInProcess = false;
+                                HungerSystem.isVeryThirsty = HungerSystem.getPedThirstLvl(Game.Player.Character, Common.doc) < HungerSystem.criticalThirstLvl;
                             }
                         }
                         else
@@ -1027,7 +982,7 @@ namespace GTAExpansion
             {
                 if (HungerSystem.isDrinking && !Common.inMainMenu && !InventoryBag.inMenu && Game.Player.CanControlCharacter)
                 {
-                    Main.DisableControlsFunc(true);
+                    HTools.Main.DisableControlsFunc(true);
                     if (!HungerSystem.drinkingInProcess)
                     {
                         if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@scripted@heist@ig1_table_grab@gold@male@", (InputArgument)"enter", (InputArgument)3))
@@ -1051,6 +1006,7 @@ namespace GTAExpansion
                     }
                     else
                     {
+                        int counter = 0;
                         if ((Entity)HungerSystem._drink != (Entity)null)
                         {
                             if (HungerSystem.drinkingEffectsTimer <= 0)
@@ -1090,11 +1046,18 @@ namespace GTAExpansion
                                 double num = (double)Function.Call<float>(Hash.SET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)HungerSystem.pedDrinkingAnimDict, (InputArgument)HungerSystem.pedDrinkingAnimName, (InputArgument)0.3f);
                                 if (HungerSystem.swallowSoundFXTimer <= 0)
                                 {
-                                    Main.soundFX(Game.Player.Character, "swallow.wav", Common.assetFolder, 18f);
+                                    HTools.Main.soundFX(Game.Player.Character, "swallow.wav", Common.assetFolder, 18f);
                                     HungerSystem.swallowSoundFXTimer = 100;
                                 }
                                 else
                                     --HungerSystem.swallowSoundFXTimer;
+
+                                int normalized = (HungerSystem.drinkSipsLeft/500) * HungerSystem.thirst_lvl_max;
+                                int inverted = HungerSystem.thirst_lvl_max - normalized;
+                                
+                                int compounded = counter + inverted;
+                                HungerSystem.savePedThirstLvl(Game.Player.Character, compounded, HungerSystem.thirst_lvl_max, Common.doc);
+
                             }
                             if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)25) || HungerSystem.drinkSipsLeft <= 0 || Game.Player.Character.IsRagdoll)
                             {
@@ -1109,18 +1072,22 @@ namespace GTAExpansion
                         {
                             Function.Call(Hash.REMOVE_PARTICLE_FX_FROM_ENTITY, (InputArgument)(Entity)HungerSystem._drink);
                             HungerSystem.isDrinking = false;
+                            
                             HungerSystem.drinkingInProcess = false;
                             Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"GENERIC_DRINK", (InputArgument)"SPEECH_PARAMS_FORCE");
                             HungerSystem.updatePedDrinksCount(Game.Player.Character, HungerSystem._curPedsDrink, HungerSystem.getPedDrinksCount(Game.Player.Character, HungerSystem._curPedsDrink, Common.doc) - 1, Common.doc);
                             HungerSystem.drinksLeft = HungerSystem.getPedDrinksCount(Game.Player.Character, "", Common.doc);
                             HungerSystem._drink.Detach();
                             HungerSystem._drink.MarkAsNoLongerNeeded();
+                            HungerSystem.savePedThirstLvl(Game.Player.Character, HungerSystem.thirst_lvl_max, HungerSystem.thirst_lvl_max, Common.doc);
+                            HungerSystem.isThirsty = false;
+                            counter = 0;
                         }
                     }
                 }
                 if (HungerSystem.isEating)
                 {
-                    Main.DisableControlsFunc(true);
+                    HTools.Main.DisableControlsFunc(true);
                     string animDict = "amb@code_human_wander_eating_donut@male@idle_a";
                     string animName = "idle_c";
                     float num = 0.98f;
@@ -1130,7 +1097,7 @@ namespace GTAExpansion
                     if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName, (InputArgument)3))
                     {
                         Game.Player.Character.Task.PlayAnimation(animDict, animName, 4f, duration, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
-                        Main.soundFX(Game.Player.Character, "draw2.wav", Common.assetFolder, 10f);
+                        HTools.Main.soundFX(Game.Player.Character, "draw2.wav", Common.assetFolder);
                         HungerSystem.createFood(Game.Player.Character, Game.Player.Character.Position, HungerSystem.foodModel, attachPositionType: 1);
                     }
                     else
@@ -1140,8 +1107,8 @@ namespace GTAExpansion
                             if (HungerSystem.eatingSoundsInt <= 0)
                             {
                                 HungerSystem.eatingSoundsInt = HungerSystem.eatingSoundsMaxInt;
-                                Main.soundFX(Game.Player.Character, "eat.wav", Common.assetFolder, 15f);
-                                Main.soundFX(Game.Player.Character, "snack.wav", Common.assetFolder, 15f);
+                                HTools.Main.soundFX(Game.Player.Character, "eat.wav", Common.assetFolder, 15f);
+                                HTools.Main.soundFX(Game.Player.Character, "snack.wav", Common.assetFolder, 15f);
                             }
                             else
                                 --HungerSystem.eatingSoundsInt;
@@ -1152,11 +1119,11 @@ namespace GTAExpansion
                             if (!Game.Player.Character.IsInStealthMode)
                                 Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"GENERIC_EAT", (InputArgument)"SPEECH_PARAMS_FORCE_SHOUTED");
                             Screen.ShowHelpText("~BLIP_INFO_ICON~ You feel much better now!", 6000);
-                            Main.soundFX(Game.Player.Character, "swallow.wav", Common.assetFolder, 15f);
+                            HTools.Main.soundFX(Game.Player.Character, "swallow.wav", Common.assetFolder, 15f);
                             HungerSystem.savePedHungerLvl(Game.Player.Character, HungerSystem.hunger_lvl_max, HungerSystem.hunger_lvl_max, Common.doc);
                             HungerSystem.updatePedFoodCount(Game.Player.Character, HungerSystem._curPedsFood, HungerSystem.getPedFoodCount(Game.Player.Character, HungerSystem._curPedsFood, Common.doc) - 1, Common.doc);
                             HungerSystem.clearFood(Game.Player.Character, HungerSystem.foodModel);
-                            Main.stopBleeding(Game.Player.Character, true);
+                            HTools.Main.stopBleeding(Game.Player.Character);
                             HungerSystem.foodLeft = HungerSystem.getPedFoodCount(Game.Player.Character, "", Common.doc);
                             HungerSystem.isEating = false;
                             HungerSystem.isHungry = false;
@@ -1166,7 +1133,7 @@ namespace GTAExpansion
             }
             if (Common.pedIsNearGunDealer)
             {
-                Main.DisableControlsFunc(true);
+                HTools.Main.DisableControlsFunc(true);
                 Common.Draw(11, cameraModuleParam: false, swingWeaponModuleParam: false, laserSightModuleParam: false, weaponJamningModuleParam: false);
                 if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)24) && !Game.Player.IsAiming)
                 {
@@ -1201,7 +1168,6 @@ namespace GTAExpansion
                         InventoryBag._isBuyingGear = true;
                         Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"GENERIC_HI", (InputArgument)"SPEECH_PARAMS_FORCE");
                         Common._GunDealer.Task.LookAt((Entity)Game.Player.Character, 1000);
-
                     }
                     else
                     {
@@ -1225,35 +1191,29 @@ namespace GTAExpansion
                             InventoryBag.bagSet(InventoryBag.bagModelCheck(Game.Player.Character), Game.Player.Character);
                             Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                             Notification.Show("Dufflebag has been ~g~purchased", true);
-                            Main.Notify("Your payment check: ~n~Dufflebag: ~h~" + InventoryBag.BagPrice.ToString() + "~h~~g~$~w~~n~-------------~n~Total sum: ~h~" + InventoryBag.BagPrice.ToString() + "~h~~g~$~w~", "Shopping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
+                            HTools.Main.Notify("Your payment check: ~n~Dufflebag: ~h~" + InventoryBag.BagPrice.ToString() + "~h~~g~$~w~~n~-------------~n~Total sum: ~h~" + InventoryBag.BagPrice.ToString() + "~h~~g~$~w~", "Shopping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
                             HungerSystem.clearFoodPacket(Game.Player.Character, "hei_prop_hei_paper_bag");
                             InventoryBag._isBuyingGear = false;
                             InventoryBag.hasBag = InventoryBag.doesPedHasInventoryBag(Game.Player.Character);
-                            
-
-
                         }
                         if (Common.purchaseType == 4)
                         {
                             WeaponHolster.SaveHolster(Game.Player.Character);
                             Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                             Notification.Show("Holster has been ~g~purchased", true);
-                            Main.Notify("Your payment check: ~n~Holster: ~h~" + WeaponHolster.HolsterPrice.ToString() + "~h~~g~$~w~~n~-------------~n~Total sum: ~h~" + WeaponHolster.HolsterPrice.ToString() + "~h~~g~$~w~", "Shopping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
+                            HTools.Main.Notify("Your payment check: ~n~Holster: ~h~" + WeaponHolster.HolsterPrice.ToString() + "~h~~g~$~w~~n~-------------~n~Total sum: ~h~" + WeaponHolster.HolsterPrice.ToString() + "~h~~g~$~w~", "Shopping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
                             HungerSystem.clearFoodPacket(Game.Player.Character, "hei_prop_hei_paper_bag");
                             InventoryBag._isBuyingGear = false;
                             WeaponHolster.hasHolster = WeaponHolster.doesPedHasHolster(Game.Player.Character);
                         }
                         if (Common.purchaseType == 5)
                         {
-                          
                             Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                             Common.saveSupplies(Game.Player.Character, "weapon_tools", WeaponJamming.cleaningToolsMax);
                             Notification.Show("Weapon cleaning toolkit set has been ~g~purchased", true);
-                            Main.Notify("Your payment check: ~n~Weapon cleaning toolkit set: ~h~" + WeaponJamming.weaponToolsPrice.ToString() + "~h~~g~$~w~~n~-------------~n~Total sum: ~h~" + WeaponJamming.weaponToolsPrice.ToString() + "~h~~g~$~w~", "Shopping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
+                            HTools.Main.Notify("Your payment check: ~n~Weapon cleaning toolkit set: ~h~" + WeaponJamming.weaponToolsPrice.ToString() + "~h~~g~$~w~~n~-------------~n~Total sum: ~h~" + WeaponJamming.weaponToolsPrice.ToString() + "~h~~g~$~w~", "Shopping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
                             HungerSystem.clearFoodPacket(Game.Player.Character, "hei_prop_hei_paper_bag");
                             InventoryBag._isBuyingGear = false;
-                            
-                            
                         }
                         Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"GENERIC_THANKS", (InputArgument)"SPEECH_PARAMS_FORCE");
                         if (Game.Player.Character.Model == (Model)PedHash.Michael || Game.Player.Character.Model == (Model)PedHash.Franklin || Game.Player.Character.Model == (Model)PedHash.Trevor)
@@ -1261,9 +1221,10 @@ namespace GTAExpansion
                     }
                 }
             }
+            int num3;
             if (Common.pedIsNearShopkeeper)
             {
-                Main.DisableControlsFunc(true);
+                HTools.Main.DisableControlsFunc(true);
                 Common.Draw(6, cameraModuleParam: false, swingWeaponModuleParam: false, laserSightModuleParam: false, weaponJamningModuleParam: false);
                 if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)24) && !Game.Player.IsAiming)
                 {
@@ -1309,7 +1270,22 @@ namespace GTAExpansion
                         {
                             HungerSystem.updatePedFoodCount(Game.Player.Character, "burgers", 3, Common.doc);
                             HungerSystem.updatePedDrinksCount(Game.Player.Character, "coffee", 3, Common.doc);
-                            Main.Notify("Your payment check: ~n~3 coffee: ~h~" + (HungerSystem.foodCost / 2).ToString() + "~h~~g~$~w~~n~2 burgers: ~h~" + (HungerSystem.foodCost / 2).ToString() + "~h~~g~$~w~~n~-------------~n~total sum: ~h~" + HungerSystem.foodCost.ToString() + "~h~~g~$~w~", "Shoping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
+                            string[] strArray = new string[7]
+                            {
+                "Your payment check: ~n~3 coffee: ~h~",
+                (HungerSystem.foodCost / 2).ToString(),
+                "~h~~g~$~w~~n~2 burgers: ~h~",
+                null,
+                null,
+                null,
+                null
+                            };
+                            num3 = HungerSystem.foodCost / 2;
+                            strArray[3] = num3.ToString();
+                            strArray[4] = "~h~~g~$~w~~n~-------------~n~total sum: ~h~";
+                            strArray[5] = HungerSystem.foodCost.ToString();
+                            strArray[6] = "~h~~g~$~w~";
+                            HTools.Main.Notify(string.Concat(strArray), "Shoping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
                             HungerSystem.clearFoodPacket(Game.Player.Character, "hei_prop_hei_paper_bag");
                             HungerSystem._buyingSnacks = false;
                         }
@@ -1319,7 +1295,21 @@ namespace GTAExpansion
                                 Common.saveSupplies(Game.Player.Character, "painkillers", CigsAndPills.maxPills);
                             if (CigsAndPills.cigsCount < CigsAndPills.maxCigs)
                                 Common.saveSupplies(Game.Player.Character, "ciggaretes", CigsAndPills.maxCigs);
-                            Main.Notify("Your payment check: ~n~~h~" + CigsAndPills.maxPills.ToString() + "~h~ painkillers: ~h~" + (Common.purchaseSum / 2).ToString() + "~h~~g~$~w~~n~~h~" + CigsAndPills.maxCigs.ToString() + "~h~ cigs: ~h~" + (Common.purchaseSum / 2).ToString() + "~h~~g~$~w~~n~-------------~n~total sum: ~h~" + Common.purchaseSum.ToString() + "~g~$~w~~h~", "Shoping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
+                            string[] strArray = new string[11];
+                            strArray[0] = "Your payment check: ~n~~h~";
+                            strArray[1] = CigsAndPills.maxPills.ToString();
+                            strArray[2] = "~h~ painkillers: ~h~";
+                            num3 = Common.purchaseSum / 2;
+                            strArray[3] = num3.ToString();
+                            strArray[4] = "~h~~g~$~w~~n~~h~";
+                            strArray[5] = CigsAndPills.maxCigs.ToString();
+                            strArray[6] = "~h~ cigs: ~h~";
+                            num3 = Common.purchaseSum / 2;
+                            strArray[7] = num3.ToString();
+                            strArray[8] = "~h~~g~$~w~~n~-------------~n~total sum: ~h~";
+                            strArray[9] = Common.purchaseSum.ToString();
+                            strArray[10] = "~g~$~w~~h~";
+                            HTools.Main.Notify(string.Concat(strArray), "Shoping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
                             HungerSystem.clearFoodPacket(Game.Player.Character, "hei_prop_hei_paper_bag");
                             HungerSystem._buyingSnacks = false;
                         }
@@ -1333,11 +1323,8 @@ namespace GTAExpansion
             if (InventoryBag.timeReference < Game.GameTime)
             {
                 InventoryBag.timeReference = Game.GameTime + 1000;
-                Model[] gundudes = new Model[2]
-                {(Model)PedHash.Ammucity01SMY, (Model)PedHash.AmmuCountrySMM };
-                Ped[] nearbyPeds = World.GetNearbyPeds(Game.Player.Character, 5f, gundudes);
-        
-                if (nearbyPeds.Length != 0 )
+                Ped[] nearbyPeds = World.GetNearbyPeds(Game.Player.Character, 5f, (Model)PedHash.Ammucity01SMY, (Model)PedHash.AmmuCountrySMM);
+                if (nearbyPeds.Length != 0)
                 {
                     vector3_1 = Game.Player.Character.Position;
                     if ((double)vector3_1.DistanceTo(nearbyPeds[0].Position) <= 4.0 && Function.Call<bool>(Hash.IS_PED_FACING_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Entity)nearbyPeds[0], (InputArgument)15f) && !nearbyPeds[0].IsFleeing && nearbyPeds[0].IsOnScreen)
@@ -1422,32 +1409,70 @@ namespace GTAExpansion
                 {
                     if (HungerSystem.curHungerLvl < HungerSystem.hunger_lvl_max / 100 * 25)
                     {
-                        Main.soundFX(Game.Player.Character, "StomachGrowling.wav", Common.assetFolder, 13f);
+                        
+                        HTools.Main.soundFX(Game.Player.Character, "StomachGrowling.wav", Common.assetFolder, 13f);
                         HungerSystem.hungerBar.ForegroundColor = Color.Red;
                     }
-                    if (!Main.barPool.ToList().Contains(HungerSystem.hungerBar))
-                        Main.barPool.Add(HungerSystem.hungerBar);
+                    if (!HTools.Main.barPool.ToList().Contains(HungerSystem.hungerBar))
+                        HTools.Main.barPool.Add(HungerSystem.hungerBar);
                 }
-                else if (Main.barPool.ToList().Contains(HungerSystem.hungerBar))
-                    Main.barPool.Remove(HungerSystem.hungerBar);
+                else if (HTools.Main.barPool.ToList().Contains(HungerSystem.hungerBar))
+                    HTools.Main.barPool.Remove(HungerSystem.hungerBar);
                 if (HungerSystem.curHungerLvl <= HungerSystem.criticalHungerLvl)
                 {
                     Game.Player.Character.HealthFloat -= 0.5f;
                     if (!HungerSystem.isHungry)
                     {
-                        Main.Notify("You're ~r~starving~w~.~n~Eat some food using the ~b~Main ~y~Menu~w~", "Health Report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
-                        Main.startBleeding(Game.Player.Character, false, -1, false);
+                        HTools.Main.Notify("You're ~r~starving~w~.~n~Eat some ~g~food~w~ using the ~b~Main ~y~Menu~w~", "Health Report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
+                        HTools.Main.startBleeding(Game.Player.Character, false, useInjuryAnim: false);
                     }
                     HungerSystem.isHungry = true;
                 }
                 else
                 {
                     if (HungerSystem.isHungry)
-                        Main.stopBleeding(Game.Player.Character, false);
+                        HTools.Main.stopBleeding(Game.Player.Character, false);
                     HungerSystem.isHungry = false;
                 }
                 if (HungerSystem.isHungry)
-                    Main.soundFX(Game.Player.Character, "StomachGrowling.wav", Common.assetFolder, 13f);
+                    HTools.Main.soundFX(Game.Player.Character, "StomachGrowling.wav", Common.assetFolder, 13f);
+            }
+            if (HungerSystem.hungerModuleActive && HungerSystem.thirstTimeRef < Game.GameTime)
+            {
+                HungerSystem.thirstTimeRef = Game.GameTime + 30000;
+                HungerSystem.curThirstLvl = HungerSystem.savePedThirstLvl(Game.Player.Character, HungerSystem.getPedThirstLvl(Game.Player.Character, Common.doc) - 1, HungerSystem.thirst_lvl_max, Common.doc);
+                HungerSystem.thirstBar.Percentage = HungerSystem.curThirstLvl > 0 ? (float)((double)HungerSystem.curThirstLvl / (double)HungerSystem.thirst_lvl_max * 100.0) : 0.0f;
+                if (HungerSystem.curThirstLvl < HungerSystem.thirst_lvl_max / 100 * 50)
+                {
+                    if (HungerSystem.curThirstLvl < HungerSystem.thirst_lvl_max / 100 * 25)
+                    {
+                        HTools.Main.soundFX(Game.Player.Character, "StomachGrowling.wav", Common.assetFolder, 13f);
+                        HungerSystem.thirstBar.ForegroundColor = Color.Red;
+                    }
+                    if (!HTools.Main.barPool.ToList().Contains(HungerSystem.thirstBar))
+                        HTools.Main.barPool.Add(HungerSystem.thirstBar);
+                }
+                else if (HTools.Main.barPool.ToList().Contains(HungerSystem.thirstBar))
+                    HTools.Main.barPool.Remove(HungerSystem.thirstBar);
+                if (HungerSystem.curThirstLvl <= HungerSystem.criticalThirstLvl)
+                {
+                    Game.Player.Character.HealthFloat -= 0.5f;
+                    if (!HungerSystem.isThirsty)
+                    {
+                        HTools.Main.Notify("You're ~r~dehydrated~w~.~n~Drink ~g~fluids~w~ using the ~b~Main ~y~Menu~w~", "Health Report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
+                        HTools.Main.startBleeding(Game.Player.Character, false, useInjuryAnim: false);
+                    }
+                    HungerSystem.isThirsty = true;
+                }
+                else
+                {
+                    if (HungerSystem.isThirsty)
+                        HTools.Main.stopBleeding(Game.Player.Character, false);
+                    HungerSystem.isThirsty = false;
+                }
+                if (HungerSystem.isThirsty)
+                    
+                HTools.Main.soundFX(Game.Player.Character, "StomachGrowling.wav", Common.assetFolder, 13f);
             }
             if (WeaponHolster.holster_module_active)
             {
@@ -1460,7 +1485,7 @@ namespace GTAExpansion
                         Function.Call(Hash.STOP_ENTITY_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"outro", (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)3);
                         Function.Call(Hash.STOP_ENTITY_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"cop_p1_rf_right_0", (InputArgument)"mp_arrest_paired", (InputArgument)3);
                     }
-                    if ((Entity)WeaponHolster.holster != (Entity)null && WeaponHolster.holster.Exists() && WeaponHolster.holsterSet && !Common.isOccupied(Game.Player.Character) && !Main.isOccupiedNative(Game.Player.Character) && !Function.Call<bool>(Hash.IS_PED_RUNNING_MOBILE_PHONE_TASK, (InputArgument)(Entity)Game.Player.Character) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)"intro", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_m@intimidation@cop@unarmed", (InputArgument)"idle", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)"outro", (InputArgument)3) && WeaponHolster.weaponPistolInHands != WeaponHolster.pistolChanged)
+                    if ((Entity)WeaponHolster.holster != (Entity)null && WeaponHolster.holster.Exists() && WeaponHolster.holsterSet && !Common.isOccupied(Game.Player.Character) && !HTools.Main.isOccupiedNative(Game.Player.Character) && !Function.Call<bool>(Hash.IS_PED_RUNNING_MOBILE_PHONE_TASK, (InputArgument)(Entity)Game.Player.Character) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)"intro", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_m@intimidation@cop@unarmed", (InputArgument)"idle", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)"outro", (InputArgument)3) && WeaponHolster.weaponPistolInHands != WeaponHolster.pistolChanged)
                     {
                         WeaponHolster.pistolChanged = WeaponHolster.weaponPistolInHands;
                         if (!Game.Player.Character.IsSittingInVehicle())
@@ -1474,14 +1499,14 @@ namespace GTAExpansion
                             }
                             else if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"mp_arrest_paired", (InputArgument)"cop_p1_rf_right_0", (InputArgument)3))
                                 Function.Call(Hash.TASK_PLAY_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"mp_arrest_paired", (InputArgument)"cop_p1_rf_right_0", (InputArgument)8f, (InputArgument)(-8.0), (InputArgument)(-1), (InputArgument)48, (InputArgument)0.0f, (InputArgument)0, (InputArgument)0, (InputArgument)0);
-                            Main.soundFX(Game.Player.Character, "holster.wav", Common.assetFolder, 10f);
+                            HTools.Main.soundFX(Game.Player.Character, "holster.wav", Common.assetFolder);
                         }
                     }
                 }
                 if (WeaponHolster.intimidation)
                 {
                     Common.Draw(4);
-                    Main.DisableControlsFunc(false);
+                    HTools.Main.DisableControlsFunc(false);
                     if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_m@intimidation@cop@unarmed", (InputArgument)"idle", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)"intro", (InputArgument)3) && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)"outro", (InputArgument)3))
                         Game.Player.Character.Task.PlayAnimation("move_m@intimidation@cop@unarmed", "idle", 12f, -1, AnimationFlags.StayInEndFrame | AnimationFlags.Secondary | AnimationFlags.AbortOnPedMovement);
                     else if (Game.IsControlJustPressed(Control.Attack) && (Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_m@intimidation@cop@unarmed", (InputArgument)"idle", (InputArgument)3) || Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)"intro", (InputArgument)3) || Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"reaction@intimidation@cop@unarmed", (InputArgument)"outro", (InputArgument)3)))
@@ -1591,13 +1616,13 @@ namespace GTAExpansion
                     if ((Entity)WeaponHolster.holster != (Entity)null && WeaponHolster.holster.Exists() && Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)WeaponHolster.holster, (InputArgument)(Entity)Game.Player.Character) && WeaponHolster.worldPistolModel != 0)
                     {
                         WeaponHolster.HolstedPistol = WeaponHolster.removeHolstedPistolFunc(Game.Player.Character, WeaponHolster.HolstedPistol, WeaponHolster.choosenPistol, WeaponHolster.worldPistolModel);
-                        if (!Common.isOccupied(Game.Player.Character) && !Main.isOccupiedNative(Game.Player.Character) && !Game.Player.Character.IsSittingInVehicle())
+                        if (!Common.isOccupied(Game.Player.Character) && !HTools.Main.isOccupiedNative(Game.Player.Character) && !Game.Player.Character.IsSittingInVehicle())
                             WeaponHolster.HolstedPistol = WeaponHolster.checkPistolFunc(Game.Player.Character, WeaponHolster.holster, WeaponHolster.weaponPistolInHands, WeaponHolster.choosenPistol, WeaponHolster.worldPistolModel, WeaponHolster.HolstedPistol, WeaponHolster.useHipHolster, false, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), 0);
                     }
                     if (WeaponHolster.worldNonPistolWeaponModel != 0 && WeaponHolster.holsted_big_weapons_module_active)
                     {
                         WeaponHolster.HolstedNonPistolWeapon = WeaponHolster.removeHolstedPistolFunc(Game.Player.Character, WeaponHolster.HolstedNonPistolWeapon, (WeaponHash)WeaponHolster.choosenNonPistolWeapon, WeaponHolster.worldNonPistolWeaponModel);
-                        if (!Common.isOccupied(Game.Player.Character) && !Main.isOccupiedNative(Game.Player.Character) && !Game.Player.Character.IsSittingInVehicle())
+                        if (!Common.isOccupied(Game.Player.Character) && !HTools.Main.isOccupiedNative(Game.Player.Character) && !Game.Player.Character.IsSittingInVehicle())
                             WeaponHolster.HolstedNonPistolWeapon = WeaponHolster.checkPistolFunc(Game.Player.Character, (Prop)null, WeaponHolster.weaponNonPistolInHands, (WeaponHash)WeaponHolster.choosenNonPistolWeapon, WeaponHolster.worldNonPistolWeaponModel, WeaponHolster.HolstedNonPistolWeapon, WeaponHolster.useHipHolster, true, WeaponHolster.holstedWeaponAttachPos, WeaponHolster.holstedWeaponAttachRot, WeaponHolster.holstedWeaponAttachBone, positionTypeParam: WeaponHolster.weaponPositionType);
                         if (!WeaponHolster.weaponNonPistolInHands && (Entity)WeaponHolster.HolstedNonPistolWeapon != (Entity)null && Game.Player.Character.IsJumping)
                         {
@@ -1605,14 +1630,14 @@ namespace GTAExpansion
                             {
                                 if (Game.Player.Character.IsJumping)
                                     WeaponHolster.weaponSoundFXTimer = 0;
-                                Main.soundFX(Game.Player.Character, WeaponHolster.weaponSoundsFXArray[WeaponHolster.weaponSoundFXIndex], Common.assetFolder, 10f);
+                                HTools.Main.soundFX(Game.Player.Character, WeaponHolster.weaponSoundsFXArray[WeaponHolster.weaponSoundFXIndex], Common.assetFolder);
                                 if (WeaponHolster.weaponSoundFXIndex < WeaponHolster.weaponSoundsFXArray.Length - 1)
-                                    ++WeaponHolster.weaponSoundFXIndex;
+                                    num3 = ++WeaponHolster.weaponSoundFXIndex;
                                 else
                                     WeaponHolster.weaponSoundFXIndex = 0;
                             }
                             else
-                                --WeaponHolster.weaponSoundFXTimer;
+                                num3 = --WeaponHolster.weaponSoundFXTimer;
                         }
                         else
                             WeaponHolster.weaponSoundFXTimer = 0;
@@ -1622,7 +1647,7 @@ namespace GTAExpansion
                         Prop[] allProps = World.GetAllProps((Model)"prop_holster_01");
                         if (!WeaponHolster.useHipHolster)
                             allProps = World.GetAllProps((Model)"prop_pistol_holster");
-                        for (int index = 0; index < allProps.Length; ++index)
+                        for (int index = 0; index < allProps.Length; num3 = ++index)
                         {
                             if (allProps.Length != 0 && (Entity)allProps[index] != (Entity)null && allProps[index].Exists() && !allProps[index].IsAttached())
                             {
@@ -1633,40 +1658,39 @@ namespace GTAExpansion
                     }
                 }
             }
-
-            int num3 = FastWardrobe.mask_module_active ? 1 : 0;
+            int num4 = FastWardrobe.mask_module_active ? 1 : 0;
             if (OnFootRadio.earRadioTimer < Game.GameTime)
             {
                 OnFootRadio.earRadioTimer = Game.GameTime + 5000;
                 model = Game.Player.Character.Model;
-                if (model.Hash != Main.GetHashKey("mp_m_freemode_01"))
+                if (model.Hash != HTools.Main.GetHashKey("mp_m_freemode_01"))
                 {
                     model = Game.Player.Character.Model;
-                    if (model.Hash != Main.GetHashKey("mp_f_freemode_01"))
+                    if (model.Hash != HTools.Main.GetHashKey("mp_f_freemode_01"))
                     {
                         model = Game.Player.Character.Model;
-                        if (model.Hash != Main.GetHashKey("PLAYER_ZERO"))
+                        if (model.Hash != HTools.Main.GetHashKey("PLAYER_ZERO"))
                         {
                             model = Game.Player.Character.Model;
-                            if (model.Hash != Main.GetHashKey("PLAYER_ONE"))
+                            if (model.Hash != HTools.Main.GetHashKey("PLAYER_ONE"))
                             {
                                 model = Game.Player.Character.Model;
-                                if (model.Hash != Main.GetHashKey("PLAYER_TWO"))
-                                    goto label_506;
+                                if (model.Hash != HTools.Main.GetHashKey("PLAYER_TWO"))
+                                    goto label_611;
                             }
                         }
                     }
                 }
-                int num4 = Function.Call<int>(Hash.GET_PED_PROP_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2);
+                int num5 = Function.Call<int>(Hash.GET_PED_PROP_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2);
                 OnFootRadio.headset = false;
-                if (num4 == 0)
+                if (num5 == 0)
                     OnFootRadio.headset = true;
-                label_506:
+                label_611:
                 if (!OnFootRadio.headset && Function.Call<bool>(Hash.IS_MOBILE_PHONE_RADIO_ACTIVE))
                 {
                     Vector3 position = new Vector3(266.1459f, -1007.036f, -100.9292f);
                     vector3_1 = Game.Player.Character.Position;
-                    if ((double)vector3_1.DistanceTo(position) > 50.0 && !Function.Call<bool>(Hash.DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)25f, (InputArgument)Main.GetHashKey("prop_boombox_01"), (InputArgument)0))
+                    if ((double)vector3_1.DistanceTo(position) > 50.0 && !Function.Call<bool>(Hash.DOES_OBJECT_OF_TYPE_EXIST_AT_COORDS, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)25f, (InputArgument)HTools.Main.GetHashKey("prop_boombox_01"), (InputArgument)0))
                     {
                         Function.Call(Hash.SET_MOBILE_PHONE_RADIO_STATE, (InputArgument)false);
                         Function.Call(Hash.SET_MOBILE_RADIO_ENABLED_DURING_GAMEPLAY, (InputArgument)false);
@@ -1699,19 +1723,19 @@ namespace GTAExpansion
                 Function.Call(Hash.SET_CURRENT_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2725352035U, (InputArgument)true);
                 Function.Call(Hash.SET_PED_CAN_PLAY_GESTURE_ANIMS, (InputArgument)(Entity)Game.Player.Character, (InputArgument)false);
                 Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)36029);
-                int num5 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)6286);
+                int num6 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)6286);
                 if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@amb@board_room@supervising@", (InputArgument)"dissaproval_01_lo_amy_skater_01", (InputArgument)3))
                 {
                     Wallet.animSpeed = 1f;
                     Game.Player.Character.Task.LookAt((Entity)Game.Player.Character);
-                    Function.Call(Hash.ATTACH_ENTITY_TO_ENTITY, (InputArgument)(Entity)Wallet.wallet, (InputArgument)(Entity)Game.Player.Character, (InputArgument)num5, (InputArgument)0.1, (InputArgument)0.015, (InputArgument)(-0.025), (InputArgument)115.0, (InputArgument)20.0, (InputArgument)0.0, (InputArgument)false, (InputArgument)false, (InputArgument)false, (InputArgument)false, (InputArgument)0, (InputArgument)true);
+                    Function.Call(Hash.ATTACH_ENTITY_TO_ENTITY, (InputArgument)(Entity)Wallet.wallet, (InputArgument)(Entity)Game.Player.Character, (InputArgument)num6, (InputArgument)0.1, (InputArgument)0.015, (InputArgument)(-0.025), (InputArgument)115.0, (InputArgument)20.0, (InputArgument)0.0, (InputArgument)false, (InputArgument)false, (InputArgument)false, (InputArgument)false, (InputArgument)0, (InputArgument)true);
                     Game.Player.Character.Task.PlayAnimation("anim@amb@board_room@supervising@", "dissaproval_01_lo_amy_skater_01", Wallet.animSpeed, -1, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
                 }
                 else
                 {
                     if ((double)Wallet.animSpeed < 2.0)
                         Wallet.animSpeed += 0.01f;
-                    double num6 = (double)Function.Call<float>(Hash.SET_ENTITY_ANIM_SPEED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@amb@board_room@supervising@", (InputArgument)"dissaproval_01_lo_amy_skater_01", (InputArgument)Wallet.animSpeed);
+                    double num7 = (double)Function.Call<float>(Hash.SET_ENTITY_ANIM_SPEED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@amb@board_room@supervising@", (InputArgument)"dissaproval_01_lo_amy_skater_01", (InputArgument)Wallet.animSpeed);
                     if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@amb@board_room@supervising@", (InputArgument)"dissaproval_01_lo_amy_skater_01") > 0.10000000149011612 && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@amb@board_room@supervising@", (InputArgument)"dissaproval_01_lo_amy_skater_01") < 0.5)
                     {
                         if ((Entity)Wallet.walletOpened != (Entity)null)
@@ -1724,21 +1748,25 @@ namespace GTAExpansion
                         if (Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@amb@board_room@supervising@", (InputArgument)"dissaproval_01_lo_amy_skater_01", (InputArgument)3))
                         {
                             Game.Player.Character.Task.ClearAnimation("anim@amb@board_room@supervising@", "dissaproval_01_lo_amy_skater_01");
-                            string str = 9999999.ToString() + "~g~~h~$~h~~w~";
+                            num3 = 9999999;
+                            string str = num3.ToString() + "~g~~h~$~h~~w~";
                             if (Game.Player.Character.Model == (Model)PedHash.Michael || Game.Player.Character.Model == (Model)PedHash.Franklin || Game.Player.Character.Model == (Model)PedHash.Trevor)
-                                str = Game.Player.Money.ToString() + " ~g~~h~$~h~~w~";
-                            Main.Notify("Current balance: " + str, "Money in Wallet has been Counted", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
+                            {
+                                num3 = Game.Player.Money;
+                                str = num3.ToString() + " ~g~~h~$~h~~w~";
+                            }
+                            HTools.Main.Notify("Current balance: " + str, "Money in Wallet has been Counted", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
                             Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"LOCAL_PLYR_CASH_COUNTER_COMPLETE", (InputArgument)"DLC_HEISTS_GENERAL_FRONTEND_SOUNDS", (InputArgument)0);
                         }
                         if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"mp_arrest_paired", (InputArgument)"cop_p1_rf_right_0", (InputArgument)3))
                         {
-                            Function.Call(Hash.ATTACH_ENTITY_TO_ENTITY, (InputArgument)(Entity)Wallet.wallet, (InputArgument)(Entity)Game.Player.Character, (InputArgument)num5, (InputArgument)0.1, (InputArgument)0.015, (InputArgument)(-0.025), (InputArgument)115.0, (InputArgument)20.0, (InputArgument)0.0, (InputArgument)false, (InputArgument)false, (InputArgument)false, (InputArgument)false, (InputArgument)0, (InputArgument)true);
+                            Function.Call(Hash.ATTACH_ENTITY_TO_ENTITY, (InputArgument)(Entity)Wallet.wallet, (InputArgument)(Entity)Game.Player.Character, (InputArgument)num6, (InputArgument)0.1, (InputArgument)0.015, (InputArgument)(-0.025), (InputArgument)115.0, (InputArgument)20.0, (InputArgument)0.0, (InputArgument)false, (InputArgument)false, (InputArgument)false, (InputArgument)false, (InputArgument)0, (InputArgument)true);
                             if ((Entity)Wallet.walletOpened != (Entity)null)
                                 Wallet.walletOpened.IsVisible = false;
                             if ((Entity)Wallet.wallet != (Entity)null)
                                 Wallet.wallet.IsVisible = true;
                             Function.Call(Hash.TASK_PLAY_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"mp_arrest_paired", (InputArgument)"cop_p1_rf_right_0", (InputArgument)4f, (InputArgument)(-4f), (InputArgument)(-1), (InputArgument)48, (InputArgument)0.0f, (InputArgument)0, (InputArgument)0, (InputArgument)0);
-                            Main.soundFX(Game.Player.Character, "grab.wav", Common.assetFolder, 10f);
+                            HTools.Main.soundFX(Game.Player.Character, "grab.wav", Common.assetFolder);
                             Script.Wait(700);
                             if (Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"mp_arrest_paired", (InputArgument)"cop_p1_rf_right_0", (InputArgument)3))
                                 Game.Player.Character.Task.ClearAnimation("mp_arrest_paired", "cop_p1_rf_right_0");
@@ -1748,9 +1776,9 @@ namespace GTAExpansion
                             Wallet.wallet.Delete();
                             Wallet.wallet = (Prop)null;
                         }
-                        else if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
+                        else if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
                         {
-                            Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                            Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_02"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                             if ((Entity)prop != (Entity)Wallet.wallet && Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character) && prop.Exists())
                                 prop.Delete();
                         }
@@ -1759,9 +1787,9 @@ namespace GTAExpansion
                             Wallet.walletOpened.Delete();
                             Wallet.walletOpened = (Prop)null;
                         }
-                        else if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
+                        else if (Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false).Exists())
                         {
-                            Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
+                            Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, (InputArgument)Game.Player.Character.Position.X, (InputArgument)Game.Player.Character.Position.Y, (InputArgument)Game.Player.Character.Position.Z, (InputArgument)3f, (InputArgument)HTools.Main.GetHashKey("prop_ld_wallet_pickup"), (InputArgument)true, (InputArgument)false, (InputArgument)false);
                             if ((Entity)prop != (Entity)Wallet.wallet && Function.Call<bool>(Hash.IS_ENTITY_ATTACHED_TO_ENTITY, (InputArgument)(Entity)prop, (InputArgument)(Entity)Game.Player.Character) && prop.Exists())
                                 prop.Delete();
                         }
@@ -1776,7 +1804,7 @@ namespace GTAExpansion
             {
                 if (Game.Player.Character.Weapons.Current.Hash != WeaponHash.Unarmed)
                     Function.Call(Hash.SET_CURRENT_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character, (InputArgument)2725352035U, (InputArgument)true);
-                Main.DisableControlsFunc(false);
+                HTools.Main.DisableControlsFunc(false);
             }
             if ((Entity)CigsAndPills.cig != (Entity)null)
             {
@@ -1785,15 +1813,15 @@ namespace GTAExpansion
                 {
                     if (CigsAndPills.sizzle <= 0)
                     {
-                        --CigsAndPills.cig_durability;
+                        num3 = --CigsAndPills.cig_durability;
                         CigsAndPills.sizzle = 200;
-                        Main.soundFX(Game.Player.Character, "sizzle.wav", Common.assetFolder, 7f);
+                        HTools.Main.soundFX(Game.Player.Character, "sizzle.wav", Common.assetFolder, 7f);
                         Function.Call(Hash.REQUEST_NAMED_PTFX_ASSET, (InputArgument)"scr_safehouse");
                         Function.Call(Hash.USE_PARTICLE_FX_ASSET, (InputArgument)"scr_safehouse");
                         Function.Call<int>(Hash.START_PARTICLE_FX_LOOPED_ON_ENTITY, (InputArgument)"scr_sh_lighter_flame", (InputArgument)(Entity)CigsAndPills.cig, (InputArgument)(-0.075f), (InputArgument)0.0f, (InputArgument)0.0f, (InputArgument)0, (InputArgument)0, (InputArgument)0, (InputArgument)0.2f, (InputArgument)false, (InputArgument)false, (InputArgument)false);
                     }
                     else
-                        --CigsAndPills.sizzle;
+                        num3 = --CigsAndPills.sizzle;
                 }
                 else
                 {
@@ -1802,12 +1830,12 @@ namespace GTAExpansion
                 }
             }
             if (CigsAndPills.smoke == 1 && CigsAndPills.smoking && !Game.Player.Character.IsSittingInVehicle() && (!CigsAndPills.cigReady || CigsAndPills.cigReady && !CigsAndPills.readyToIgnite))
-                Main.DisableControlsFunc(false);
+                HTools.Main.DisableControlsFunc(false);
             if (CigsAndPills.extraEffectsStat)
             {
                 if (CigsAndPills.extraEffectsTimer > 0)
                 {
-                    --CigsAndPills.extraEffectsTimer;
+                    num3 = --CigsAndPills.extraEffectsTimer;
                     if (CigsAndPills.extraEffects)
                     {
                         if (CigsAndPills.screenFX && !Screen.IsEffectActive(ScreenEffect.FocusIn))
@@ -1817,12 +1845,12 @@ namespace GTAExpansion
                         Game.TimeScale = CigsAndPills.slowMoScale;
                     }
                     if (Game.Player.Character.Health <= Game.Player.Character.MaxHealth)
-                        ++Game.Player.Character.Health;
-                    double num7 = (double)Function.Call<float>(Hash.SET_PED_MOVE_RATE_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)1.15f);
+                        num3 = ++Game.Player.Character.Health;
+                    double num8 = (double)Function.Call<float>(Hash.SET_PED_MOVE_RATE_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)1.15f);
                 }
                 else
                 {
-                    double num8 = (double)Function.Call<float>(Hash.SET_PED_MOVE_RATE_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)1f);
+                    double num9 = (double)Function.Call<float>(Hash.SET_PED_MOVE_RATE_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)1f);
                     if (Screen.IsEffectActive(ScreenEffect.FocusIn))
                         Screen.StopEffects();
                     if (CigsAndPills.screenFX && !Screen.IsEffectActive(ScreenEffect.FocusOut))
@@ -1849,7 +1877,7 @@ namespace GTAExpansion
                 if (FocusMode.isFocused)
                 {
                     Common.Draw(7);
-                    Main.DisableControlsFunc(true);
+                    HTools.Main.DisableControlsFunc(true);
                     if (!Game.Player.IsAiming)
                         Game.Player.ForcedAim = true;
                     Game.Player.IgnoredByEveryone = true;
@@ -1867,10 +1895,10 @@ namespace GTAExpansion
                         {
                             Vector3 source = Function.Call<Vector3>(Hash.GET_GAMEPLAY_CAM_COORD);
                             Vector3 vector3_3 = Function.Call<Vector3>(Hash.GET_GAMEPLAY_CAM_ROT);
-                            float num9 = vector3_3.Z * ((float)System.Math.PI / 180f);
-                            float num10 = vector3_3.X * ((float)System.Math.PI / 180f);
-                            float num11 = (float)System.Math.Abs(System.Math.Cos((double)num10));
-                            Ped _hitedPed = World.GetClosestPed(World.Raycast(source, source + new Vector3((float)(System.Math.Sin((double)num9) * (double)num11 * -1.0), (float)System.Math.Cos((double)num9) * num11, (float)System.Math.Sin((double)num10)) * 1000f, IntersectFlags.Peds).HitPosition, 1f);
+                            float num10 = vector3_3.Z * ((float)System.Math.PI / 180f);
+                            float num11 = vector3_3.X * ((float)System.Math.PI / 180f);
+                            float num12 = (float)System.Math.Abs(System.Math.Cos((double)num11));
+                            Ped _hitedPed = World.GetClosestPed(World.Raycast(source, source + new Vector3((float)(System.Math.Sin((double)num10) * (double)num12 * -1.0), (float)System.Math.Cos((double)num10) * num12, (float)System.Math.Sin((double)num11)) * 1000f, IntersectFlags.Peds).HitPosition, 1f);
                             if ((Entity)_hitedPed != (Entity)null && (Entity)_hitedPed != (Entity)Game.Player.Character && !Function.Call<bool>(Hash.IS_PED_IN_GROUP, (InputArgument)(Entity)_hitedPed, (InputArgument)Game.Player.Character.PedGroup))
                             {
                                 if (!((IEnumerable<Ped>)FocusMode.focusTargetedPeds).Contains<Ped>(_hitedPed))
@@ -1891,8 +1919,8 @@ namespace GTAExpansion
                         else
                             FocusMode.focusTimer = 0;
                     }
-                    --FocusMode.focusTimer;
-                    if ((double)Game.TimeScale > 1.0 / 1000.0)
+                    num3 = --FocusMode.focusTimer;
+                    if ((double)Game.TimeScale > 0.001)
                         Game.TimeScale -= 0.05f;
                     if (FocusMode.focusTimer <= 0)
                     {
@@ -1914,15 +1942,15 @@ namespace GTAExpansion
                             if ((Entity)_target != (Entity)null)
                             {
                                 vector3_1 = _target.Position;
-                                float num12 = (float)(0.10000000149011612 * ((double)vector3_1.DistanceTo(Game.Player.Character.Position) / 10.0));
-                                if ((double)num12 < 0.10000000149011612)
-                                    num12 = 0.1f;
+                                float num13 = (float)(0.10000000149011612 * ((double)vector3_1.DistanceTo(Game.Player.Character.Position) / 10.0));
+                                if ((double)num13 < 0.10000000149011612)
+                                    num13 = 0.1f;
                                 Vector3 dir = new Vector3(0.0f, 0.0f, 0.0f);
                                 Vector3 rot = new Vector3(0.0f, GameplayCamera.Rotation.Y, 0.0f);
-                                Vector3 scale = new Vector3(num12, num12, num12);
-                                int num13 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)_target, (InputArgument)31086);
-                                Vector3 vector3_4 = Function.Call<Vector3>(Hash.GET_WORLD_POSITION_OF_ENTITY_BONE, (InputArgument)(Entity)_target, (InputArgument)num13);
-                                World.DrawMarker(MarkerType.ChevronUpx1, new Vector3(vector3_4.X, vector3_4.Y, vector3_4.Z + 0.5f), dir, rot, scale, Color.Red, faceCamera: true);
+                                Vector3 scale = new Vector3(num13, num13, num13);
+                                int num14 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)_target, (InputArgument)31086);
+                                Vector3 vector3_4 = Function.Call<Vector3>(Hash.GET_WORLD_POSITION_OF_ENTITY_BONE, (InputArgument)(Entity)_target, (InputArgument)num14);
+                                World.DrawMarker(MarkerType.Chevron1, new Vector3(vector3_4.X, vector3_4.Y, vector3_4.Z + 0.5f), dir, rot, scale, Color.Red, faceCamera: true);
                             }
                             else
                                 FocusMode.focusTargetedPeds = ((IEnumerable<Ped>)FocusMode.focusTargetedPeds).Where<Ped>((Func<Ped, bool>)(val => (Entity)val != (Entity)_target)).ToArray<Ped>();
@@ -1940,7 +1968,7 @@ namespace GTAExpansion
                                 GameplayCamera.Shake(CameraShake.Vibrate, 0.5f);
                                 if (Function.Call<bool>(Hash.IS_SPECIAL_ABILITY_METER_FULL, (InputArgument)Game.Player))
                                 {
-                                    ++FocusMode.focusButtonPressedCounter;
+                                    num3 = ++FocusMode.focusButtonPressedCounter;
                                     if (FocusMode.focusButtonPressedCounter == 2 && !Screen.IsEffectActive(ScreenEffect.DrugsDrivingIn))
                                         Screen.StartEffect(ScreenEffect.DrugsDrivingIn, 300);
                                     if (FocusMode.focusButtonPressedCounter == 5)
@@ -1953,7 +1981,7 @@ namespace GTAExpansion
                                 }
                                 else
                                 {
-                                    ++FocusMode.focusButtonPressedHintCounter;
+                                    num3 = ++FocusMode.focusButtonPressedHintCounter;
                                     if (FocusMode.focusButtonPressedHintCounter == 2)
                                     {
                                         Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
@@ -1964,7 +1992,7 @@ namespace GTAExpansion
                                 }
                             }
                             else
-                                ++FocusMode.focusButtonPressedCounter;
+                                num3 = ++FocusMode.focusButtonPressedCounter;
                         }
                         else if (!Function.Call<bool>(Hash.IS_HELP_MESSAGE_BEING_DISPLAYED))
                             Screen.ShowHelpText("~BLIP_INFO_ICON~ ~ц~You need to select any ~o~firearms~w~ (pistols,smgs,shotguns,assaultrifles,sniperrifles) to activate ~y~focus mode~w~", 5000);
@@ -1991,7 +2019,7 @@ namespace GTAExpansion
                         }
                         else
                         {
-                            double num14 = (double)Function.Call<float>(Hash.SET_PED_MOVE_RATE_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)1f);
+                            double num15 = (double)Function.Call<float>(Hash.SET_PED_MOVE_RATE_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)1f);
                             FocusMode.focusEffectsStoped = true;
                             if (Game.Player.IsAiming)
                                 Game.Player.ForcedAim = false;
@@ -2033,7 +2061,7 @@ namespace GTAExpansion
                         }
                     }
                     if (FocusMode.focusTargetingTimer > 0)
-                        --FocusMode.focusTargetingTimer;
+                        num3 = --FocusMode.focusTargetingTimer;
                     if (FocusMode.focusEffectsStoped)
                     {
                         if (FocusMode.focusTargetedPeds.Length != 0 && Game.Player.Character.Weapons.Current.Ammo >= FocusMode.focusTargetedPeds.Length && FocusMode.focusTargetingTimer > 0)
@@ -2094,8 +2122,8 @@ namespace GTAExpansion
                                 {
                                     if (!Game.Player.Character.IsShooting)
                                     {
-                                        int num15 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)FocusMode.focusTarget, (InputArgument)31086);
-                                        Vector3 vector3_5 = Function.Call<Vector3>(Hash.GET_WORLD_POSITION_OF_ENTITY_BONE, (InputArgument)(Entity)FocusMode.focusTarget, (InputArgument)num15);
+                                        int num16 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)FocusMode.focusTarget, (InputArgument)31086);
+                                        Vector3 vector3_5 = Function.Call<Vector3>(Hash.GET_WORLD_POSITION_OF_ENTITY_BONE, (InputArgument)(Entity)FocusMode.focusTarget, (InputArgument)num16);
                                         FocusMode.shootingCoords = vector3_5;
                                         Function.Call(Hash.SET_PED_SHOOTS_AT_COORD, (InputArgument)(Entity)Game.Player.Character, (InputArgument)vector3_5.X, (InputArgument)vector3_5.Y, (InputArgument)vector3_5.Z, (InputArgument)false);
                                     }
@@ -2142,7 +2170,7 @@ namespace GTAExpansion
                         else
                         {
                             Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusOut", (InputArgument)"HintCamSounds");
-                            double num16 = (double)Function.Call<float>(Hash.SET_PED_MOVE_RATE_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)1f);
+                            double num17 = (double)Function.Call<float>(Hash.SET_PED_MOVE_RATE_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)1f);
                             Game.Player.IgnoredByEveryone = false;
                             Game.Player.IsInvincible = false;
                             Game.Player.Character.Task.ClearAll();
@@ -2165,12 +2193,12 @@ namespace GTAExpansion
                     {
                         if (FocusMode.focusButtonPressedCounter > 0 && !Function.Call<bool>(Hash.IS_DISABLED_CONTROL_PRESSED, (InputArgument)0, (InputArgument)FocusMode.focus_mode_btn))
                         {
-                            --FocusMode.focusButtonPressedCounter;
+                            num3 = --FocusMode.focusButtonPressedCounter;
                             if (Screen.IsEffectActive(ScreenEffect.DrugsDrivingOut) && FocusMode.focusButtonPressedCounter == 1)
                                 Screen.StopEffect(ScreenEffect.DrugsDrivingOut);
                         }
                         if (FocusMode.focusButtonPressedHintCounter > 0 && !Function.Call<bool>(Hash.IS_DISABLED_CONTROL_PRESSED, (InputArgument)0, (InputArgument)FocusMode.focus_mode_btn))
-                            --FocusMode.focusButtonPressedHintCounter;
+                            num3 = --FocusMode.focusButtonPressedHintCounter;
                     }
                     if (!FocusMode.focusTargetFacing && (Entity)FocusMode.focusTarget != (Entity)null && FocusMode.targetsPicked)
                     {
@@ -2180,7 +2208,7 @@ namespace GTAExpansion
                             Function.Call(Hash.TASK_AIM_GUN_AT_COORD, (InputArgument)(Entity)Game.Player.Character, (InputArgument)FocusMode.focusTarget.Position.X, (InputArgument)FocusMode.focusTarget.Position.Y, (InputArgument)FocusMode.focusTarget.Position.Z, (InputArgument)(-1), (InputArgument)false, (InputArgument)false);
                         if (FocusMode.focusTarget.IsInCover)
                             FocusMode.focusTarget.Task.GoTo(Game.Player.Character.FrontPosition, 5000);
-                        --FocusMode.focusPedfacingTime;
+                        num3 = --FocusMode.focusPedfacingTime;
                         if (FocusMode.focusPedfacingTime <= 0)
                             FocusMode.focusTargetFacing = true;
                     }
@@ -2206,50 +2234,48 @@ namespace GTAExpansion
                     if (WoundsSystem.bleedTimer <= 0 || (Entity)Game.Player.Character != (Entity)WoundsSystem.curWoundPlayer || Game.Player.Character.IsDead)
                     {
                         WoundsSystem.curWoundPlayer = Game.Player.Character;
-                        Main.stopBleeding(Game.Player.Character, true);
+                        HTools.Main.stopBleeding(Game.Player.Character);
                         Function.Call(Hash.CLEAR_PED_LAST_WEAPON_DAMAGE, (InputArgument)(Entity)Game.Player.Character);
                         WoundsSystem.isWounded = false;
                         Screen.ShowHelpText("~BLIIP_INFO_ICON~ The ~r~bleeding~w~ stopped", 5000);
                     }
                     else
                     {
-                        --WoundsSystem.bleedTimer;
+                        num3 = --WoundsSystem.bleedTimer;
                         if ((Entity)WoundsSystem.curWoundPlayer == (Entity)Game.Player.Character)
-                            Main.startBleeding(Game.Player.Character, true, -1, true);
+                            HTools.Main.startBleeding(Game.Player.Character, true);
                     }
                 }
             }
             if (WeaponSwing.swingGunAnim)
             {
-                Main.DisableControlsFunc(true);
+                HTools.Main.DisableControlsFunc(true);
                 if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@weapons@pistol@doubleaction_holster", (InputArgument)"holster", (InputArgument)3))
                     Game.Player.Character.Task.PlayAnimation("anim@weapons@pistol@doubleaction_holster", "holster", 4f, 1000, AnimationFlags.StayInEndFrame | AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
                 else if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@weapons@pistol@doubleaction_holster", (InputArgument)"holster") > 0.40000000596046448)
                     WeaponSwing.swingGunAnim = false;
             }
-            if (Game.Player.Character.Weapons.Current != WeaponHash.Unarmed)
+            if ((WeaponHash)Game.Player.Character.Weapons.Current != WeaponHash.Unarmed)
             {
                 Silencer.silencercheck();
                 Scope.scopecheck();
-               Flashlight.flashlightcheck();
+                Flashlight.flashlightcheck();
                 Grip.gripcheck();
+                ExtendedMagazine.CheckExtendedMagazine();
             }
             if (Common.AllWeaponsCount(Game.Player.Character) == 0)
-            {
                 Common.RemoveAllAttachments();
-
-            }
-            if (Scope.toggleScope)
+            if (ExtendedMagazine.toggleExtendedMagazine)
             {
-                Main.DisableControlsFunc(true);
+                HTools.Main.DisableControlsFunc(true);
                 if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action", (InputArgument)3))
                 {
                     if (!Game.Player.Character.IsInCover && Game.Player.Character.IsOnFoot && Game.Player.CanControlCharacter)
                     {
                         bool flag1 = false;
-                        foreach (int Scope in Scope.scopes)
+                        foreach ((WeaponHash weapon, WeaponComponentHash component) extendedmagazine in ExtendedMagazine.extendedmagazines)
                         {
-                            if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)(WeaponComponentHash)Scope))
+                            if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)extendedmagazine.component))
                             {
                                 flag1 = true;
                                 break;
@@ -2257,28 +2283,92 @@ namespace GTAExpansion
                         }
                         if (flag1)
                         {
-                            if (Scope.HasPedBoughtScope(Game.Player.Character))
+                            if (ExtendedMagazine.HasPedBoughtExtendedMagazine(Game.Player.Character))
                             {
-
                                 Game.Player.Character.Task.PlayAnimation("move_action@p_m_one@armed@2h_short@trans@a", "idle2action", 4f, -1, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
-                                Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                                HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
                                 bool flag2 = false;
-                                foreach (WeaponComponentHash Scope in Scope.scopes)
+                                foreach ((WeaponHash _, WeaponComponentHash component) in ExtendedMagazine.extendedmagazines)
                                 {
-                                    if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)Scope))
+                                    if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)component))
                                     {
                                         flag2 = true;
-                                        Function.Call(Hash.REMOVE_WEAPON_COMPONENT_FROM_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)Scope);
+                                        Function.Call(Hash.REMOVE_WEAPON_COMPONENT_FROM_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)component);
                                         break;
                                     }
                                 }
                                 if (!flag2)
                                 {
-                                    foreach (WeaponComponentHash Scope in Scope.scopes)
+                                    foreach ((WeaponHash _, WeaponComponentHash component) in ExtendedMagazine.extendedmagazines)
                                     {
-                                        if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)Scope))
+                                        if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)component))
                                         {
-                                            Function.Call(Hash.GIVE_WEAPON_COMPONENT_TO_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)Scope);
+                                            Function.Call(Hash.GIVE_WEAPON_COMPONENT_TO_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)component);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Screen.ShowHelpText("~BLIP_INFO_ICON~ ~r~Extended Magazine~w~ hasn't been ~r~purchased", 5000);
+                                ExtendedMagazine.toggleExtendedMagazine = false;
+                            }
+                        }
+                        else
+                        {
+                            Screen.ShowHelpText("~BLIP_INFO_ICON~ ~r~Extended Magazine can't be attached to this weapon", 5000);
+                            ExtendedMagazine.toggleExtendedMagazine = false;
+                        }
+                    }
+                    else
+                        ExtendedMagazine.toggleExtendedMagazine = false;
+                }
+                else if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action") >= 0.949999988079071)
+                {
+                    HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                    ExtendedMagazine.toggleExtendedMagazine = false;
+                }
+            }
+            if (Scope.toggleScope)
+            {
+                HTools.Main.DisableControlsFunc(true);
+                if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action", (InputArgument)3))
+                {
+                    if (!Game.Player.Character.IsInCover && Game.Player.Character.IsOnFoot && Game.Player.CanControlCharacter)
+                    {
+                        bool flag3 = false;
+                        foreach (int scope in Scope.scopes)
+                        {
+                            if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)(WeaponComponentHash)scope))
+                            {
+                                flag3 = true;
+                                break;
+                            }
+                        }
+                        if (flag3)
+                        {
+                            if (Scope.HasPedBoughtScope(Game.Player.Character))
+                            {
+                                Game.Player.Character.Task.PlayAnimation("move_action@p_m_one@armed@2h_short@trans@a", "idle2action", 4f, -1, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
+                                HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                                bool flag4 = false;
+                                foreach (WeaponComponentHash scope in Scope.scopes)
+                                {
+                                    if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)scope))
+                                    {
+                                        flag4 = true;
+                                        Function.Call(Hash.REMOVE_WEAPON_COMPONENT_FROM_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)scope);
+                                        break;
+                                    }
+                                }
+                                if (!flag4)
+                                {
+                                    foreach (WeaponComponentHash scope in Scope.scopes)
+                                    {
+                                        if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)scope))
+                                        {
+                                            Function.Call(Hash.GIVE_WEAPON_COMPONENT_TO_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)scope);
                                             break;
                                         }
                                     }
@@ -2301,46 +2391,43 @@ namespace GTAExpansion
                 }
                 else if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action") >= 0.949999988079071)
                 {
-                    Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                    HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
                     Scope.toggleScope = false;
                 }
-
-
-
             }
             if (Flashlight.toggleFlashlight)
             {
-                Main.DisableControlsFunc(true);
+                HTools.Main.DisableControlsFunc(true);
                 if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action", (InputArgument)3))
                 {
                     if (!Game.Player.Character.IsInCover && Game.Player.Character.IsOnFoot && Game.Player.CanControlCharacter)
                     {
-                        bool flag1 = false;
+                        bool flag5 = false;
                         foreach (int flashlight in Flashlight.flashlights)
                         {
                             if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)(WeaponComponentHash)flashlight))
                             {
-                                flag1 = true;
+                                flag5 = true;
                                 break;
                             }
                         }
-                        if (flag1)
+                        if (flag5)
                         {
                             if (Flashlight.HasPedBoughtFlashlight(Game.Player.Character))
                             {
                                 Game.Player.Character.Task.PlayAnimation("move_action@p_m_one@armed@2h_short@trans@a", "idle2action", 4f, -1, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
-                                Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
-                                bool flag2 = false;
+                                HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                                bool flag6 = false;
                                 foreach (WeaponComponentHash flashlight in Flashlight.flashlights)
                                 {
                                     if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)flashlight))
                                     {
-                                        flag2 = true;
+                                        flag6 = true;
                                         Function.Call(Hash.REMOVE_WEAPON_COMPONENT_FROM_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)flashlight);
                                         break;
                                     }
                                 }
-                                if (!flag2)
+                                if (!flag6)
                                 {
                                     foreach (WeaponComponentHash flashlight in Flashlight.flashlights)
                                     {
@@ -2369,45 +2456,43 @@ namespace GTAExpansion
                 }
                 else if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action") >= 0.949999988079071)
                 {
-                    Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                    HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
                     Flashlight.toggleFlashlight = false;
                 }
-
             }
-
             if (Grip.toggleGrip)
             {
-                Main.DisableControlsFunc(true);
+                HTools.Main.DisableControlsFunc(true);
                 if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action", (InputArgument)3))
                 {
                     if (!Game.Player.Character.IsInCover && Game.Player.Character.IsOnFoot && Game.Player.CanControlCharacter)
                     {
-                        bool flag1 = false;
-                        foreach (int grips in Grip.grips)
+                        bool flag7 = false;
+                        foreach (int grip in Grip.grips)
                         {
-                            if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)(WeaponComponentHash)grips))
+                            if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)(WeaponComponentHash)grip))
                             {
-                                flag1 = true;
+                                flag7 = true;
                                 break;
                             }
                         }
-                        if (flag1)
+                        if (flag7)
                         {
                             if (Grip.HasPedBoughtGrip(Game.Player.Character))
                             {
                                 Game.Player.Character.Task.PlayAnimation("move_action@p_m_one@armed@2h_short@trans@a", "idle2action", 4f, -1, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
-                                Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
-                                bool flag2 = false;
+                                HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                                bool flag8 = false;
                                 foreach (WeaponComponentHash grip in Grip.grips)
                                 {
                                     if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)grip))
                                     {
-                                        flag2 = true;
+                                        flag8 = true;
                                         Function.Call(Hash.REMOVE_WEAPON_COMPONENT_FROM_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)grip);
                                         break;
                                     }
                                 }
-                                if (!flag2)
+                                if (!flag8)
                                 {
                                     foreach (WeaponComponentHash grip in Grip.grips)
                                     {
@@ -2437,44 +2522,43 @@ namespace GTAExpansion
                 }
                 else if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action") >= 0.949999988079071)
                 {
-                    Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                    HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
                     Grip.toggleGrip = false;
                 }
             }
             if (Silencer.toggleSilencer)
             {
-                Main.DisableControlsFunc(true);
+                HTools.Main.DisableControlsFunc(true);
                 if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action", (InputArgument)3))
                 {
                     if (!Game.Player.Character.IsInCover && Game.Player.Character.IsOnFoot && Game.Player.CanControlCharacter)
                     {
-                        bool flag1 = false;
+                        bool flag9 = false;
                         foreach (int silencer in Silencer.silencers)
                         {
                             if (Function.Call<bool>(Hash.DOES_WEAPON_TAKE_WEAPON_COMPONENT, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)(WeaponComponentHash)silencer))
                             {
-                                flag1 = true;
+                                flag9 = true;
                                 break;
                             }
                         }
-                        if (flag1)
+                        if (flag9)
                         {
                             if (Silencer.HasPedBoughtSilencer(Game.Player.Character))
                             {
-
                                 Game.Player.Character.Task.PlayAnimation("move_action@p_m_one@armed@2h_short@trans@a", "idle2action", 4f, -1, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
-                                Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
-                                bool flag2 = false;
+                                HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                                bool flag10 = false;
                                 foreach (WeaponComponentHash silencer in Silencer.silencers)
                                 {
                                     if (Function.Call<bool>(Hash.HAS_PED_GOT_WEAPON_COMPONENT, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)silencer))
                                     {
-                                        flag2 = true;
+                                        flag10 = true;
                                         Function.Call(Hash.REMOVE_WEAPON_COMPONENT_FROM_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)(Enum)Game.Player.Character.Weapons.Current.Hash, (InputArgument)(Enum)silencer);
                                         break;
                                     }
                                 }
-                                if (!flag2)
+                                if (!flag10)
                                 {
                                     foreach (WeaponComponentHash silencer in Silencer.silencers)
                                     {
@@ -2491,8 +2575,7 @@ namespace GTAExpansion
                                 Screen.ShowHelpText("~BLIP_INFO_ICON~ ~r~Silencer~w~ hasn't been ~r~purchased", 5000);
                                 Silencer.toggleSilencer = false;
                             }
-
-                            }
+                        }
                         else
                         {
                             Screen.ShowHelpText("~BLIP_INFO_ICON~ ~r~Silencer can't be attached to this weapon", 5000);
@@ -2504,11 +2587,11 @@ namespace GTAExpansion
                 }
                 else if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"move_action@p_m_one@armed@2h_short@trans@a", (InputArgument)"idle2action") >= 0.949999988079071)
                 {
-                    Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                    HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
                     Silencer.toggleSilencer = false;
                 }
             }
-            if (Game.Player.Character.IsOnFoot && (Game.Player.Character.IsAiming) && !FocusMode.isFocused && Game.Player.CanControlCharacter && !Silencer.toggleSilencer)
+            if (Game.Player.Character.IsOnFoot && Game.Player.Character.IsAiming && !FocusMode.isFocused && Game.Player.CanControlCharacter && !Silencer.toggleSilencer)
             {
                 if (!WeaponJamming.jammingModeIsActive && (ShoulderCameraSwitch.ShoulderCameraModuleActive || LaserSight.laserSightModeActive || WeaponSwing.swingGunModuleActive || Silencer.silencerModeActive || AimingStyle.aimingStyleModeActive))
                 {
@@ -2521,29 +2604,29 @@ namespace GTAExpansion
                 {
                     Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
                     if (AimingStyle.aiming_style_indx < AimingStyle.aiming_style_indx_max)
-                        ++AimingStyle.aiming_style_indx;
+                        num3 = ++AimingStyle.aiming_style_indx;
                     else
                         AimingStyle.aiming_style_indx = 0;
                     switch (AimingStyle.aiming_style_indx)
                     {
                         case 0:
                             Function.Call(Hash.SET_PLAYER_FORCE_SKIP_AIM_INTRO, (InputArgument)Game.Player, (InputArgument)false);
-                            Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)Main.GetHashKey("Default"));
+                            Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)HTools.Main.GetHashKey("Default"));
                             break;
                         case 1:
                             Function.Call(Hash.SET_PLAYER_FORCE_SKIP_AIM_INTRO, (InputArgument)Game.Player, (InputArgument)true);
-                            Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)Main.GetHashKey("Hillbilly"));
+                            Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)HTools.Main.GetHashKey("Hillbilly"));
                             break;
                         case 2:
                             Function.Call(Hash.SET_PLAYER_FORCE_SKIP_AIM_INTRO, (InputArgument)Game.Player, (InputArgument)true);
-                            Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)Main.GetHashKey("Gang1H"));
+                            Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)HTools.Main.GetHashKey("Gang1H"));
                             break;
                     }
                 }
                 if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)Silencer.silencer_toggle_btn) && !Game.IsControlPressed(Control.Sprint))
                 {
                     Silencer.toggleSilencer = true;
-                    Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                    HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
                 }
                 if (WeaponSwing.swingGunModuleActive)
                 {
@@ -2560,47 +2643,26 @@ namespace GTAExpansion
                     {
                         if (!Game.Player.Character.IsInCover)
                         {
-
                             if (ShoulderCameraSwitch.activeCam == (Camera)null)
                             {
-                                ShoulderCameraSwitch.targetOffset = -.7f;
+                                ShoulderCameraSwitch.targetOffset = -0.7f;
                                 ShoulderCameraSwitch.TransitionCamera(Game.Player.Character);
+                            }
+                            else if (Game.IsControlPressed(Control.Sprint))
+                            {
+                                ShoulderCameraSwitch.targetOffset = -0.7f;
+                                ShoulderCameraSwitch.TransitionCamera(Game.Player.Character);
+                                if (Game.IsControlPressed(Control.Cover) && !Game.Player.Character.IsAnimPlay("weapons@misc@digi_scanner", "walk_additive_left"))
+                                    Game.Player.Character.Task.PlayAnimation("weapons@misc@digi_scanner", "walk_additive_left", 8f, -8f, -1, AnimationFlags.StayInEndFrame | AnimationFlags.Secondary | AnimationFlags.Additive, 0.0f);
+                                else if (Game.IsControlPressed(Control.Talk) && !Game.Player.Character.IsAnimPlay("weapons@misc@digi_scanner", "walk_additive_right"))
+                                    Game.Player.Character.Task.PlayAnimation("weapons@misc@digi_scanner", "walk_additive_right", 8f, -8f, -1, AnimationFlags.StayInEndFrame | AnimationFlags.Secondary | AnimationFlags.Additive, 0.0f);
+                                else if (Game.IsControlJustReleased(Control.Cover) || Game.IsControlJustReleased(Control.Talk))
+                                    Game.Player.Character.Task.ClearSecondary();
                             }
                             else
                             {
-                                if (Game.IsControlPressed(GTA.Control.Sprint))
-                                {
-                                    ShoulderCameraSwitch.targetOffset = -.7f;
-                                    ShoulderCameraSwitch.TransitionCamera(Game.Player.Character);
-                                    if (Game.IsControlPressed(Control.Cover) && !Game.Player.Character.IsAnimPlay("weapons@misc@digi_scanner", "walk_additive_left"))
-                                    {
-
-                                        Game.Player.Character.Task.PlayAnimation("weapons@misc@digi_scanner", "walk_additive_left", 8f, -8f, -1, AnimationFlags.StayInEndFrame | AnimationFlags.Secondary | AnimationFlags.Additive, 0.0f);
-                                          // PeekingMod.Main.stance = 7;
-                                        
-                                        
-                                    }
-                                    else if (Game.IsControlPressed(Control.Talk) && !Game.Player.Character.IsAnimPlay("weapons@misc@digi_scanner", "walk_additive_right"))
-                                    {
-                                        Game.Player.Character.Task.PlayAnimation("weapons@misc@digi_scanner", "walk_additive_right", 8f, -8f, -1, AnimationFlags.StayInEndFrame | AnimationFlags.Secondary | AnimationFlags.Additive, 0.0f);
-                                      //  PeekingMod.Main.stance = 7;
-                                       
-
-
-                                    }
-                                    else if (Game.IsControlJustReleased(Control.Cover) || (Game.IsControlJustReleased(Control.Talk) ))
-                                    {
-                                        Game.Player.Character.Task.ClearSecondary();
-                                    }
-        
-                                    
-
-                                }
-                                else
-                                {
-                                    ShoulderCameraSwitch.targetOffset = -.7f;
-                                    ShoulderCameraSwitch.TransitionCamera(Game.Player.Character);
-                                }  
+                                ShoulderCameraSwitch.targetOffset = -0.7f;
+                                ShoulderCameraSwitch.TransitionCamera(Game.Player.Character);
                             }
                             Function.Call(Hash.DISABLE_GAMEPLAY_CAM_ALTITUDE_FOV_SCALING_THIS_UPDATE);
                             Function.Call(Hash.SHOW_HUD_COMPONENT_THIS_FRAME, (InputArgument)14);
@@ -2616,13 +2678,11 @@ namespace GTAExpansion
                     {
                         if (PeekingMod.Main.PeekingPosition == 1 || PeekingMod.Main.PeekingPosition == 2)
                             return;
-
                         ShoulderCameraSwitch.targetOffset = 0.0f;
                         ShoulderCameraSwitch.TransitionCamera(Game.Player.Character);
                     }
                     Game.DisableControlThisFrame((Control)ShoulderCameraSwitch.switch_shoulder_camera_btn);
                     Function.Call(Hash.DISABLE_CONTROL_ACTION, (InputArgument)2, (InputArgument)LaserSight.laser_sight_toggle_btn, (InputArgument)true);
-
                 }
                 if (LaserSight.laserSightModeActive)
                 {
@@ -2635,15 +2695,15 @@ namespace GTAExpansion
                             Prop currentWeaponObject = Game.Player.Character.Weapons.CurrentWeaponObject;
                             model = currentWeaponObject.Model;
                             Vector3 frontTopRight = model.Dimensions.frontTopRight;
-                            float num17 = -0.03f;
+                            float num18 = -0.03f;
                             if (((IEnumerable<WeaponGroup>)WeaponHolster._bigWeaponGroups).Contains<WeaponGroup>(Game.Player.Character.Weapons.Current.Group))
-                                num17 = -0.06f;
-                            Vector3 offsetPosition1 = currentWeaponObject.GetOffsetPosition(new Vector3(frontTopRight.X, frontTopRight.Y + num17, frontTopRight.Z - 0.03f));
+                                num18 = -0.06f;
+                            Vector3 offsetPosition1 = currentWeaponObject.GetOffsetPosition(new Vector3(frontTopRight.X, frontTopRight.Y + num18, frontTopRight.Z - 0.03f));
                             Vector3 offsetPosition2 = currentWeaponObject.GetOffsetPosition(new Vector3(frontTopRight.X + 2.5f, frontTopRight.Y, frontTopRight.Z));
                             Function.Call(Hash.DRAW_LINE, (InputArgument)offsetPosition1.X, (InputArgument)offsetPosition1.Y, (InputArgument)offsetPosition1.Z, (InputArgument)offsetPosition2.X, (InputArgument)offsetPosition2.Y, (InputArgument)offsetPosition2.Z, (InputArgument)LaserSight.LSredColor, (InputArgument)LaserSight.LSgreenColor, (InputArgument)LaserSight.LSblueColor, (InputArgument)100);
                         }
                         else
-                            --LaserSight.laserSightActivationTimer;
+                            num3 = --LaserSight.laserSightActivationTimer;
                     }
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)LaserSight.laser_sight_toggle_btn))
                     {
@@ -2659,7 +2719,7 @@ namespace GTAExpansion
                         if (flag)
                         {
                             LaserSight.laseredWeapon = (WeaponHash)Game.Player.Character.Weapons.Current;
-                            Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
+                            HTools.Main.soundFX(Game.Player.Character, "switchBtn.wav", Common.assetFolder, 13f);
                             Game.Player.Character.Task.PlayAnimation("weapons@first_person@aim_idle@generic@melee@unarmed@", "aim_med_loop", 4f, -1, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
                             LaserSight.laserSightMode = !LaserSight.laserSightMode;
                             LaserSight.laserSightActivationTimer = 20;
@@ -2668,11 +2728,11 @@ namespace GTAExpansion
                             Screen.ShowHelpText("~BLIP_INFO_ICON~ You need to set ~y~flashlight~w~ component to use a ~r~laser-sight~w~ with this weapon", 6000);
                     }
                 }
-                if (ShoulderCameraSwitch.ShoulderCameraModuleActive && Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)ShoulderCameraSwitch.switch_shoulder_camera_btn) && !Game.Player.Character.IsInCover  && GameplayCamera.GetCamViewModeForContext(CamViewModeContext.OnFoot) != CamViewMode.FirstPerson)
+                if (ShoulderCameraSwitch.ShoulderCameraModuleActive && Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)ShoulderCameraSwitch.switch_shoulder_camera_btn) && !Game.Player.Character.IsInCover && GameplayCamera.GetCamViewModeForContext(CamViewModeContext.OnFoot) != CamViewMode.FirstPerson)
                 {
                     if (!ShoulderCameraSwitch.ShoulderCameraActive)
                     {
-                                              ShoulderCameraSwitch.ShoulderCameraActive = true;
+                        ShoulderCameraSwitch.ShoulderCameraActive = true;
                     }
                     else
                     {
@@ -2682,8 +2742,6 @@ namespace GTAExpansion
                             ShoulderCameraSwitch.TransitionCamera(Game.Player.Character);
                         }
                         ShoulderCameraSwitch.ShoulderCameraActive = false;
-                       // ShoulderCameraSwitch.targetOffset = 0.0f;
-                       // ShoulderCameraSwitch.TransitionCamera(Game.Player.Character);
                     }
                     Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"FocusIn", (InputArgument)"HintCamSounds");
                 }
@@ -2698,19 +2756,16 @@ namespace GTAExpansion
                     ShoulderCameraSwitch.ShoulderCameraActive = false;
                 }
             }
-            
-            int index3;
             if (WeaponJamming.jammingModeIsActive)
             {
                 if (WeaponJamming.weaponIsJammed)
                 {
-                    
                     Game.DisableControlThisFrame(Control.Attack);
                     Game.DisableControlThisFrame(Control.Attack2);
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)24))
                     {
                         WeaponJamming.jammCounter = Common.rnd.Next(1, 5);
-                        Main.soundFX(Game.Player.Character, "dryfire.wav", Common.assetFolder, 15f);
+                        HTools.Main.soundFX(Game.Player.Character, "dryfire.wav", Common.assetFolder, 15f);
                         if (!Function.Call<bool>(Hash.IS_HELP_MESSAGE_BEING_DISPLAYED))
                             Screen.ShowHelpText("~BLIP_INFO_ICON~ Weapon is ~r~jammed", 1000);
                     }
@@ -2726,8 +2781,8 @@ namespace GTAExpansion
                     WeaponJamming.isFixingJammedGun = false;
                     WeaponJamming.isCheckingWeaponCondition = false;
                     Array.Clear((Array)WeaponJamming.jammedWeapons, 0, WeaponJamming.jammedWeapons.Length);
-                    WeaponJamming.clearWeaponCase(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_model));
-                    WeaponJamming.clearWeaponCase(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_opened_model));
+                    WeaponJamming.clearWeaponCase(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_model));
+                    WeaponJamming.clearWeaponCase(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_opened_model));
                     if (Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@briefcase", (InputArgument)"enter", (InputArgument)3))
                         Game.Player.Character.Task.ClearAll();
                     WeaponJamming.cleaningRequired = false;
@@ -2740,11 +2795,11 @@ namespace GTAExpansion
                         WeaponJamming.weaponCleaningInProcess = false;
                         WeaponJamming.weaponIsReady = false;
                     }
-                    Main.DisableControlsFunc(true);
+                    HTools.Main.DisableControlsFunc(true);
                     bool cleaningWeaponIsBig = WeaponJamming.cleaningWeaponIsBig;
                     string animDict = !cleaningWeaponIsBig ? "combat@aim_variations@pistol" : "anim@amb@range@assemble_guns@";
                     string animName = !cleaningWeaponIsBig ? "var_f" : "expel_cartridge_01_amy_skater_01";
-                    int num18 = cleaningWeaponIsBig ? 1 : 0;
+                    int num19 = cleaningWeaponIsBig ? 1 : 0;
                     int blendInSpeed = cleaningWeaponIsBig ? 1 : 4;
                     int duration = cleaningWeaponIsBig ? -1 : -1;
                     if (WeaponJamming.weaponCleaningInProcess && Game.Player.CanControlCharacter && !Game.Player.Character.IsAttached())
@@ -2752,43 +2807,43 @@ namespace GTAExpansion
                         if (!WeaponJamming.weaponIsReady)
                         {
                             if (WeaponJamming.playCleaningWeaponAnimTimer > 0)
-                                --WeaponJamming.playCleaningWeaponAnimTimer;
+                                num3 = --WeaponJamming.playCleaningWeaponAnimTimer;
                             if ((WeaponHash)Game.Player.Character.Weapons.Current == WeaponJamming.cleaningWeapon && WeaponJamming.playCleaningWeaponAnimTimer <= 0)
                             {
                                 if (Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName, (InputArgument)3))
                                 {
-                                    float num19 = 0.0f;
-                                    float num20 = 0.99f;
+                                    float num20 = 0.0f;
+                                    float num21 = 0.99f;
                                     if (WeaponJamming.jammCounter > 0)
                                     {
                                         if (WeaponJamming.cleaningWeaponIsBig)
                                         {
-                                            num19 = 0.21f;
-                                            num20 = 0.25f;
+                                            num20 = 0.21f;
+                                            num21 = 0.25f;
                                         }
                                         else
                                         {
-                                            num19 = 0.1f;
-                                            num20 = 0.5f;
+                                            num20 = 0.1f;
+                                            num21 = 0.5f;
                                         }
                                     }
                                     if (WeaponJamming.jammCounter <= 0)
                                         WeaponJamming.weaponIsReady = true;
-                                    if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName) >= (double)num20)
+                                    if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName) >= (double)num21)
                                     {
-                                        --WeaponJamming.jammCounter;
-                                        Function.Call(Hash.SET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName, (InputArgument)num19);
+                                        num3 = --WeaponJamming.jammCounter;
+                                        Function.Call(Hash.SET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName, (InputArgument)num20);
                                         if (!cleaningWeaponIsBig && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName) >= 0.5 && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName) < 0.699999988079071)
-                                            Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder, 10f);
+                                            HTools.Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder);
                                     }
                                 }
                                 else if (WeaponJamming.jammCounter > 0)
                                 {
                                     Game.Player.Character.Task.PlayAnimation(animDict, animName, (float)blendInSpeed, duration, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
                                     if (!cleaningWeaponIsBig)
-                                        Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder, 15f);
+                                        HTools.Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder, 15f);
                                     else
-                                        Main.soundFX(Game.Player.Character, "draw2.wav", Common.assetFolder, 15f);
+                                        HTools.Main.soundFX(Game.Player.Character, "draw2.wav", Common.assetFolder, 15f);
                                 }
                             }
                         }
@@ -2805,7 +2860,8 @@ namespace GTAExpansion
                                 Game.Player.Character.Weapons.Select(WeaponHash.Unarmed);
                                 WeaponJamming.weaponCleaningInProcess = false;
                                 Game.Player.Character.Task.PlayAnimation("anim@scripted@heist@ig1_table_grab@cash@male@", "grab_idle", 4f, -1, AnimationFlags.Loop | AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
-                                Screen.ShowHelpText("~BLIP_INFO_ICON~ Your weapon is in ~g~good~w~ condition now! You have ~o~" + (supplies - 1).ToString() + "~w~ cleaning tools left");
+                                num3 = supplies - 1;
+                                Screen.ShowHelpText("~BLIP_INFO_ICON~ Your weapon is in ~g~good~w~ condition now! You have ~o~" + num3.ToString() + "~w~ cleaning tools left");
                             }
                         }
                     }
@@ -2839,8 +2895,8 @@ namespace GTAExpansion
                             }
                             else
                             {
-                                WeaponJamming.clearWeaponCase(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_model));
-                                WeaponJamming.clearWeaponCase(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_opened_model));
+                                WeaponJamming.clearWeaponCase(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_model));
+                                WeaponJamming.clearWeaponCase(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_opened_model));
                                 WeaponJamming.isCleaningJammedGun = false;
                                 WeaponJamming.weaponCaseSwitched = false;
                             }
@@ -2849,30 +2905,30 @@ namespace GTAExpansion
                         {
                             if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@briefcase", (InputArgument)"exit") > 0.65)
                             {
-                                WeaponJamming.clearWeaponCase(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_model));
-                                WeaponJamming.clearWeaponCase(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_opened_model));
+                                WeaponJamming.clearWeaponCase(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_model));
+                                WeaponJamming.clearWeaponCase(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_opened_model));
                                 WeaponJamming.isCleaningJammedGun = false;
                             }
                             else if (!WeaponJamming.weaponCaseSwitched)
                             {
                                 WeaponJamming.weaponCaseSwitched = true;
-                                WeaponJamming.clearWeaponCase(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_opened_model));
-                                WeaponJamming.getWeaponCaseFunc(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_model), true, new Vector3(Game.Player.Character.FrontPosition.X, Game.Player.Character.FrontPosition.Y, Game.Player.Character.FrontPosition.Z), true);
-                                WeaponJamming.clearWeaponCleaningToolsFunc(Main.GetHashKey(WeaponJamming.gunspray_can), Game.Player.Character.Position);
-                                WeaponJamming.clearWeaponCleaningToolsFunc(Main.GetHashKey(WeaponJamming.gun_case_small), Game.Player.Character.Position);
+                                WeaponJamming.clearWeaponCase(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_opened_model));
+                                WeaponJamming.getWeaponCaseFunc(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_model), true, new Vector3(Game.Player.Character.FrontPosition.X, Game.Player.Character.FrontPosition.Y, Game.Player.Character.FrontPosition.Z), true);
+                                WeaponJamming.clearWeaponCleaningToolsFunc(HTools.Main.GetHashKey(WeaponJamming.gunspray_can), Game.Player.Character.Position);
+                                WeaponJamming.clearWeaponCleaningToolsFunc(HTools.Main.GetHashKey(WeaponJamming.gun_case_small), Game.Player.Character.Position);
                             }
                         }
                         if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@briefcase", (InputArgument)"exit", (InputArgument)3) && Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@briefcase", (InputArgument)"enter", (InputArgument)3) && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@briefcase", (InputArgument)"enter") >= 0.64999997615814209 && !WeaponJamming.weaponCaseSwitched)
                         {
-                            WeaponJamming.clearWeaponCase(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_model));
-                            Prop weaponCaseFunc = WeaponJamming.getWeaponCaseFunc(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_opened_model), false, new Vector3(Game.Player.Character.Position.X - 0.5f, Game.Player.Character.Position.Y + 0.3f, (float)((double)Game.Player.Character.Position.Z - (double)Game.Player.Character.HeightAboveGround + 0.10000000149011612)), true);
+                            WeaponJamming.clearWeaponCase(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_model));
+                            Prop weaponCaseFunc = WeaponJamming.getWeaponCaseFunc(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_opened_model), false, new Vector3(Game.Player.Character.Position.X - 0.5f, Game.Player.Character.Position.Y + 0.3f, (float)((double)Game.Player.Character.Position.Z - (double)Game.Player.Character.HeightAboveGround + 0.10000000149011612)), true);
                             if ((Entity)weaponCaseFunc != (Entity)null)
                             {
                                 weaponCaseFunc.IsCollisionEnabled = false;
                                 weaponCaseFunc.Rotation = new Vector3(Game.Player.Character.Rotation.X, Game.Player.Character.Rotation.Y, Game.Player.Character.Rotation.Z);
                                 weaponCaseFunc.Position = new Vector3(Game.Player.Character.FrontPosition.X, Game.Player.Character.FrontPosition.Y, (float)((double)Game.Player.Character.Position.Z - (double)Game.Player.Character.HeightAboveGround + 0.10000000149011612));
-                                WeaponJamming.getWeaponCleaningToolsFunc(Game.Player.Character, Main.GetHashKey(WeaponJamming.gunspray_can), new Vector3(Game.Player.Character.RightPosition.X, Game.Player.Character.RightPosition.Y, Game.Player.Character.RightPosition.Z + 0.1f));
-                                WeaponJamming.getWeaponCleaningToolsFunc(Game.Player.Character, Main.GetHashKey(WeaponJamming.gun_case_small), new Vector3(Game.Player.Character.RightPosition.X - 0.2f, Game.Player.Character.RightPosition.Y, Game.Player.Character.RightPosition.Z + 0.3f));
+                                WeaponJamming.getWeaponCleaningToolsFunc(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.gunspray_can), new Vector3(Game.Player.Character.RightPosition.X, Game.Player.Character.RightPosition.Y, Game.Player.Character.RightPosition.Z + 0.1f));
+                                WeaponJamming.getWeaponCleaningToolsFunc(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.gun_case_small), new Vector3(Game.Player.Character.RightPosition.X - 0.2f, Game.Player.Character.RightPosition.Y, Game.Player.Character.RightPosition.Z + 0.3f));
                             }
                             Game.Player.Character.Task.PlayAnimation("anim@scripted@heist@ig1_table_grab@cash@male@", "grab_idle", 4f, -1, AnimationFlags.Loop | AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
                             WeaponJamming.weaponCaseSwitched = true;
@@ -2885,7 +2941,7 @@ namespace GTAExpansion
                     bool flag = ((IEnumerable<WeaponGroup>)WeaponHolster._bigWeaponGroups).Contains<WeaponGroup>(Game.Player.Character.Weapons.Current.Group) && (WeaponHash)Game.Player.Character.Weapons.Current != WeaponHash.MicroSMG && (WeaponHash)Game.Player.Character.Weapons.Current != WeaponHash.MiniSMG && (WeaponHash)Game.Player.Character.Weapons.Current != WeaponHash.SMGMk2;
                     string str1 = !flag ? "combat@aim_variations@pistol" : "anim@amb@range@assemble_guns@";
                     string animName1 = !flag ? "var_f" : "expel_cartridge_01_amy_skater_01";
-                    float num21 = flag ? 0.5f : 0.99f;
+                    float num22 = flag ? 0.5f : 0.99f;
                     int blendInSpeed = flag ? 1 : 4;
                     int duration = flag ? -1 : -1;
                     string animName2 = "drop_lh";
@@ -2900,22 +2956,22 @@ namespace GTAExpansion
                         AimingStyle.canSwitchAimingStyle = (WeaponHash)Game.Player.Character.Weapons.Current == WeaponHash.Pistol;
                         LaserSight.canUseLaserSight = true;
                         Common.Draw(0, weaponIsJammedParam: WeaponJamming.weaponIsJammed, canClean: true, cleaningRequiredParam: WeaponJamming.cleaningRequired, action_page: Common.cur_action_page, cameraModuleParam: ShoulderCameraSwitch.ShoulderCameraModuleActive, swingWeaponModuleParam: WeaponSwing.swingGunModuleActive, laserSightModuleParam: LaserSight.laserSightModeActive, canSwingWeaponParam: WeaponSwing.canSwingGun, canUseLaserSightParam: LaserSight.canUseLaserSight, weaponJamningModuleParam: WeaponJamming.jammingModeIsActive, silencerModeActiveParam: Silencer.silencerModeActive, aimingStyleModeActiveParam: AimingStyle.aimingStyleModeActive, canSwitchAimingStyleParam: AimingStyle.canSwitchAimingStyle);
-                        // if (!WeaponJamming.weaponRemoveInProcess && Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponJamming.drop_weapon_btn))
-                        //     WeaponJamming.weaponRemoveInProcess = true;
                         if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)Scope.scope_toggle_btn))
                             Scope.toggleScope = true;
                         if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)Flashlight.flashlight_toggle_btn))
                             Flashlight.toggleFlashlight = true;
-                            if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)Grip.grip_toggle_btn))
-                                Grip.toggleGrip = true;
-                            if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponJamming.clean_weapon_btn) && WeaponJamming.cleaningRequired)
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)Grip.grip_toggle_btn))
+                            Grip.toggleGrip = true;
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)ExtendedMagazine.extendedmagazine_toggle_btn))
+                            ExtendedMagazine.toggleExtendedMagazine = true;
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponJamming.clean_weapon_btn) && WeaponJamming.cleaningRequired)
                         {
                             if (Game.Player.CanControlCharacter && Game.Player.Character.IsOnFoot && !Game.Player.Character.IsInCombat && Game.Player.WantedLevel <= 0)
                             {
                                 WeaponJamming.cleaningWeapon = Game.Player.Character.Weapons.Current.Hash;
                                 WeaponJamming.cleaningWeaponIsBig = flag;
                                 Game.Player.Character.Weapons.Select(WeaponHash.Unarmed);
-                                if ((Entity)WeaponJamming.getWeaponCaseFunc(Game.Player.Character, Main.GetHashKey(WeaponJamming.briefcase_model), true, new Vector3(Game.Player.Character.FrontPosition.X, Game.Player.Character.FrontPosition.Y, Game.Player.Character.FrontPosition.Z), true) != (Entity)null && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@briefcase", (InputArgument)"enter", (InputArgument)3))
+                                if ((Entity)WeaponJamming.getWeaponCaseFunc(Game.Player.Character, HTools.Main.GetHashKey(WeaponJamming.briefcase_model), true, new Vector3(Game.Player.Character.FrontPosition.X, Game.Player.Character.FrontPosition.Y, Game.Player.Character.FrontPosition.Z), true) != (Entity)null && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@briefcase", (InputArgument)"enter", (InputArgument)3))
                                 {
                                     WeaponJamming.weaponCaseSwitched = false;
                                     Game.Player.Character.Task.PlayAnimation("anim@heists@money_grab@briefcase", "enter", 4f, -1, AnimationFlags.StayInEndFrame);
@@ -2944,7 +3000,7 @@ namespace GTAExpansion
                                     WeaponJamming.weaponIsReady = false;
                                     Game.Player.Character.Task.PlayAnimation(str1, animName1, (float)blendInSpeed, duration, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
                                     if (!flag)
-                                        Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder, 15f);
+                                        HTools.Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder, 15f);
                                     WeaponJamming.isFixingJammedGun = true;
                                     WeaponJamming.weaponJammingAnimTimeOut = 500;
                                 }
@@ -2964,7 +3020,7 @@ namespace GTAExpansion
                                 WeaponJamming.weaponIsReady = false;
                                 Game.Player.Character.Task.PlayAnimation(str1, animName1, (float)blendInSpeed, duration, AnimationFlags.UpperBodyOnly | AnimationFlags.Secondary);
                                 if (!flag)
-                                    Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder, 15f);
+                                    HTools.Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder, 15f);
                                 WeaponJamming.isCheckingWeaponCondition = true;
                                 WeaponJamming.weaponJammingAnimTimeOut = 300;
                             }
@@ -2979,17 +3035,15 @@ namespace GTAExpansion
                             if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)24))
                             {
                                 WeaponJamming.jammCounter = Common.rnd.Next(1, 5);
-                                Main.soundFX(Game.Player.Character, "dryfire.wav", Common.assetFolder, 15f);
+                                HTools.Main.soundFX(Game.Player.Character, "dryfire.wav", Common.assetFolder, 15f);
                                 if (!Function.Call<bool>(Hash.IS_HELP_MESSAGE_BEING_DISPLAYED))
                                     Screen.ShowHelpText("~BLIP_INFO_ICON~ Weapon is ~r~jammed", 1000);
                             }
                         }
                     }
-
-
                     if (WeaponJamming.weaponRemoveInProcess)
                     {
-                        Main.DisableControlsFunc(true);
+                        HTools.Main.DisableControlsFunc(true);
                         if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)animDict, (InputArgument)animName2, (InputArgument)3))
                         {
                             Game.Player.Character.Task.ClearAll();
@@ -3002,7 +3056,7 @@ namespace GTAExpansion
                             Function.Call(Hash.GET_WEAPON_OBJECT_FROM_PED, (InputArgument)(Entity)Game.Player.Character, (InputArgument)false);
                             Script.Wait(200);
                             Game.Player.Character.Weapons.Remove(Game.Player.Character.Weapons.Current);
-                            Main.soundFX(Game.Player.Character, "draw2.wav", Common.assetFolder, 10f);
+                            HTools.Main.soundFX(Game.Player.Character, "draw2.wav", Common.assetFolder);
                         }
                     }
                     if (WeaponJamming.isCheckingWeaponCondition)
@@ -3012,10 +3066,10 @@ namespace GTAExpansion
                             if (flag && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) >= 0.20000000298023224 && !WeaponJamming.weaponIsReady)
                             {
                                 if (Game.Player.Character.Weapons.Current.AmmoInClip > 1)
-                                    --Game.Player.Character.Weapons.Current.AmmoInClip;
+                                    num3 = --Game.Player.Character.Weapons.Current.AmmoInClip;
                                 WeaponJamming.weaponIsReady = true;
                             }
-                            if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) >= (double)num21)
+                            if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) >= (double)num22)
                             {
                                 Game.Player.Character.Task.ClearAnimation(str1, animName1);
                                 WeaponJamming.isCheckingWeaponCondition = false;
@@ -3030,67 +3084,57 @@ namespace GTAExpansion
                                 WeaponJamming.max_rnd_chance = WeaponJamming.maxShotsBeforeBadCondition > weaponTotalShots ? WeaponJamming.maxShotsBeforeBadCondition - weaponTotalShots : 0;
                                 if (WeaponJamming.hasCleaningTools && !Game.Player.Character.IsInCombat && !Game.Player.Character.IsInCover)
                                     WeaponJamming.cleaningRequired = true;
-                                string str2;
-                                if (!WeaponJamming.cleaningRequired)
-                                {
-                                    str2 = "~n~You need to purchase a weapon cleaning toolkit from a ~p~weapon dealer~w~ or ~p~Ammunation~w~ for regular weapon maintenance. Dial the phone contact named ~p~Richard~w~ to call a blackmarket~BLIP_INFO_ICON~ ~p~dealer~w~";
-                                }
-                                else
-                                {
-                                    index3 = Common.getSupplies(Game.Player.Character, "weapon_tools");
-                                    str2 = "~n~You have ~o~" + index3.ToString() + "~w~ weapon cleaning toolkits. You can clean your weapon now.";
-                                }
-                                string str3 = str2;
+                                string str2 = WeaponJamming.cleaningRequired ? "~n~You have ~o~" + Common.getSupplies(Game.Player.Character, "weapon_tools").ToString() + "~w~ weapon cleaning toolkits. You can clean your weapon now." : "~n~You need to purchase a weapon cleaning toolkit from a ~p~weapon dealer~w~ or ~p~Ammunation~w~ for regular weapon maintenance. Dial the phone contact named ~p~Richard~w~ to call a blackmarket~BLIP_INFO_ICON~ ~p~dealer~w~";
                                 if (WeaponJamming.max_rnd_chance <= 30 && WeaponJamming.max_rnd_chance > 1)
-                                    Screen.ShowHelpText("~BLIP_INFO_ICON~ Your weapon is in ~o~BAD~w~ condition." + str3, 10000);
+                                    Screen.ShowHelpText("~BLIP_INFO_ICON~ Your weapon is in ~o~BAD~w~ condition." + str2, 10000);
                                 else if (WeaponJamming.max_rnd_chance < 1)
-                                    Screen.ShowHelpText("~BLIP_INFO_ICON~ Your weapon is ~r~DESTROYED~w~." + str3, 10000);
+                                    Screen.ShowHelpText("~BLIP_INFO_ICON~ Your weapon is ~r~DESTROYED~w~." + str2, 10000);
                                 else if (WeaponJamming.max_rnd_chance > 30)
-                                    Screen.ShowHelpText("~BLIP_INFO_ICON~ Your weapon is in ~g~GOOD~w~ condition." + str3, 10000);
+                                    Screen.ShowHelpText("~BLIP_INFO_ICON~ Your weapon is in ~g~GOOD~w~ condition." + str2, 10000);
                             }
                         }
                         else if (WeaponJamming.weaponJammingAnimTimeOut > 0)
                         {
-                            --WeaponJamming.weaponJammingAnimTimeOut;
+                            num3 = --WeaponJamming.weaponJammingAnimTimeOut;
                         }
                         else
                         {
                             WeaponJamming.isCheckingWeaponCondition = false;
                             Game.Player.Character.Task.ClearAll();
                         }
-                        Main.DisableControlsFunc(true);
+                        HTools.Main.DisableControlsFunc(true);
                     }
                     if (WeaponJamming.weaponIsJammed && WeaponJamming.isFixingJammedGun)
                     {
                         if (Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1, (InputArgument)3))
                         {
-                            float num22 = 0.0f;
-                            float num23 = 0.99f;
+                            float num23 = 0.0f;
+                            float num24 = 0.99f;
                             if (WeaponJamming.jammCounter > 0)
                             {
                                 if (flag)
                                 {
-                                    num22 = 0.21f;
-                                    num23 = 0.25f;
+                                    num23 = 0.21f;
+                                    num24 = 0.25f;
                                 }
                                 else
                                 {
-                                    num22 = 0.1f;
-                                    num23 = 0.5f;
+                                    num23 = 0.1f;
+                                    num24 = 0.5f;
                                 }
                             }
                             if (WeaponJamming.jammCounter <= 0)
                                 WeaponJamming.weaponIsReady = true;
-                            if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) >= (double)num23)
+                            if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) >= (double)num24)
                             {
-                                --WeaponJamming.jammCounter;
-                                Function.Call(Hash.SET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1, (InputArgument)num22);
+                                num3 = --WeaponJamming.jammCounter;
+                                Function.Call(Hash.SET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1, (InputArgument)num23);
                                 if (Game.Player.Character.Weapons.Current.AmmoInClip > 1)
-                                    --Game.Player.Character.Weapons.Current.AmmoInClip;
+                                    num3 = --Game.Player.Character.Weapons.Current.AmmoInClip;
                                 if (!flag && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) >= 0.5 && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) < 0.699999988079071)
-                                    Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder, 10f);
+                                    HTools.Main.soundFX(Game.Player.Character, "tweak.wav", Common.assetFolder);
                             }
-                            if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) >= (double)num21)
+                            if ((double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)str1, (InputArgument)animName1) >= (double)num22)
                             {
                                 Game.Player.Character.Task.ClearAnimation(str1, animName1);
                                 WeaponJamming.isFixingJammedGun = false;
@@ -3100,14 +3144,14 @@ namespace GTAExpansion
                         }
                         else if (WeaponJamming.weaponJammingAnimTimeOut > 0)
                         {
-                            --WeaponJamming.weaponJammingAnimTimeOut;
+                            num3 = --WeaponJamming.weaponJammingAnimTimeOut;
                         }
                         else
                         {
                             WeaponJamming.isCheckingWeaponCondition = false;
                             Game.Player.Character.Task.ClearAll();
                         }
-                        Main.DisableControlsFunc(true);
+                        HTools.Main.DisableControlsFunc(true);
                     }
                     if (!WeaponJamming.weaponIsJammed && Game.Player.Character.IsShooting)
                     {
@@ -3120,7 +3164,7 @@ namespace GTAExpansion
                             int weaponTotalShots = WeaponJamming.getCurWeaponTotalShots(Game.Player.Character, Common.doc, WeaponJamming.shootingWeapon);
                             WeaponJamming.max_rnd_chance = WeaponJamming.maxShotsBeforeBadCondition > weaponTotalShots ? WeaponJamming.maxShotsBeforeBadCondition - weaponTotalShots : 0;
                         }
-                        ++WeaponJamming.shotsFired;
+                        num3 = ++WeaponJamming.shotsFired;
                         if (Common.rnd.Next(0, WeaponJamming.max_rnd_chance) == 0)
                         {
                             WeaponJamming.jammCounter = Common.rnd.Next(1, 5);
@@ -3160,17 +3204,14 @@ namespace GTAExpansion
                 }
             }
             else
-            {
                 Common.callContact.Name = "Richard";
-                
-            }  
             if (Common.come_over_mode)
             {
                 if (Function.Call<int>(Hash.GET_INTERIOR_FROM_ENTITY, (InputArgument)(Entity)Game.Player.Character) == 0)
                 {
                     if ((Entity)Common.seller == (Entity)null || (Entity)Common.seller != (Entity)null && (!Common.seller.Exists() || Common.seller.IsDead))
                     {
-                        if ((Entity)Main.TryToGetPedAtLocation(Game.Player.Character.Position, 25f, PedHash.Dealer01SMY) == (Entity)null)
+                        if ((Entity)HTools.Main.TryToGetPedAtLocation(Game.Player.Character.Position, 25f, PedHash.Dealer01SMY) == (Entity)null)
                             Common.CreateSeller(World.GetSafeCoordForPed(new Vector3(Game.Player.Character.Position.X, Game.Player.Character.Position.Y + 100f, Game.Player.Character.Position.Z), flags: 1));
                     }
                     else
@@ -3182,7 +3223,7 @@ namespace GTAExpansion
                     {
                         Screen.FadeOut(3000);
                         Script.Wait(1000);
-                        Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument) (- 1), (InputArgument)"DOOR_BUZZ", (InputArgument)"MP_PLAYER_APARTMENT", (InputArgument)1);
+                        Function.Call(Hash.PLAY_SOUND_FRONTEND, (InputArgument)(-1), (InputArgument)"DOOR_BUZZ", (InputArgument)"MP_PLAYER_APARTMENT", (InputArgument)1);
                     }
                     if (Screen.IsFadedOut)
                     {
@@ -3190,7 +3231,7 @@ namespace GTAExpansion
                         World.GetSafeCoordForPed(vector3_6, false, 1);
                         if ((Entity)Common.seller == (Entity)null || (Entity)Common.seller != (Entity)null && (!Common.seller.Exists() || Common.seller.IsDead))
                         {
-                            if ((Entity)Main.TryToGetPedAtLocation(Game.Player.Character.Position, 25f, PedHash.Dealer01SMY) == (Entity)null)
+                            if ((Entity)HTools.Main.TryToGetPedAtLocation(Game.Player.Character.Position, 25f, PedHash.Dealer01SMY) == (Entity)null)
                                 Common.CreateSeller(vector3_6);
                         }
                         else
@@ -3226,29 +3267,26 @@ namespace GTAExpansion
                 Common.update_inventory_status(Game.Player.Character);
                 Common.clearTrash();
             }
-            if(Game.Player.Character.IsDead)
+            if (Game.Player.Character.IsDead)
             {
                 Common.ClearedItemsWhenDeadXML();
                 Common.ClearItemsWhenDead();
                 Common.clearTrash();
                 Common.DeleteSupplies(Game.Player.Character);
             }
-
             if (InventoryBag.bag_module_active)
             {
                 if (Game.Player.Character.IsOnFoot && (Entity)InventoryBag.bagModelReturn(Game.Player.Character) != (Entity)null)
                 {
-                    if (!Common.isOccupied(Game.Player.Character) && !Main.isOccupiedNative(Game.Player.Character))
+                    if (!Common.isOccupied(Game.Player.Character) && !HTools.Main.isOccupiedNative(Game.Player.Character))
                         InventoryBag.WeaponSwitchAnim(Game.Player.Character);
                     else
-                            {
-                                InventoryBag.prevWeapon = Function.Call<uint>(Hash.GET_SELECTED_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character);
-                            }
+                        InventoryBag.prevWeapon = Function.Call<uint>(Hash.GET_SELECTED_PED_WEAPON, (InputArgument)(Entity)Game.Player.Character);
                 }
                 if (InventoryBag.bagPickUp)
                 {
                     Entity dropedBag = InventoryBag.droped_bag;
-                    if (dropedBag != (Entity)null && dropedBag.Exists() && dropedBag.Model == (Model)Main.GetHashKey(InventoryBag.stashedBagModel))
+                    if (dropedBag != (Entity)null && dropedBag.Exists() && dropedBag.Model == (Model)HTools.Main.GetHashKey(InventoryBag.stashedBagModel))
                     {
                         Common.camTimer = 0;
                         Common.CamObject = dropedBag;
@@ -3264,7 +3302,7 @@ namespace GTAExpansion
                                     Common.blipHandle(false, dropedBag, BlipSprite.Briefcase2, "DuffleBag", 0.85f, 200, true, true);
                                     dropedBag.Delete();
                                     InventoryBag.bagSet(InventoryBag.bagModelCheck(Game.Player.Character), Game.Player.Character);
-                                    goto label_1002;
+                                    goto label_1305;
                                 }
                             }
                             Screen.ShowHelpText("~BLIP_INFO_ICON~ ~c~Get closer to ~w~~h~Stashed bag~h~~w~", 6000);
@@ -3272,8 +3310,7 @@ namespace GTAExpansion
                         }
                     }
                 }
-            label_1002:
-                //Common.MaximumWeaponCapacity();
+            label_1305:
                 if (!InventoryBag.canTakeBagFromVehicle && InventoryBag.canPutOnBagOnExit && Game.IsControlJustPressed(Control.VehicleExit))
                     InventoryBag.bagSet(InventoryBag.bagModelCheck(Game.Player.Character), Game.Player.Character);
                 if (InventoryBag.droped_bag != (Entity)null)
@@ -3300,10 +3337,10 @@ namespace GTAExpansion
                                     {
                                         InventoryBag.bagPickUp = true;
                                         Screen.ShowHelpText("~BLIP_INFO_ICON~ Stashed bag found");
-                                        goto label_1023;
+                                        goto label_1323;
                                     }
                                     else
-                                        goto label_1023;
+                                        goto label_1323;
                                 }
                             }
                             if (InventoryBag.bagPickUp)
@@ -3312,7 +3349,7 @@ namespace GTAExpansion
                     }
                     else if (InventoryBag.bagPickUp)
                         InventoryBag.bagPickUp = false;
-                    label_1023:
+                    label_1323:
                     if (Game.Player.Character.IsSittingInVehicle())
                     {
                         model = Game.Player.Character.CurrentVehicle.Model;
@@ -3330,10 +3367,10 @@ namespace GTAExpansion
                                         if (Game.Player.Character.CurrentVehicle.IsStopped)
                                         {
                                             InventoryBag.TakeOffBagInCar(bag, Game.Player.Character);
-                                            goto label_1038;
+                                            goto label_1340;
                                         }
                                         else
-                                            goto label_1038;
+                                            goto label_1340;
                                     }
                                     else if ((Entity)bag == (Entity)null)
                                     {
@@ -3343,29 +3380,29 @@ namespace GTAExpansion
                                             if (!InventoryBag.notifed)
                                             {
                                                 Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)0, (InputArgument)100);
-                                                Main.Notify("~y~Your bag is stashed in this vehicle", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
+                                                HTools.Main.Notify("~y~Your bag is stashed in this vehicle", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
                                                 Screen.ShowHelpText("~BLIP_INFO_ICON~ Your bag is stashed in this vehicle", 3000);
                                                 Common.blipHandle(true, (Entity)Game.Player.Character.CurrentVehicle, BlipSprite.Information, "DuffleBag", 0.85f, 200, false, false);
                                                 InventoryBag.notifed = true;
-                                                goto label_1038;
+                                                goto label_1340;
                                             }
                                             else
-                                                goto label_1038;
+                                                goto label_1340;
                                         }
                                         else
                                         {
                                             InventoryBag.canTakeBagFromVehicle = false;
                                             InventoryBag.notifed = false;
-                                            goto label_1038;
+                                            goto label_1340;
                                         }
                                     }
                                     else if (!bag.IsVisible)
                                     {
                                         InventoryBag.canPutOnBagOnExit = true;
-                                        goto label_1038;
+                                        goto label_1340;
                                     }
                                     else
-                                        goto label_1038;
+                                        goto label_1340;
                                 }
                             }
                         }
@@ -3373,7 +3410,7 @@ namespace GTAExpansion
                     InventoryBag.notifed = false;
                     InventoryBag.canTakeBagFromVehicle = false;
                     InventoryBag.canPutOnBagOnExit = false;
-                label_1038:
+                label_1340:
                     if (InventoryBag.doesPedHasInventoryBag(Game.Player.Character) && !Game.Player.Character.IsSittingInVehicle() && !Function.Call<bool>(Hash.IS_CUTSCENE_PLAYING) && Screen.IsFadedIn && Game.Player.Character.IsStopped && (Entity)InventoryBag.bagModelReturn(Game.Player.Character) == (Entity)null)
                         InventoryBag.bagSet(InventoryBag.bagModelCheck(Game.Player.Character), Game.Player.Character);
                     if ((Entity)Game.Player.Character != (Entity)null)
@@ -3390,13 +3427,13 @@ namespace GTAExpansion
                                 {
                                     model = Game.Player.Character.CurrentVehicle.Model;
                                     if (!model.IsBike)
-                                        goto label_1048;
+                                        goto label_1352;
                                 }
                             }
                             InventoryBag.checkBagVisibility(Game.Player.Character);
                         }
                     }
-                label_1048:
+                label_1352:
                     if (Game.IsMissionActive || Function.Call<bool>(Hash.IS_CUTSCENE_PLAYING))
                     {
                         PedHash[] pedHashArray = new PedHash[3]
@@ -3413,9 +3450,9 @@ namespace GTAExpansion
                                 if (((IEnumerable<Ped>)allPeds).Count<Ped>() > 0)
                                 {
                                     Ped[] pedArray = allPeds;
-                                    for (index3 = 0; index3 < pedArray.Length; ++index3)
+                                    for (int index = 0; index < pedArray.Length; num3 = ++index)
                                     {
-                                        Ped ped = pedArray[index3];
+                                        Ped ped = pedArray[index];
                                         if ((Entity)InventoryBag.bagModelReturn(ped) == (Entity)null)
                                         {
                                             if (InventoryBag.DoesPedHasBigWeapons(ped))
@@ -3463,31 +3500,42 @@ namespace GTAExpansion
             }
             if (Common.findSellerOption)
             {
-                int num24 = 0;
-                int num25 = 176;
-                int num26 = 177;
-                Screen.ShowHelpText("~y~Call ~w~closest ~BLIP_INFO_ICON~ Dealer to purchase Supplies, Bags and Holsters", 5000);
+
+                
+
+                int num25 = 0;
+                int num26 = 176;
+                int num27 = 177;
+                Screen.ShowHelpText("~y~Call ~w~closest ~BLIP_INFO_ICON~ ~y~Dealer~w~ to purchase ~r~supplies~w~, ~r~bags~w~ and ~r~holsters", 5000);
                 Common.Draw(2, InventoryBag.hasBag, InventoryBag.canTakeBagFromVehicle, WeaponHolster.hasHolster, InventoryBag.isBagBought, InventoryBag.isBagDropped);
-                if (InventoryBag.isBagDropped && Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num24))
+                if (InventoryBag.isBagDropped && Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num25))
                 {
                     Entity droppedBag = InventoryBag.getDroppedBag(Game.Player.Character);
                     if (droppedBag != (Entity)null)
                         Common.blipHandle(true, droppedBag, BlipSprite.Information, "Dufflebag", 0.85f, 200, true, false);
-                    Main.Notify("Stashed bag's location~n~  has been ~y~Marked", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
-                    Function.Call(Hash.CELL_SET_INPUT, (InputArgument)2);
+                    HTools.Main.Notify("Stashed bag's location~n~  has been ~y~Marked", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
+                    
+                    //Function.Call(Hash.CELL_SET_INPUT, (InputArgument)2);
+                    //HTools.Main.ClosePhoneFunc(Game.Player.Character, 0, 0);
                     Common.findSellerOption = false;
-                    Main.ClosePhoneFunc(Game.Player.Character, 0, 0);
                     Common.followCamera = false;
-                    Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder, 10f);
+                    HTools.Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
+                }
+                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num27))
+                {
+
+                    Common.findSellerOption = false;
+                    //Game.Player.Character.Task.ClearAll();
+                    //Common.findSellerOption = false;
+                    //Function.Call(Hash.CELL_SET_INPUT, (InputArgument)1);
+                    //Common.IFruit.Close();
+                    //HTools.Main.ClosePhoneFunc(Game.Player.Character, 0, 0);
+                    Common.followCamera = false;
+                    
+                    //Game.Player.Character.Task.PutAwayMobilePhone();
+                    //Game.Player.Character.Task.ClearAll();
                 }
                 if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num26))
-                {
-                    Function.Call(Hash.CELL_SET_INPUT, (InputArgument)1);
-                    Common.findSellerOption = false;
-                    Main.ClosePhoneFunc(Game.Player.Character, 300, 0);
-                    Common.followCamera = false;
-                }
-                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num25))
                 {
                     WeaponJamming.hasCleaningTools = Common.getSupplies(Game.Player.Character, "weapon_tools") > 0;
                     InventoryBag.hasBag = InventoryBag.doesPedHasInventoryBag(Game.Player.Character);
@@ -3503,7 +3551,7 @@ namespace GTAExpansion
                         flag = true;
                     if (flag)
                     {
-                        Main.Notify("Stay put. ~p~Dealer~w~ is heading your way.", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
+                        HTools.Main.Notify("Stay put. ~p~Dealer~w~ is heading your way.", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
                         Common.trans_timer = 500;
                         Common.trans_in_process = false;
                         Common.trans_completed = false;
@@ -3512,14 +3560,16 @@ namespace GTAExpansion
                         Common.followCamera = false;
                     }
                     else
-                        Main.Notify("Sorry, can't send anyone to your location at the moment. Try again later.", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
+                        HTools.Main.Notify("Sorry, can't send anyone to your location at the moment. Try again later.", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
+                    
+                    //Function.Call(Hash.CELL_SET_INPUT, (InputArgument)3);
+                    //HTools.Main.ClosePhoneFunc(Game.Player.Character, 0, 0);
                     Common.findSellerOption = false;
-                    Function.Call(Hash.CELL_SET_INPUT, (InputArgument)3);
-                    Main.ClosePhoneFunc(Game.Player.Character, 0, 0);
-                    Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder, 10f);
+                    HTools.Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
                 }
                 Common.camTimer = 0;
-                int num27 = Common.followCamera ? 1 : 0;
+                int num28 = Common.followCamera ? 1 : 0;
+                
             }
             if (InventoryBag.bag_module_active)
             {
@@ -3529,9 +3579,9 @@ namespace GTAExpansion
                     Common.camTimer = 0;
                     if (!InventoryBag.reattached && Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@duffel", (InputArgument)"enter", (InputArgument)3) && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"anim@heists@money_grab@duffel", (InputArgument)"enter") >= 0.75)
                     {
-                        int num28 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)57005);
+                        int num29 = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)Game.Player.Character, (InputArgument)57005);
                         InventoryBag.reattached = true;
-                        Function.Call(Hash.ATTACH_ENTITY_TO_ENTITY, (InputArgument)(Entity)InventoryBag.bagModelReturn(Game.Player.Character), (InputArgument)(Entity)Game.Player.Character, (InputArgument)num28, (InputArgument)InventoryBag.xg, (InputArgument)InventoryBag.yg, (InputArgument)InventoryBag.zg, (InputArgument)InventoryBag.xrg, (InputArgument)InventoryBag.yrg, (InputArgument)InventoryBag.zrg, (InputArgument)true, (InputArgument)true, (InputArgument)false, (InputArgument)false, (InputArgument)2, (InputArgument)true);
+                        Function.Call(Hash.ATTACH_ENTITY_TO_ENTITY, (InputArgument)(Entity)InventoryBag.bagModelReturn(Game.Player.Character), (InputArgument)(Entity)Game.Player.Character, (InputArgument)num29, (InputArgument)InventoryBag.xg, (InputArgument)InventoryBag.yg, (InputArgument)InventoryBag.zg, (InputArgument)InventoryBag.xrg, (InputArgument)InventoryBag.yrg, (InputArgument)InventoryBag.zrg, (InputArgument)true, (InputArgument)true, (InputArgument)false, (InputArgument)false, (InputArgument)2, (InputArgument)true);
                     }
                     if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)177) || Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)202) || Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)25))
                     {
@@ -3548,7 +3598,7 @@ namespace GTAExpansion
                         InventoryBag.modMenuPool = (MenuPool)null;
                         InventoryBag.weaponInventoryAnim(InventoryBag.bagModelReturn(Game.Player.Character), Game.Player.Character);
                     }
-                    int num29 = Common.followCamera ? 1 : 0;
+                    int num30 = Common.followCamera ? 1 : 0;
                     if (InventoryBag.modMenuPool != null)
                     {
                         InventoryBag.modMenuPool.ProcessMenus();
@@ -3558,7 +3608,7 @@ namespace GTAExpansion
                         {
                             if (InventoryBag.mainMenu != null)
                             {
-                                if (!Common.isOccupied(Game.Player.Character) && !Main.isOccupiedNative(Game.Player.Character))
+                                if (!Common.isOccupied(Game.Player.Character) && !HTools.Main.isOccupiedNative(Game.Player.Character))
                                     InventoryBag.weaponInventoryAnim(InventoryBag.bagModelReturn(Game.Player.Character), Game.Player.Character);
                                 InventoryBag.mainMenu.Visible = true;
                             }
@@ -3595,35 +3645,35 @@ namespace GTAExpansion
                         Common.clearScriptFunction();
                     if (!Common.inProcessBag)
                     {
-                        Main.DisableControlsFunc(true);
-                        int num30 = 52;
-                        int num31 = 0;
-                        int num32 = 73;
-                        int num33 = 26;
-                        int num34 = 75;
-                        int num35 = 51;
+                        HTools.Main.DisableControlsFunc(true);
+                        int num31 = 52;
+                        int num32 = 0;
+                        int num33 = 73;
+                        int num34 = 26;
+                        int num35 = 75;
+                        int num36 = 51;
                         if (Common.sellerAvailableItems <= 0 && Common.TotalPrice <= 0)
                         {
                             Screen.ShowHelpTextThisFrame("No ~o~items~w~ are available right now");
                         }
                         else
                         {
-                            int num36 = 999999;
+                            int num37 = 999999;
                             if (Game.Player.Character.Model == (Model)PedHash.Michael || Game.Player.Character.Model == (Model)PedHash.Franklin || Game.Player.Character.Model == (Model)PedHash.Trevor)
-                                num36 = Game.Player.Money;
-                            Screen.ShowHelpTextThisFrame(" Price: ~c~" + Common.TotalPrice.ToString() + " ~g~~h~$~h~~n~~w~ Money: ~c~" + num36.ToString() + " ~g~~h~$~h~~w~");
+                                num37 = Game.Player.Money;
+                            Screen.ShowHelpTextThisFrame(" Price: ~c~" + Common.TotalPrice.ToString() + " ~g~~h~$~h~~n~~w~ Money: ~c~" + num37.ToString() + " ~g~~h~$~h~~w~");
                         }
                         Common.Draw(3, InventoryBag.hasBag, InventoryBag.canTakeBagFromVehicle, WeaponHolster.hasHolster, InventoryBag.isBagBought, InventoryBag.isBagDropped);
                         if (InventoryBag.bag_module_active)
                         {
                             if (!InventoryBag.isBagBought)
                             {
-                                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num30))
+                                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num31))
                                 {
                                     if (!Common.buyBag)
                                     {
                                         Common.buyBag = true;
-                                        --Common.sellerAvailableItems;
+                                        num3 = --Common.sellerAvailableItems;
                                         Common.TotalPrice += InventoryBag.BagPrice;
                                         Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                                         Notification.Show("Dufflebag has been ~g~added~w~ to your ~o~Cart", true);
@@ -3631,7 +3681,7 @@ namespace GTAExpansion
                                     else
                                     {
                                         Common.buyBag = false;
-                                        ++Common.sellerAvailableItems;
+                                        num3 = ++Common.sellerAvailableItems;
                                         Common.TotalPrice -= InventoryBag.BagPrice;
                                         Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)(int)byte.MaxValue, (InputArgument)(int)sbyte.MaxValue, (InputArgument)80, (InputArgument)100);
                                         Notification.Show("Dufflebag has been ~r~removed~w~ from your ~o~Cart", true);
@@ -3645,12 +3695,12 @@ namespace GTAExpansion
                         {
                             if (!WeaponHolster.hasHolster)
                             {
-                                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num32))
+                                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num33))
                                 {
                                     if (!Common.buyHolster)
                                     {
                                         Common.buyHolster = true;
-                                        --Common.sellerAvailableItems;
+                                        num3 = --Common.sellerAvailableItems;
                                         Common.TotalPrice += WeaponHolster.HolsterPrice;
                                         Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                                         Notification.Show("Holster has been ~g~added~w~ to your ~o~Cart", true);
@@ -3658,7 +3708,7 @@ namespace GTAExpansion
                                     else
                                     {
                                         Common.buyHolster = false;
-                                        ++Common.sellerAvailableItems;
+                                        num3 = ++Common.sellerAvailableItems;
                                         Common.TotalPrice -= WeaponHolster.HolsterPrice;
                                         Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)(int)byte.MaxValue, (InputArgument)(int)sbyte.MaxValue, (InputArgument)80, (InputArgument)100);
                                         Notification.Show("Holster has been ~r~removed~w~ from your ~o~Cart", true);
@@ -3672,12 +3722,12 @@ namespace GTAExpansion
                         {
                             if (WeaponJamming.cleaningToolsCount < WeaponJamming.cleaningToolsMax)
                             {
-                                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num33))
+                                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num34))
                                 {
                                     if (!Common.buyTools)
                                     {
                                         Common.buyTools = true;
-                                        --Common.sellerAvailableItems;
+                                        num3 = --Common.sellerAvailableItems;
                                         Common.TotalPrice += WeaponJamming.weaponToolsPrice;
                                         Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                                         Notification.Show("Weapon cleaning tools has been ~g~added~w~ to your ~o~Cart", true);
@@ -3685,7 +3735,7 @@ namespace GTAExpansion
                                     else
                                     {
                                         Common.buyTools = false;
-                                        ++Common.sellerAvailableItems;
+                                        num3 = ++Common.sellerAvailableItems;
                                         Common.TotalPrice -= WeaponJamming.weaponToolsPrice;
                                         Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)(int)byte.MaxValue, (InputArgument)(int)sbyte.MaxValue, (InputArgument)80, (InputArgument)100);
                                         Notification.Show("Weapon cleaning tools has been ~r~removed~w~ from your ~o~Cart", true);
@@ -3697,12 +3747,12 @@ namespace GTAExpansion
                         }
                         if (CigsAndPills.cigsCount < CigsAndPills.maxCigs || CigsAndPills.pillsCount < CigsAndPills.maxPills)
                         {
-                            if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num31))
+                            if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num32))
                             {
                                 if (!Common.buySupplies)
                                 {
                                     Common.buySupplies = true;
-                                    --Common.sellerAvailableItems;
+                                    num3 = --Common.sellerAvailableItems;
                                     Common.TotalPrice += CigsAndPills.SupplyPrice;
                                     Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                                     Notification.Show("Medical supplies has been ~g~added~w~ to your ~o~Cart", true);
@@ -3710,7 +3760,7 @@ namespace GTAExpansion
                                 else
                                 {
                                     Common.buySupplies = false;
-                                    ++Common.sellerAvailableItems;
+                                    num3 = ++Common.sellerAvailableItems;
                                     Common.TotalPrice -= CigsAndPills.SupplyPrice;
                                     Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)(int)byte.MaxValue, (InputArgument)(int)sbyte.MaxValue, (InputArgument)80, (InputArgument)100);
                                     Notification.Show("Medical supplies has been ~r~removed~w~ from your ~o~Cart", true);
@@ -3719,13 +3769,13 @@ namespace GTAExpansion
                         }
                         else
                             Common.buySupplies = false;
-                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num34))
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num35))
                         {
                             Common.sellerDialogCounter = 3;
                             Common.inProcessBag = true;
                             Common.canceled = true;
                         }
-                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num35))
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)num36))
                         {
                             Common.sellerDialogCounter = 7;
                             Common.inProcessBag = true;
@@ -3742,9 +3792,9 @@ namespace GTAExpansion
                         }
                         else
                         {
-                            Main.DisableControlsFunc(true);
+                            HTools.Main.DisableControlsFunc(true);
                             if (Common.timeOut > 0)
-                                --Common.timeOut;
+                                num3 = --Common.timeOut;
                             if (Common.timeOut <= 0)
                             {
                                 if (!Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"oddjobs@assassinate@construction@", (InputArgument)"unarmed_fold_arms", (InputArgument)3))
@@ -3773,10 +3823,10 @@ namespace GTAExpansion
                     }
                     else if (Common.payed)
                     {
-                        int num37 = 9999999;
+                        int num38 = 9999999;
                         if (Game.Player.Character.Model == (Model)PedHash.Michael || Game.Player.Character.Model == (Model)PedHash.Franklin || Game.Player.Character.Model == (Model)PedHash.Trevor)
-                            num37 = Game.Player.Money;
-                        if (num37 > Common.TotalPrice + Common.TotalPrice / 100 * 5)
+                            num38 = Game.Player.Money;
+                        if (num38 > Common.TotalPrice + Common.TotalPrice / 100 * 5)
                         {
                             vector3_1 = Game.Player.Character.Position;
                             if ((double)vector3_1.DistanceTo(Common.seller.Position) <= 5.0)
@@ -3786,7 +3836,7 @@ namespace GTAExpansion
                             else
                             {
                                 if (Common.timeOut > 0)
-                                    --Common.timeOut;
+                                    num3 = --Common.timeOut;
                                 if (Common.timeOut <= 0)
                                 {
                                     TaskInvoker task = Game.Player.Character.Task;
@@ -3801,8 +3851,8 @@ namespace GTAExpansion
                         }
                         else
                         {
-                            Main.Notify("Transaction ~r~Failed", "MAZE", (int)byte.MaxValue, 0, 0, NotificationIcon.BankMaze);
-                            Main.Notify("~o~Not enough money on your account", "MAZE", (int)byte.MaxValue, 0, 0, NotificationIcon.BankMaze);
+                            HTools.Main.Notify("Transaction ~r~Failed", "MAZE", (int)byte.MaxValue, 0, 0, NotificationIcon.BankMaze);
+                            HTools.Main.Notify("~o~Not enough money on your account", "MAZE", (int)byte.MaxValue, 0, 0, NotificationIcon.BankMaze);
                             Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)Common.seller, (InputArgument)"GENERIC_CURSE_MED", (InputArgument)"SPEECH_PARAMS_FORCE");
                             Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"GAME_BAD_SELF", (InputArgument)"SPEECH_PARAMS_FORCE");
                             Common.clearScriptFunction();
@@ -3834,7 +3884,7 @@ namespace GTAExpansion
                         if ((double)vector3_1.DistanceTo(Common.seller.Position) < 50.0)
                         {
                             if (Common.timeOut > 0)
-                                --Common.timeOut;
+                                num3 = --Common.timeOut;
                             if (Common.timeOut <= 0)
                             {
                                 TaskInvoker task = Common.seller.Task;
@@ -3855,7 +3905,7 @@ namespace GTAExpansion
                 vector3_1 = Game.Player.Character.Position;
                 if ((double)vector3_1.DistanceTo(Common.seller.Position) < 7.0)
                 {
-                    int num38 = Common.followCamera ? 1 : 0;
+                    int num39 = Common.followCamera ? 1 : 0;
                     Common.camTimer = 0;
                 }
                 else
@@ -3863,7 +3913,7 @@ namespace GTAExpansion
                 if (!Common.greeting)
                     return;
                 if (Common.timeOut > 0)
-                    --Common.timeOut;
+                    num3 = --Common.timeOut;
                 vector3_1 = Common.seller.Position;
                 if ((double)vector3_1.DistanceTo(Game.Player.Character.Position) >= 2.5)
                     return;
@@ -3885,14 +3935,14 @@ namespace GTAExpansion
                 InventoryBag.hasBag = InventoryBag.doesPedHasInventoryBag(Game.Player.Character);
                 WeaponHolster.hasHolster = WeaponHolster.doesPedHasHolster(Game.Player.Character);
                 if (!Common.buyBag && !InventoryBag.isBagBought)
-                    ++Common.sellerAvailableItems;
+                    num3 = ++Common.sellerAvailableItems;
                 if (!Common.buyHolster && !WeaponHolster.hasHolster)
-                    ++Common.sellerAvailableItems;
+                    num3 = ++Common.sellerAvailableItems;
                 if (!Common.buyTools && !WeaponJamming.hasCleaningTools)
-                    ++Common.sellerAvailableItems;
+                    num3 = ++Common.sellerAvailableItems;
                 if (Common.buySupplies || CigsAndPills.cigsCount >= CigsAndPills.maxCigs && CigsAndPills.pillsCount >= CigsAndPills.maxPills)
                     return;
-                ++Common.sellerAvailableItems;
+                num3 = ++Common.sellerAvailableItems;
             }
             else
                 Common.clearScriptFunction();
