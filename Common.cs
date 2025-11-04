@@ -896,12 +896,12 @@ namespace GTAExpansion
                         }
 
 
-                    //    if (Game.Player.Character.Armor > 0 || Vest.armortakenoff )
-                    //    {
-                  //          Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
-                   //         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
-                 //           ++index1;
-                 //       }
+                       if (Game.Player.Character.Armor >= 0 && Vest.HasPedBoughtVest(Game.Player.Character))
+                        {
+                            Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
+                            source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                            ++index1;
+                        }
 
                         // if (
                         if (WeaponHolster.holster_module_active & hasHolster)
@@ -1629,6 +1629,15 @@ namespace GTAExpansion
             {
                 pedElement.SetAttributeValue("holster", false);
             }
+
+
+            // Remove vest
+            var vestAttr = pedElement.Attribute("vest");
+            if (vestAttr == null || (bool.TryParse(vestAttr.Value, out var hasVest) && hasVest))
+            {
+                pedElement.SetAttributeValue("vest", false);
+            }
+
 
             var weaponsConditions = pedElement.Element("WeaponsConditions");
             if (weaponsConditions != null)
