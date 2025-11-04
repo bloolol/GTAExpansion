@@ -129,7 +129,7 @@ namespace GTAExpansion
         {
            
 
-            Common.IFruit.Close2(2000);
+            Common.IFruit.Close2();
             Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
             Common.update_inventory_status(Game.Player.Character);
             if (Common.deal && !Common.payed)
