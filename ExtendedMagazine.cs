@@ -67,7 +67,7 @@ namespace GTAExpansion
             (WeaponHash.CombatMGMk2, WeaponComponentHash.CombatMGMk2Clip02)
         };
 
-        public static void CheckExtendedMagazine()
+        public static void extendedmagazinecheck()
         {
             Ped player = Game.Player.Character;
             WeaponHash currentWeapon = player.Weapons.Current.Hash;

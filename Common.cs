@@ -1726,6 +1726,8 @@ namespace GTAExpansion
             Common.saveDoc();
         }
         */
+        /*
+          
         public static void UpdateAttachment(string attachmentName, bool state)
         {
             var ped = Game.Player.Character;
@@ -1750,6 +1752,39 @@ namespace GTAExpansion
 
             pedElement.SetAttributeValue(attachmentName, state);
             Common.saveDoc();
+        }
+        */
+        private static Dictionary<string, bool> lastAttachmentStates = new Dictionary<string, bool>();
+        public static void UpdateAttachment(string attachmentName, bool state)
+        {
+            var ped = Game.Player.Character;
+            if (ped == null || !ped.Exists()) return;
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+            string key = $"{name}_{attachmentName}";
+            if (lastAttachmentStates.TryGetValue(key, out bool lastState) && lastState == state)
+                return; // No change, skip update
+
+            lastAttachmentStates[key] = state;
+
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null)
+            {
+                weaponList = new XElement("WeaponList");
+                Common.doc.Add(weaponList); // Only add if it doesn't exist
+            }
+
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            pedElement.SetAttributeValue(attachmentName, state);
+            Common.saveDoc(); // Optional: defer this to a timer or batch save
         }
 
 

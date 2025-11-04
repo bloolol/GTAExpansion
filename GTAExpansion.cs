@@ -2261,7 +2261,7 @@ namespace GTAExpansion
                 Scope.scopecheck();
                 Flashlight.flashlightcheck();
                 Grip.gripcheck();
-                ExtendedMagazine.CheckExtendedMagazine();
+                ExtendedMagazine.extendedmagazinecheck();
             }
             if (Common.AllWeaponsCount(Game.Player.Character) == 0)
                 Common.RemoveAllAttachments();
