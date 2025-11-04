@@ -459,6 +459,17 @@ namespace GTAExpansion
                         else if (InventoryBag.canTakeBagFromVehicle && Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)InventoryBag.bag_menu_btn))
                             InventoryBag.bagSet(InventoryBag.bagModelCheck(Game.Player.Character), Game.Player.Character);
                     }
+                    if (Vest.vest_module_active)
+                    {
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)Vest.vest_menu_btn) && Vest.HasPedBoughtVest(Game.Player.Character))
+                        {
+                            Common.inMainMenu = false;
+                            Game.Player.Character.Task.ClearAll();
+                            Vest.inMenu = true;
+                        }
+                        
+
+                    }
                     if (WeaponHolster.holster_module_active && !Function.Call<bool>(Hash.IS_PED_RUNNING_MOBILE_PHONE_TASK, (InputArgument)(Entity)Game.Player.Character) && !Function.Call<bool>(Hash.IS_PED_RUNNING_RAGDOLL_TASK, (InputArgument)(Entity)Game.Player.Character) && !Function.Call<bool>(Hash.IS_PLAYER_FREE_AIMING, (InputArgument)Game.Player) && Game.Player.Character.IsOnFoot)
                     {
                         if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)WeaponHolster.intimidate_btn))
@@ -1157,6 +1168,16 @@ namespace GTAExpansion
                         Common.purchaseProcess = true;
                     }
                 }
+                if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)22) && !Game.Player.IsAiming)
+                {
+                    Vest.armorPlateCount = Vest.getArmorPlateCount(Game.Player.Character, "Armor_Plates");
+                    if (Vest.armorPlateCount <= Vest.armorPlatesMax)
+                    {
+                        Common.purchaseType = 6;
+                        Common.purchaseSum = Vest.armorPlatePrice;
+                        Common.purchaseProcess = true;
+                    }
+                }
                 if (Common.purchaseProcess)
                 {
                     Common.purchaseProcess = false;
@@ -1212,6 +1233,15 @@ namespace GTAExpansion
                             Common.saveSupplies(Game.Player.Character, "weapon_tools", WeaponJamming.cleaningToolsMax);
                             Notification.Show("Weapon cleaning toolkit set has been ~g~purchased", true);
                             HTools.Main.Notify("Your payment check: ~n~Weapon cleaning toolkit set: ~h~" + WeaponJamming.weaponToolsPrice.ToString() + "~h~~g~$~w~~n~-------------~n~Total sum: ~h~" + WeaponJamming.weaponToolsPrice.ToString() + "~h~~g~$~w~", "Shopping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
+                            HungerSystem.clearFoodPacket(Game.Player.Character, "hei_prop_hei_paper_bag");
+                            InventoryBag._isBuyingGear = false;
+                        }
+                        if (Common.purchaseType == 6)
+                        {
+                            Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
+                            Vest.SavePlates(Game.Player.Character, "Armor_Plates", Vest.armorPlatesMax);
+                            Notification.Show("Armor plate set set has been ~g~purchased", true);
+                            HTools.Main.Notify("Your payment check: ~n~Armor plate set: ~h~" + Vest.armorPlatePrice.ToString() + "~h~~g~$~w~~n~-------------~n~Total sum: ~h~" + Vest.armorPlatePrice.ToString() + "~h~~g~$~w~", "Shopping purchase", 0, (int)byte.MaxValue, 0, NotificationIcon.BankMaze);
                             HungerSystem.clearFoodPacket(Game.Player.Character, "hei_prop_hei_paper_bag");
                             InventoryBag._isBuyingGear = false;
                         }
@@ -3629,6 +3659,65 @@ namespace GTAExpansion
                     InventoryBag.mainMenu.Clear();
                     InventoryBag.mainMenu = (UIMenu)null;
                     InventoryBag.modMenuPool = (MenuPool)null;
+                }
+            }
+            if (Vest.vest_module_active)
+            {
+                Vest.vestcheck();
+
+                if (Vest.inMenu)
+                {
+                    Function.Call(Hash.CAN_PHONE_BE_SEEN_ON_SCREEN, (InputArgument)false);
+                    Common.camTimer = 0;
+                    //Common.followCamera = true;
+                    if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)177) || Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)202) || Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)25))
+                    {
+                        Common.followCamera = false;
+                        Game.Player.Character.Task.ClearAll();
+                        Vest.inMenu = false;
+                        Vest.mainMenuListString.Clear();
+                        Vest.stashedWeapons.Clear();
+                        Vest.characterWeapons.Clear();
+                        Vest.mainMenu.Visible = false;
+                        Vest.modMenuPool.CloseAllMenus();
+                        Vest.mainMenu.Clear();
+                        Vest.mainMenu = (UIMenu)null;
+                        Vest.modMenuPool = (MenuPool)null;
+                    }
+                    int num30 = Common.followCamera ? 1 : 0;
+                    if (Vest.modMenuPool != null)
+                    {
+                        Vest.modMenuPool.ProcessMenus();
+                        Vest.modMenuPool.ProcessMouse();
+                        Vest.modMenuPool.MouseEdgeEnabled = true;
+                        if (!Vest.modMenuPool.IsAnyMenuOpen())
+                        {
+                            if (Vest.mainMenu != null)
+                            {
+                                //if (!Common.isOccupied(Game.Player.Character) && !HTools.Main.isOccupiedNative(Game.Player.Character))
+                                  //  InventoryBag.weaponInventoryAnim(InventoryBag.bagModelReturn(Game.Player.Character), Game.Player.Character);
+                                Vest.mainMenu.Visible = true;
+                            }
+                            else
+                                Vest.Setup(Game.Player.Character);
+                        }
+                    }
+                    else
+                        Vest.Setup(Game.Player.Character);
+
+                    
+                }
+                else if (Vest.modMenuPool != null && Vest.mainMenu != null)
+                {
+                    Vest.mainMenuListString.Clear();
+                    //Vest.stashedWeapons.Clear();
+                    //Vest.characterWeapons.Clear();
+                    Vest.mainMenu.Visible = false;
+                    Vest.modMenuPool.CloseAllMenus();
+                    Vest.mainMenu.Clear();
+                    Vest.mainMenu = (UIMenu)null;
+                    Vest.modMenuPool = (MenuPool)null;
+                    Common.followCamera = false;
                 }
             }
             if (!((Entity)Common.seller != (Entity)null) || !Common.trans_completed)

@@ -44,6 +44,7 @@ namespace GTAExpansion
         public static int followCameraTimer = 0;
         public static Entity CamObject;
         public static int camTimer = 0;
+        public static bool buyArmorPlate = false;
         public static bool buyTools = false;
         public static bool buyBag = false;
         public static bool buyHolster = false;
@@ -863,6 +864,7 @@ namespace GTAExpansion
                     source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                     ++index1;
                 }
+
                 if (Common.buyBag || Common.buyHolster || Common.buySupplies || Common.buyTools)
                 {
                     Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], Control.Context, "Confirm");
@@ -896,12 +898,12 @@ namespace GTAExpansion
                         }
 
 
-                    //    if (Game.Player.Character.Armor > 0 || Vest.armortakenoff )
-                    //    {
-                  //          Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
-                   //         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
-                 //           ++index1;
-                 //       }
+                       if (Game.Player.Character.Armor >= 0 && Vest.HasPedBoughtVest(Game.Player.Character))
+                        {
+                            Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
+                            source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                            ++index1;
+                        }
 
                         // if (
                         if (WeaponHolster.holster_module_active & hasHolster)
@@ -1077,6 +1079,15 @@ namespace GTAExpansion
                 {
                     Function.Call(Hash.DISABLE_CONTROL_ACTION, (InputArgument)0, (InputArgument)26, (InputArgument)true);
                     Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], Control.LookBehind, "Buy cleaning kit (" + WeaponJamming.weaponToolsPrice.ToString() + "$)");
+                    source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                    ++index1;
+                }
+                if (Vest.vest_module_active && Vest.armorPlateCount < Vest.armorPlatesMax)
+                {
+                    string label = "Uncheck vest plates";
+                    if (!Common.buyArmorPlate)
+                        label = "Check vest plates (" + Vest.armorPlatePrice.ToString() + " $)";
+                    Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], Control.Jump, "Buy armor plates (" + Vest.armorPlatePrice.ToString() + "$)");
                     source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                     ++index1;
                 }
@@ -1629,6 +1640,15 @@ namespace GTAExpansion
             {
                 pedElement.SetAttributeValue("holster", false);
             }
+
+
+            // Remove vest
+            var vestAttr = pedElement.Attribute("vest");
+            if (vestAttr == null || (bool.TryParse(vestAttr.Value, out var hasVest) && hasVest))
+            {
+                pedElement.SetAttributeValue("vest", false);
+            }
+
 
             var weaponsConditions = pedElement.Element("WeaponsConditions");
             if (weaponsConditions != null)

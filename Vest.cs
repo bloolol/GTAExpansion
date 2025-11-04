@@ -15,6 +15,10 @@ namespace GTAExpansion
     public static class Vest
     {
         public static int vest_menu_btn = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("VEST", "VEST_MENU_BTN", 22);
+        public static bool vest_module_active = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<bool>("VEST_SETTINGS", "VEST_MODULE_ACTIVE", true);
+        public static int armorPlatePrice = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("PRICES", "WEAPON_CLEANING_TOOLS_PRICE", 300);
+        public static int armorPlateCount = 0;
+        public static int armorPlatesMax = 3;
         public static MenuPool modMenuPool;
         public static UIMenu mainMenu;
         public static List<object> mainMenuListString = new List<object>();
@@ -29,6 +33,7 @@ namespace GTAExpansion
         public static int armorlevel;
         public static void Setup(Ped ped)
         {
+            
             Vest.modMenuPool = new MenuPool();
             Vest.mainMenu = new UIMenu("Vest Menu", "Select option");
             Vest.modMenuPool.Add(Vest.mainMenu);
@@ -55,7 +60,13 @@ namespace GTAExpansion
             TakeItem.HighlightedTextColor = Vest.btnTextColor2;
             UIMenuColoredItem RemoveArmor = new UIMenuColoredItem("Take off armor", Vest.btnColor1, Vest.btnColor2);
             UIMenuColoredItem EquipArmor = new UIMenuColoredItem("Equip armor", Vest.btnColor1, Vest.btnColor2);
-            UIMenuColoredItem ReplaceArmorPlate = new UIMenuColoredItem("Replace armor plates", Vest.btnColor1, Vest.btnColor2);
+            armorPlateCount = Vest.getArmorPlateCount(ped, "Armor_Plates");
+            UIMenuColoredItem ReplaceArmorPlate = new UIMenuColoredItem(
+    $"Replace armor plates ({armorPlateCount})",
+    Vest.btnColor1,
+    Vest.btnColor2
+);
+
             UIMenuColoredItem CloseMenu = new UIMenuColoredItem("Exit", Color.Transparent, Color.GhostWhite);
             ReplaceArmorPlate.SetRightBadge(UIMenuItem.BadgeStyle.Clothes);
             ReplaceArmorPlate.TextColor = Vest.btnTextColor1;
@@ -70,12 +81,13 @@ namespace GTAExpansion
             RemoveArmor.SetRightBadge(UIMenuItem.BadgeStyle.Clothes);
             RemoveArmor.TextColor = Vest.btnTextColor1;
             RemoveArmor.HighlightedTextColor = Vest.btnTextColor2;
+            /*
             string character = ((PedHash)ped.Model).ToString();
             if (char.IsDigit(character[0]))
                 character = "CustomPed_" + character;
             if (Common.doc.Element((XName)"WeaponList").Element((XName)character) == null)
                 Common.doc.Element((XName)"WeaponList").Add((object)new XElement((XName)character));
-           /* if (!Vest.mainMenuListString.Contains((object)uiMenu1))
+            if (!Vest.mainMenuListString.Contains((object)uiMenu1))
             {
                 Vest.mainMenuListString.Add((object)uiMenu1);
                 UIMenu uiMenu11 = Vest.modMenuPool.AddSubMenu(Vest.mainMenu, "Auxillary");
@@ -269,7 +281,7 @@ namespace GTAExpansion
 
                 }
 
-            }*/
+            }
                 if (!Vest.mainMenuListString.Contains((object)uiMenu2))
                 {
                 Vest.mainMenuListString.Add((object)uiMenu2);
@@ -566,80 +578,95 @@ namespace GTAExpansion
                         }
                     }
                 });
-            }
+            }*/
             //if ((Entity)Vest.bagModelReturn(ped) != (Entity)null)
-            if (Game.Player.Character.Armor >  0) 
+            if (Game.Player.Character.Armor > 0)
             {
-                if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)RemoveArmor) && !Vest.armortakenoff)
+                if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)RemoveArmor) && HasPedBoughtVest(Game.Player.Character))
                     Vest.mainMenu.AddItem((UIMenuItem)RemoveArmor);
-                else if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)RemoveArmor) && Vest.armortakenoff)
-                    Vest.mainMenu.AddItem((UIMenuItem)EquipArmor);
-                if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)ReplaceArmorPlate) && Game.Player.Character.Armor < 100)
+                
+                if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)ReplaceArmorPlate) && Game.Player.Character.Armor < 100 && HasPedBoughtVest(Game.Player.Character) && Vest.getArmorPlateCount(Game.Player.Character, "Armor_Plates") > 0)
                     Vest.mainMenu.AddItem((UIMenuItem)ReplaceArmorPlate);
-            /*  if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)LoadOutfit) && Common.doc.Element((XName)"WeaponList").Element((XName)character).Element((XName)"Outfit") != null)
-                    Vest.mainMenu.AddItem((UIMenuItem)LoadOutfit);
-                if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)ChangeBagPosition))
-                    Vest.mainMenu.AddItem((UIMenuItem)ChangeBagPosition);  */
+                /*  if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)LoadOutfit) && Common.doc.Element((XName)"WeaponList").Element((XName)character).Element((XName)"Outfit") != null)
+                        Vest.mainMenu.AddItem((UIMenuItem)LoadOutfit);
+                    if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)ChangeBagPosition))
+                        Vest.mainMenu.AddItem((UIMenuItem)ChangeBagPosition);  */
                 if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)CloseMenu))
                     Vest.mainMenu.AddItem((UIMenuItem)CloseMenu);
             }
+            else if ((Game.Player.Character.Armor == 0))
+                {
+                     if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)EquipArmor) && HasPedBoughtVest(Game.Player.Character))
+                    Vest.mainMenu.AddItem((UIMenuItem)EquipArmor);
+                if (!Vest.mainMenu.MenuItems.Contains((UIMenuItem)CloseMenu))
+                    Vest.mainMenu.AddItem((UIMenuItem)CloseMenu);
+            }
+            
             Vest.mainMenu.OnItemSelect += (ItemSelectEvent)((sender, item, index) =>
-            {
-                if (item == RemoveArmor )
                 {
-                    if (!ped.IsSittingInVehicle() || ped.IsSittingInVehicle() && !ped.CurrentVehicle.IsBicycle && !ped.CurrentVehicle.IsBike && !ped.CurrentVehicle.IsQuadBike)
+                    if (item == RemoveArmor)
                     {
-                        Vest.inMenu = false;
-                        Game.Player.Character.Task.ClearAll();
-                        armorlevel = Game.Player.Character.Armor;
-                        Game.Player.Character.Armor = 0;
-                        armortakenoff = true;
-                        Vest.modMenuPool.CloseAllMenus();
-                        //Vest.bagRemove(Vest.bagModelReturn(ped), ped);
+                        if (!ped.IsSittingInVehicle() || ped.IsSittingInVehicle() && !ped.CurrentVehicle.IsBicycle && !ped.CurrentVehicle.IsBike && !ped.CurrentVehicle.IsQuadBike)
+                        {
+                            UpdateArmorLevel();
+                            //armorlevel = Game.Player.Character.Armor;
+                            Vest.inMenu = false;
+                            Game.Player.Character.Task.ClearAll();
+                            
+                           
+                            Game.Player.Character.Armor = 0;
+                            armortakenoff = true;
+                            Vest.mainMenu.RefreshIndex();
+                            Vest.modMenuPool.CloseAllMenus();
+                            //Vest.bagRemove(Vest.bagModelReturn(ped), ped);
+                        }
+                        //else
+                        //  Main.Notify("~r~You cant stash your bag here", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
                     }
-                    //else
-                      //  Main.Notify("~r~You cant stash your bag here", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
-                }
-                if (item == EquipArmor)
-                {
-                    if (!ped.IsSittingInVehicle() || ped.IsSittingInVehicle() && !ped.CurrentVehicle.IsBicycle && !ped.CurrentVehicle.IsBike && !ped.CurrentVehicle.IsQuadBike)
+                    if (item == EquipArmor)
                     {
-                        Vest.inMenu = false;
-                        Game.Player.Character.Task.ClearAll();
-                        Game.Player.Character.Armor = armorlevel;
-                        armortakenoff = false;
-                        Vest.modMenuPool.CloseAllMenus();
-                        //Vest.bagRemove(Vest.bagModelReturn(ped), ped);
+                        if (!ped.IsSittingInVehicle() || ped.IsSittingInVehicle() && !ped.CurrentVehicle.IsBicycle && !ped.CurrentVehicle.IsBike && !ped.CurrentVehicle.IsQuadBike)
+                        {
+                            Vest.inMenu = false;
+                            Game.Player.Character.Task.ClearAll();
+                            Game.Player.Character.Armor = GetArmorLevelFromXml();
+                            
+                            armortakenoff = false;
+                            Vest.mainMenu.RefreshIndex();
+                            Vest.modMenuPool.CloseAllMenus();
+                            //Vest.bagRemove(Vest.bagModelReturn(ped), ped);
+                        }
+                        //else
+                        //  Main.Notify("~r~You cant stash your bag here", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
                     }
-                    //else
-                    //  Main.Notify("~r~You cant stash your bag here", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
-                }
-                if (item == ReplaceArmorPlate)
-                {
+                    if (item == ReplaceArmorPlate)
+                    {
+                        Vest.armorPlateCount--;
+                        Vest.SavePlates(Game.Player.Character, "Armor_Plates", Vest.armorPlateCount);
+                        Vest.inMenu = false;
+                        Game.Player.Character.Armor = 100;
+                        Vest.modMenuPool.CloseAllMenus();
+
+                    }
+                    /*  if (item == LoadOutfit && (Entity)Vest.bagModelReturn(ped) != (Entity)null)
+                        {
+                            Vest.modMenuPool.CloseAllMenus();
+                            Vest.inMenu = false;
+                            Vest.LoadOutfitFunc(ped);
+                        }
+                        if (item == ChangeBagPosition && (Entity)Vest.bagModelReturn(ped) != (Entity)null)
+                        {
+
+                            Vest.modMenuPool.CloseAllMenus();
+                            Vest.inMenu = false;
+                        }*/
+                    if (item != CloseMenu) //|| !((Entity)Vest.bagModelReturn(ped) != (Entity)null))
+                        return;
+                    Vest.mainMenuListString.Clear();
+                    Vest.stashedWeapons.Clear();
                     Vest.inMenu = false;
-                    Game.Player.Character.Armor = 100;
-                    Vest.modMenuPool.CloseAllMenus();
-                    
-                }
-            /*  if (item == LoadOutfit && (Entity)Vest.bagModelReturn(ped) != (Entity)null)
-                {
-                    Vest.modMenuPool.CloseAllMenus();
-                    Vest.inMenu = false;
-                    Vest.LoadOutfitFunc(ped);
-                }
-                if (item == ChangeBagPosition && (Entity)Vest.bagModelReturn(ped) != (Entity)null)
-                {
-                    
-                    Vest.modMenuPool.CloseAllMenus();
-                    Vest.inMenu = false;
-                }*/
-                if (item != CloseMenu) //|| !((Entity)Vest.bagModelReturn(ped) != (Entity)null))
-                    return;
-                Vest.mainMenuListString.Clear();
-                Vest.stashedWeapons.Clear();
-                Vest.inMenu = false;
-                //Vest.weaponInventoryAnim(Vest.bagModelReturn(Game.Player.Character), Game.Player.Character);
-            });
+                    //Vest.weaponInventoryAnim(Vest.bagModelReturn(Game.Player.Character), Game.Player.Character);
+                });
         }
 
         public static void onMenuClose(UIMenu sender)
@@ -648,6 +675,250 @@ namespace GTAExpansion
                 return;
             Vest.modMenuPool.CloseAllMenus();
             Vest.inMenu = false;
+        }
+
+        public static int getArmorPlateCount(Ped ped, string elem)
+        {
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+
+            XElement weaponList = Common.doc.Element("WeaponList");
+            XElement pedElement = weaponList?.Element(name);
+            XElement suppliesElement = pedElement?.Element("Supplies");
+            XElement itemElement = suppliesElement?.Element(elem);
+            XElement countElement = itemElement?.Element("Count");
+
+            if (countElement != null && int.TryParse(countElement.Value, out int plates))
+                return plates;
+
+            return 0;
+        }
+
+        public static void SavePlates(Ped ped, string elem, int num)
+        {
+            if (ped == null || !ped.Exists()) return;
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+
+            XElement weaponList = Common.doc.Element("WeaponList");
+            XElement pedElement = weaponList?.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+                Common.saveDoc();
+            }
+
+            XElement suppliesElement = pedElement.Element("Supplies");
+            if (suppliesElement == null)
+            {
+                suppliesElement = new XElement("Supplies");
+                pedElement.Add(suppliesElement);
+                Common.saveDoc();
+            }
+
+            XElement itemElement = suppliesElement.Element(elem);
+            if (itemElement == null)
+            {
+                itemElement = new XElement(elem);
+                suppliesElement.Add(itemElement);
+            }
+
+            XElement countElement = itemElement.Element("Count");
+            if (countElement == null)
+            {
+                countElement = new XElement("Count", num);
+                itemElement.Add(countElement);
+            }
+            else
+            {
+                countElement.Value = num.ToString();
+            }
+
+            Common.saveDoc();
+        }
+
+        public static void DeletePlates(Ped ped)
+        {
+            if (ped == null || !ped.Exists()) return;
+
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+
+            XElement weaponList = Common.doc.Element("WeaponList");
+            XElement pedElement = weaponList?.Element(name);
+            XElement suppliesElement = pedElement?.Element("Supplies");
+            XElement armorPlateElement = suppliesElement?.Element("Armor_Plates");
+
+            if (armorPlateElement != null)
+            {
+                armorPlateElement.Remove();
+                Common.saveDoc();
+            }
+        }
+
+
+        public static bool IsArmorEquipped(Ped character)
+        {
+            // Check if the character exists and is alive
+            if (!character.Exists() || character.IsDead)
+                return false;
+
+            // Check armor value
+            int armor = character.Armor;
+
+            // Optional: Check if armor component is visually equipped (e.g., bulletproof vest)
+
+
+            // Return true if armor value is greater than zero or armor component is equipped
+            return armor > 0;
+        }
+        /*
+        public static void vestcheck()
+        {
+
+            var player = Game.Player.Character;
+            var armor = player.Armor;
+            if (armor > 0 && !HasPedBoughtVest(Game.Player.Character))
+            {
+                Common.UpdateAttachment("vest", true);
+                
+            }
+            if (HasPedBoughtVest(Game.Player.Character))
+            {
+
+                armorlevel = armor;
+
+            }
+            
+        }*/
+
+        public static void vestcheck()
+        {
+            var player = Game.Player.Character;
+            var armor = player.Armor;
+            string name = ((PedHash)player.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+
+            XElement pedElement = Common.doc.Element("WeaponList").Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                Common.doc.Element("WeaponList").Add(pedElement);
+            }
+
+            if (armor > 0 && (pedElement.Attribute("vest") == null || pedElement.Attribute("vest").Value != "true"))
+            {
+                pedElement.SetAttributeValue("vest", "true");
+                Common.UpdateAttachment("vest", true);
+            }
+
+            if (pedElement.Attribute("vest")?.Value == "true")
+            {
+                armorlevel = armor;
+            }
+        }
+
+
+        public static void UpdateArmorLevel()
+        {
+            var player = Game.Player.Character;
+            int armor = player.Armor;
+            string name = ((PedHash)player.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+
+            XElement weaponList = Common.doc.Element("WeaponList");
+            XElement pedElement = weaponList.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            XElement armorElement = pedElement.Element("armorlevel");
+            if (armorElement == null)
+            {
+                armorElement = new XElement("armorlevel", armor);
+                pedElement.Add(armorElement);
+            }
+            else
+            {
+                armorElement.Value = armor.ToString();
+            }
+        }
+
+        public static int GetArmorLevelFromXml()
+        {
+            var player = Game.Player.Character;
+            string name = ((PedHash)player.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+
+            XElement weaponList = Common.doc.Element("WeaponList");
+            XElement pedElement = weaponList?.Element(name);
+            if (pedElement == null)
+                return 0;
+
+            XElement armorElement = pedElement.Element("armorlevel");
+            if (armorElement == null)
+                return 0;
+
+            if (int.TryParse(armorElement.Value, out int armorLevel))
+                return armorLevel;
+
+            return 0;
+        }
+
+
+
+        public static bool HasPedBoughtVest(Ped ped)
+        {
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0]))
+                name = "CustomPed_" + name;
+            if (Common.doc.Element((XName)"WeaponList").Element((XName)name) == null)
+                Common.doc.Element((XName)"WeaponList").Add((object)new XElement((XName)name));
+            XElement xelement = Common.doc.Element((XName)"WeaponList").Element((XName)name);
+            return xelement.Attribute((XName)"vest") != null && xelement.Attribute((XName)"vest").Value == "true";
+        }
+
+        public static void DeleteVest(Ped ped)
+        {
+            if (ped == null || !ped.Exists()) return;
+
+            // Normalize ped name
+            string name = ((PedHash)ped.Model).ToString();
+            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+            // Ensure WeaponList exists
+            var weaponList = Common.doc.Element("WeaponList");
+            if (weaponList == null)
+            {
+                weaponList = new XElement("WeaponList");
+                Common.doc.Add(weaponList);
+            }
+
+            // Ensure ped element exists
+            var pedElement = weaponList.Element(name);
+            if (pedElement == null)
+            {
+                pedElement = new XElement(name);
+                weaponList.Add(pedElement);
+            }
+
+            // Safely set holster attribute to false
+            var holsterAttr = pedElement.Attribute("vest");
+            if (holsterAttr == null || (bool.TryParse(holsterAttr.Value, out var hasHolster) && hasHolster))
+            {
+                pedElement.SetAttributeValue("vest", false);
+                Common.saveDoc();
+            }
         }
 
     }
