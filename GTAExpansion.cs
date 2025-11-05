@@ -2788,7 +2788,7 @@ namespace GTAExpansion
             }
             if (WeaponJamming.jammingModeIsActive)
             {
-                if (WeaponJamming.weaponIsJammed)
+                if (WeaponJamming.weaponIsJammed && Game.Player.Character.Weapons.Current != WeaponHash.Unarmed)
                 {
                     Game.DisableControlThisFrame(Control.Attack);
                     Game.DisableControlThisFrame(Control.Attack2);
@@ -4038,3 +4038,4 @@ namespace GTAExpansion
         }
     }
 }
+
