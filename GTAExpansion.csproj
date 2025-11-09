@@ -58,6 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetLoader.cs" />
+    <Compile Include="Blips.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="Crouch.cs" />
     <Compile Include="ExpansionEnums.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="Grip.cs" />
     <Compile Include="GTAExpansion.cs" />
     <Compile Include="Helmet.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="HungerSystem.cs" />
     <Compile Include="InventoryBag.cs" />
     <Compile Include="CigsAndPills.cs" />

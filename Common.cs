@@ -44,6 +44,9 @@ namespace GTAExpansion
         public static int followCameraTimer = 0;
         public static Entity CamObject;
         public static int camTimer = 0;
+        public static bool buyArmorPlate = false;
+        public static bool buyHeadset = false;
+
         public static bool buyTools = false;
         public static bool buyBag = false;
         public static bool buyHolster = false;
@@ -66,8 +69,10 @@ namespace GTAExpansion
         public static int actionTimer = 0;
         public static bool pedIsNearShopkeeper = false;
         public static bool pedIsNearGunDealer = false;
+        public static bool pedIsNearSuburbanCashier = false;
         public static Ped _shopKeeper = (Ped)null;
         public static Ped _GunDealer = (Ped)null;
+        public static Ped _SuburbanCashier = (Ped)null;
         public static bool come_over_mode = false;
         public static bool greeting = false;
         public static bool greetingFinished = false;
@@ -119,8 +124,17 @@ namespace GTAExpansion
         };
         public static HPhoneApp IFruit = new HPhoneApp();
         public static HPhoneContact callContact;
-        
-        
+
+        public enum PurchaseType
+        {
+            Food_Drinks = 1,
+            Cigs_Pills = 2,
+            Dufflebag = 3,
+            Holster = 4,
+            CleaningToolKit = 5,
+            ArmorPlateSet = 6
+        }
+
         public static bool IsAnimPlay(this Ped ped, string animDict, string animName)
         {
             return Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)ped, (InputArgument)animDict, (InputArgument)animName, (InputArgument)3);
@@ -128,13 +142,13 @@ namespace GTAExpansion
         public static void ContactAnsweredDate(HPhoneContact contact)
         {
            
-
+            Ped player = Game.Player.Character;
             Common.IFruit.Close2();
-            Main.soundFX(Game.Player.Character, "beep.wav", Common.assetFolder);
-            Common.update_inventory_status(Game.Player.Character);
+            Main.soundFX(player, "beep.wav", Common.assetFolder);
+            Common.update_inventory_status(player);
             if (Common.deal && !Common.payed)
             {
-                if (!((Entity)Common.seller != (Entity)null) || (double)Common.seller.Position.DistanceTo(Game.Player.Character.Position) >= 15.0 || Common.payed)
+                if (!((Entity)Common.seller != (Entity)null) || (double)Common.seller.Position.DistanceTo(player.Position) >= 15.0 || Common.payed)
                     return;
                 Common.payed = true;
             }
@@ -460,13 +474,14 @@ namespace GTAExpansion
 
         public static void followCameraCreateFunc(Ped ped, Entity follow_object)
         {
+            Ped player = Game.Player.Character;
             ++Common.camTimer;
             if (Common.camTimer >= 150)
             {
                 Common.camTimer = 0;
                 Common.followCamera = false;
             }
-            if (!Game.Player.Character.IsSittingInVehicle())
+            if (!player.IsSittingInVehicle())
             {
                 if (Function.Call<int>(Hash.GET_FOLLOW_PED_CAM_VIEW_MODE) != 4)
                 {
@@ -727,6 +742,7 @@ namespace GTAExpansion
         {
             InstructionBtn[] source = new InstructionBtn[0];
             int index1 = 0;
+            Ped player = Game.Player.Character;
             if (mode == 0)
             {
                 if (!isCleaningWeapon)
@@ -863,6 +879,7 @@ namespace GTAExpansion
                     source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                     ++index1;
                 }
+
                 if (Common.buyBag || Common.buyHolster || Common.buySupplies || Common.buyTools)
                 {
                     Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], Control.Context, "Confirm");
@@ -885,7 +902,7 @@ namespace GTAExpansion
                     index1 = index4 + 1;
                     if (action_page == 0)
                     {
-                        if (((IEnumerable<WeaponGroup>)WeaponHolster._bigWeaponGroups).Contains<WeaponGroup>(Game.Player.Character.Weapons.Current.Group))
+                        if (((IEnumerable<WeaponGroup>)WeaponHolster._bigWeaponGroups).Contains<WeaponGroup>(player.Weapons.Current.Group))
                         {
                             Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)WeaponHolster.weapon_menu_btn, "Weapon menu");
                             source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
@@ -896,12 +913,12 @@ namespace GTAExpansion
                         }
 
 
-                    //    if (Game.Player.Character.Armor > 0 || Vest.armortakenoff )
-                    //    {
-                  //          Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
-                   //         source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
-                 //           ++index1;
-                 //       }
+                       if (player.Armor >= 0 && Vest.HasPedBoughtVest(player))
+                        {
+                            Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Vest.vest_menu_btn, "Vest menu");
+                            source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                            ++index1;
+                        }
 
                         // if (
                         if (WeaponHolster.holster_module_active & hasHolster)
@@ -909,7 +926,7 @@ namespace GTAExpansion
                             Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)WeaponHolster.holster_toggle_btn, "Holster");
                             source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                             ++index1;
-                            if ((Entity)WeaponHolster.holster != (Entity)null && WeaponHolster.holster.Exists() && !Game.Player.Character.IsSittingInVehicle())
+                            if ((Entity)WeaponHolster.holster != (Entity)null && WeaponHolster.holster.Exists() && !player.IsSittingInVehicle())
                             {
                                 Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)WeaponHolster.intimidate_btn, "Start Intimidate");
                                 source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
@@ -934,7 +951,7 @@ namespace GTAExpansion
                                 ++index1;
                             }
                         }
-                        if (Game.Player.Character.IsSittingInVehicle() && (Game.Player.Character.CurrentVehicle.IsBicycle || Game.Player.Character.CurrentVehicle.IsBike))
+                        if (player.IsSittingInVehicle() && (player.CurrentVehicle.IsBicycle || player.CurrentVehicle.IsBike))
                         {
                             Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)Helmet.helmet_on_btn, "Put helmet on");
                             source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
@@ -952,15 +969,26 @@ namespace GTAExpansion
                         Common.common_btns[index7] = Main.setBtn(Common.common_btns[index7], (Control)Wallet.wallet_btn, "Wallet");
                         InstructionBtn[] array5 = ((IEnumerable<InstructionBtn>)array4).Append<InstructionBtn>(Common.common_btns[index7]).ToArray<InstructionBtn>();
                         int index8 = index7 + 1;
-                        Common.common_btns[index8] = Main.setBtn(Common.common_btns[index8], (Control)OnFootRadio.earphone_toggle_btn, "Earphone");
-                        source = ((IEnumerable<InstructionBtn>)array5).Append<InstructionBtn>(Common.common_btns[index8]).ToArray<InstructionBtn>();
-                        index1 = index8 + 1;
-                        if (OnFootRadio.headset)
+                        index1 = index8;
+                        source = array5; // ✅ Ensure base buttons are committed
+                        index1 = index8;
+                        bool hasboughtheadset = OnFootRadio.HasPedBoughtHeadset(player);
+                        if (hasboughtheadset)
                         {
-                            Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)OnFootRadio.readio_off_btn, "Toggle Radio");
-                            source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
-                            ++index1;
+                            
+                            Common.common_btns[index8] = Main.setBtn(Common.common_btns[index8], (Control)OnFootRadio.earphone_toggle_btn, "Headset");
+                            source = ((IEnumerable<InstructionBtn>)array5).Append<InstructionBtn>(Common.common_btns[index8]).ToArray<InstructionBtn>();
+                            index1 = index8 + 1;
+                            if (OnFootRadio.headset)
+                            {
+                                Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], (Control)OnFootRadio.readio_off_btn, "Toggle Radio");
+                                source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                                ++index1;
+                            }
                         }
+
+
+
                     }
                     if (action_page == 2 && FastWardrobe.mask_module_active)
                     {
@@ -1072,7 +1100,7 @@ namespace GTAExpansion
                 Common.common_btns[index14] = Main.setBtn(Common.common_btns[index14], Control.Aim, "Buy holster (" + WeaponHolster.HolsterPrice.ToString() + "$)");    
                 source = ((IEnumerable<InstructionBtn>)array).Append<InstructionBtn>(Common.common_btns[index14]).ToArray<InstructionBtn>();
                 index1 = index14 + 1;
-                WeaponJamming.cleaningToolsCount = Common.getSupplies(Game.Player.Character, "weapon_tools");
+                WeaponJamming.cleaningToolsCount = Common.getSupplies(player, "weapon_tools");
                 if (WeaponJamming.cleaningToolsCount <= WeaponJamming.cleaningToolsMax)
                 {
                     Function.Call(Hash.DISABLE_CONTROL_ACTION, (InputArgument)0, (InputArgument)26, (InputArgument)true);
@@ -1080,6 +1108,35 @@ namespace GTAExpansion
                     source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
                     ++index1;
                 }
+                if (Vest.vest_module_active && Vest.armorPlateCount < Vest.armorPlatesMax)
+                {
+                    string label = "Uncheck vest plates";
+                    if (!Common.buyArmorPlate)
+                        label = "Check vest plates (" + Vest.armorPlatePrice.ToString() + " $)";
+                    Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], Control.Jump, "Buy armor plates (" + Vest.armorPlatePrice.ToString() + "$)");
+                    source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                    ++index1;
+                }
+                if (!OnFootRadio.isHeadsetBought)
+                {
+                    string label = "Uncheck headset";
+                    if (!Common.buyHeadset)
+                        label = "Check headset (" + OnFootRadio.HeadsetPrice.ToString() + " $)";
+                    Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], Control.Sprint, "Buy headset (" + OnFootRadio.HeadsetPrice.ToString() + "$)");
+                    source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                    ++index1;
+                }
+
+            }
+
+            if (mode == 12)
+            {
+                //if (InventoryBag.hasBag)
+
+                Common.common_btns[index1] = Main.setBtn(Common.common_btns[index1], GTA.Control.LookBehind, "Buy headset (" + OnFootRadio.HeadsetPrice.ToString() + "$)");
+                InstructionBtn[] array = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                source = ((IEnumerable<InstructionBtn>)source).Append<InstructionBtn>(Common.common_btns[index1]).ToArray<InstructionBtn>();
+                ++index1;
             }
             List<InstructionBtn> list = Main.instructionButtonPool.ToList();
             foreach (InstructionBtn instructionBtn in source)
@@ -1099,9 +1156,10 @@ namespace GTAExpansion
 
         public static bool curVehicleIsCar(Ped ped)
         {
-            if (!Game.Player.Character.IsSittingInVehicle())
+            Ped player = Game.Player.Character;
+            if (!player.IsSittingInVehicle())
                 return true;
-            return Game.Player.Character.IsSittingInVehicle() && !Game.Player.Character.CurrentVehicle.IsBicycle && !Game.Player.Character.CurrentVehicle.IsBike && !Game.Player.Character.CurrentVehicle.IsQuadBike && !Game.Player.Character.CurrentVehicle.IsRegularQuadBike && !Game.Player.Character.CurrentVehicle.IsAmphibiousQuadBike && !Game.Player.Character.CurrentVehicle.IsPlane && !Game.Player.Character.CurrentVehicle.IsHelicopter;
+            return player.IsSittingInVehicle() && !player.CurrentVehicle.IsBicycle && !player.CurrentVehicle.IsBike && !player.CurrentVehicle.IsQuadBike && !player.CurrentVehicle.IsRegularQuadBike && !player.CurrentVehicle.IsAmphibiousQuadBike && !player.CurrentVehicle.IsPlane && !player.CurrentVehicle.IsHelicopter;
         }
 
         public static int getSupplies(Ped ped, string elem)
@@ -1198,22 +1256,24 @@ namespace GTAExpansion
           bool cleaning_tools_purchashed,
           XDocument _doc)
         {
+            Ped player = Game.Player.Character;
             if (Common.payed)
             {
-                Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)Game.Player.Character, (InputArgument)"GENERIC_THANKS", (InputArgument)"SPEECH_PARAMS_FORCE");
+               
+                Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)player, (InputArgument)"GENERIC_THANKS", (InputArgument)"SPEECH_PARAMS_FORCE");
                 Script.Wait(1000);
                 Function.Call(Hash.PLAY_PED_AMBIENT_SPEECH_NATIVE, (InputArgument)(Entity)dealer, (InputArgument)"GENERIC_BYE", (InputArgument)"SPEECH_PARAMS_FORCE");
                 if (Common.TotalPrice + Common.TotalPrice / 100 * 5 > 0)
                 {
                     Main.Notify((Common.TotalPrice + Common.TotalPrice / 100 * 5).ToString() + "~g~ $ ~w~Transaction ~g~successfully ~w~completed~n~Payment transaction ~o~5%~w~ has been discharged~n~Thank you for using our service!", "MAZE", (int)byte.MaxValue, 0, 0, NotificationIcon.BankMaze);
-                    if (Game.Player.Character.Model == (Model)PedHash.Michael || Game.Player.Character.Model == (Model)PedHash.Franklin || Game.Player.Character.Model == (Model)PedHash.Trevor)
+                    if (player.Model == (Model)PedHash.Michael || player.Model == (Model)PedHash.Franklin || player.Model == (Model)PedHash.Trevor)
                         Game.Player.Money -= Common.TotalPrice + Common.TotalPrice / 100 * 5;
                 }
                 Function.Call(Hash.PLAY_MISSION_COMPLETE_AUDIO, (InputArgument)"TREVOR_SMALL_01");
                 if (bag_purchase)
                 {
-                    InventoryBag.ClearInventoryData(Game.Player.Character);
-                    InventoryBag.bagSet(InventoryBag.bagModelCheck(Game.Player.Character), Game.Player.Character);
+                    InventoryBag.ClearInventoryData(player);
+                    InventoryBag.bagSet(InventoryBag.bagModelCheck(player), player);
                     Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                     Notification.Show("Dufflebag has been ~g~purchased", true);
                 }
@@ -1224,31 +1284,31 @@ namespace GTAExpansion
                     if (CigsAndPills.pillsCount < CigsAndPills.maxPills)
                     {
                         Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
-                        Common.saveSupplies(Game.Player.Character, "painkillers", CigsAndPills.maxPills);
+                        Common.saveSupplies(player, "painkillers", CigsAndPills.maxPills);
                         Notification.Show("~g~+" + num1.ToString() + " ~w~Pills", true);
                     }
                     if (CigsAndPills.cigsCount < CigsAndPills.maxCigs)
                     {
                         Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
-                        Common.saveSupplies(Game.Player.Character, "ciggaretes", CigsAndPills.maxCigs);
+                        Common.saveSupplies(player, "ciggaretes", CigsAndPills.maxCigs);
                         Notification.Show("~g~+" + num2.ToString() + " ~w~Cigs", true);
                     }
                 }
                 if (holster_purchase)
                 {
-                    WeaponHolster.SaveHolster(Game.Player.Character);
+                    WeaponHolster.SaveHolster(player);
                     Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
                     Notification.Show("Holster has been ~g~purchased", true);
                 }
                 if (cleaning_tools_purchashed && WeaponJamming.cleaningToolsCount < WeaponJamming.cleaningToolsMax)
                 {
                     Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)0, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)100);
-                    Common.saveSupplies(Game.Player.Character, "weapon_tools", WeaponJamming.cleaningToolsMax);
+                    Common.saveSupplies(player, "weapon_tools", WeaponJamming.cleaningToolsMax);
                     Notification.Show("Weapon cleaning tools has been ~g~purchased", true);
                 }
             }
             Common.clearScriptFunction();
-            Game.Player.Character.Task.ClearAll();
+            player.Task.ClearAll();
             Common.buyBag = false;
             Common.buyHolster = false;
             Common.buySupplies = false;
@@ -1359,6 +1419,7 @@ namespace GTAExpansion
 
         public static void CreateSeller(Vector3 location)
         {
+            Ped player = Game.Player.Character;
             Ped[] nearbyPeds = World.GetNearbyPeds(location, 125f, (Model)PedHash.Dealer01SMY);
             Common.seller = (Ped)null;
             bool flag1 = false;
@@ -1396,7 +1457,7 @@ namespace GTAExpansion
             {
                 foreach (Prop prop2 in nearbyProps)
                 {
-                    if (!prop2.IsAttached() && !prop2.IsAttachedTo((Entity)Common.seller) && !prop2.IsAttachedTo((Entity)Game.Player.Character) && (Entity)prop2 != InventoryBag.getDroppedBag(Game.Player.Character))
+                    if (!prop2.IsAttached() && !prop2.IsAttachedTo((Entity)Common.seller) && !prop2.IsAttachedTo((Entity)player) && (Entity)prop2 != InventoryBag.getDroppedBag(player))
                     {
                         prop1 = prop2;
                         flag2 = true;
@@ -1405,7 +1466,7 @@ namespace GTAExpansion
             }
             if (!flag2)
                 prop1 = World.CreateProp((Model)Main.GetHashKey(InventoryBag.bagModel), Common.seller.Position, true, true);
-            if (!((Entity)prop1 != (Entity)null) || prop1.IsAttached() || prop1.IsAttachedTo((Entity)Common.seller) || prop1.IsAttachedTo((Entity)Game.Player.Character))
+            if (!((Entity)prop1 != (Entity)null) || prop1.IsAttached() || prop1.IsAttachedTo((Entity)Common.seller) || prop1.IsAttachedTo((Entity)player))
                 return;
             int num = Function.Call<int>(Hash.GET_PED_BONE_INDEX, (InputArgument)(Entity)Common.seller, (InputArgument)InventoryBag.bag_attach_bone);
             Function.Call(Hash.ATTACH_ENTITY_TO_ENTITY, (InputArgument)(Entity)prop1, (InputArgument)(Entity)Common.seller, (InputArgument)num, (InputArgument)InventoryBag.xdg, (InputArgument)InventoryBag.ydg, (InputArgument)InventoryBag.zdg, (InputArgument)InventoryBag.xrdg, (InputArgument)InventoryBag.yrdg, (InputArgument)InventoryBag.zrdg, (InputArgument)true, (InputArgument)true, (InputArgument)false, (InputArgument)false, (InputArgument)0, (InputArgument)true);
@@ -1413,6 +1474,7 @@ namespace GTAExpansion
 
         public static void clearScriptFunction()
         {
+            Ped player = Game.Player.Character;
             Common.come_over_mode = false;
             World.DestroyAllCameras();
             World.RenderingCamera = (Camera)null;
@@ -1430,7 +1492,7 @@ namespace GTAExpansion
                 {
                     foreach (Prop prop in nearbyProps)
                     {
-                        if (prop.IsAttachedTo((Entity)Common.seller) || !prop.IsAttached() && (Entity)prop != InventoryBag.getDroppedBag(Game.Player.Character))
+                        if (prop.IsAttachedTo((Entity)Common.seller) || !prop.IsAttached() && (Entity)prop != InventoryBag.getDroppedBag(player))
                             prop.Delete();
                     }
                 }
@@ -1441,7 +1503,7 @@ namespace GTAExpansion
             Common.payed = false;
             Game.Pause(false);
             Game.Player.CanControlCharacter = true;
-            Game.Player.Character.Task.ClearAll();
+            player.Task.ClearAll();
             World.RenderingCamera = (Camera)null;
         }
 
@@ -1513,155 +1575,343 @@ namespace GTAExpansion
                 weaponList.Add(pedElement);
             }
 
-            // Safely set attachment attributes to false
+            // Safely set attachment attributes to false only if not already false
             string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
             foreach (var attachment in attachments)
             {
                 var attr = pedElement.Attribute(attachment);
-                if (attr == null || (bool.TryParse(attr.Value, out var hasAttachment) && hasAttachment))
-                {
-                    pedElement.SetAttributeValue(attachment, false);
-                }
+
+                // Skip if already explicitly false
+                if (attr != null && bool.TryParse(attr.Value, out var hasAttachment) && !hasAttachment)
+                    continue;
+
+                pedElement.SetAttributeValue(attachment, false);
             }
 
             Common.saveDoc();
-            return;
         }
 
-        public static void ClearItemsWhenDead()
-        {
-            var ped = Game.Player.Character;
-            if (ped == null || !ped.Exists()) return;
+                public static void ClearItemsWhenDead()
+                {
+                    var ped = Game.Player.Character;
+                    if (ped == null || !ped.Exists()) return;
 
-            // Remove current or previous inventory bag
-            if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.Exists() && InventoryBag.cur_bag.IsAttached())
-            {
-                InventoryBag.cur_bag.Delete();
-            }
-            else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
-            {
-                InventoryBag.prev_bag.Delete();
-            }
+                    // Remove current or previous inventory bag
+                    if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.Exists() && InventoryBag.cur_bag.IsAttached())
+                    {
+                        InventoryBag.cur_bag.Delete();
+                    }
+                    else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
+                    {
+                        InventoryBag.prev_bag.Delete();
+                    }
 
-            // Remove holster object
-            if (WeaponHolster.holster != null && WeaponHolster.holster.Exists() && WeaponHolster.holster.IsAttached())
-            {
-                WeaponHolster.holster.Delete();
-            }
+                    // Remove holster object
+                    if (WeaponHolster.holster != null && WeaponHolster.holster.Exists() && WeaponHolster.holster.IsAttached())
+                    {
+                        WeaponHolster.holster.Delete();
+                    }
 
-            // Remove holster metadata
-            WeaponHolster.DeleteHolster(ped);
+                    // Remove holster metadata
+                    //WeaponHolster.DeleteHolster(ped);
 
-            // Remove holstered pistol
-            if (WeaponHolster.HolstedPistol != null && WeaponHolster.HolstedPistol.Exists() && WeaponHolster.HolstedPistol.IsAttached())
-            {
-                WeaponHolster.HolstedPistol.Delete();
-            }
+                    // Remove holstered pistol
+                    if (WeaponHolster.HolstedPistol != null && WeaponHolster.HolstedPistol.Exists() && WeaponHolster.HolstedPistol.IsAttached())
+                    {
+                        WeaponHolster.HolstedPistol.Delete();
+                    }
 
-            // Remove previously holstered pistol
-            if (WeaponHolster.HolstedPistolPrev != null && WeaponHolster.HolstedPistolPrev.Exists() && WeaponHolster.HolstedPistolPrev.IsAttached())
-            {
-                WeaponHolster.HolstedPistolPrev.Delete();
-            }
-        }
+                    // Remove previously holstered pistol
+                    if (WeaponHolster.HolstedPistolPrev != null && WeaponHolster.HolstedPistolPrev.Exists() && WeaponHolster.HolstedPistolPrev.IsAttached())
+                    {
+                        WeaponHolster.HolstedPistolPrev.Delete();
+                    }
 
 
+                    // Remove headset if equipped
+                    if (OnFootRadio.headset)
+                    {
+                         Function.Call(Hash.CLEAR_PED_PROP, (InputArgument)(Entity)ped, (InputArgument)2);
+                    }
+                }
+        
+                  public static void ClearedItemsWhenDeadXML()
+                        {
+                            var ped = Game.Player.Character;
+                            if (ped == null || !ped.Exists()) return;
+
+                            string name = ((PedHash)ped.Model).ToString();
+                            if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+                            // Ensure WeaponList and ped element exist
+                            var weaponList = Common.doc.Element("WeaponList");
+                            if (weaponList == null)
+                            {
+                                weaponList = new XElement("WeaponList");
+                                Common.doc.Add(weaponList);
+                            }
+
+                            var pedElement = weaponList.Element(name);
+                            if (pedElement == null)
+                            {
+                                pedElement = new XElement(name);
+                                weaponList.Add(pedElement);
+                            }
+
+                            // Remove attachments
+                            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
+                            foreach (var attachment in attachments)
+                            {
+                                var attr = pedElement.Attribute(attachment);
+                                if (attr == null || !bool.TryParse(attr.Value, out var hasAttachment) || hasAttachment)
+                                {
+                                    pedElement.SetAttributeValue(attachment, false);
+                                }
+                            }
+
+
+
+                            // Remove inventory bag
+                            if (InventoryBag.doesPedHasInventoryBag(ped) && InventoryBag.doesPedWearingBag(ped))
+                            {
+                                // if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.IsAttached())
+                                //   {
+                                //     InventoryBag.cur_bag.Delete();
+                                //}
+                                //else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
+                                //{
+                                //   InventoryBag.prev_bag.Delete();
+                                //}
+
+                                var bagAttr = pedElement.Attribute("bag");
+                                if (bagAttr == null || !bool.TryParse(bagAttr.Value, out var hasBag) || hasBag)
+                                {
+                                    pedElement.SetAttributeValue("bag", false);
+                                }
+
+
+                                Common.curPlayer = ped;
+                                Common.update_inventory_status(ped);
+
+                            }
+
+                            // Remove holster
+                            var holsterAttr = pedElement.Attribute("holster");
+                            if (holsterAttr == null || !bool.TryParse(holsterAttr.Value, out var hasHolster) || hasHolster)
+                            {
+                                pedElement.SetAttributeValue("holster", false);
+                            }
+
+                            // Remove vest only if not already false
+                            var vestAttr = pedElement.Attribute("vest");
+                            if (vestAttr == null || !bool.TryParse(vestAttr.Value, out var hasVest) || hasVest)
+                            {
+                                pedElement.SetAttributeValue("vest", false);
+                            }
+
+
+            // Headset only if not already false
+                             var headsetAttr = pedElement.Attribute("headset");
+                            if (vestAttr == null || !bool.TryParse(vestAttr.Value, out var hasHeadset) || hasHeadset)
+                            {
+                            pedElement.SetAttributeValue("headset", false);
+                            }
+
+            // Reset armor level if tag is present and not already zero
+            var armorAttr = pedElement.Attribute("armorlevel");
+                            if (armorAttr != null && (!int.TryParse(armorAttr.Value, out var armorLevel) || armorLevel != 0))
+                            {
+                            pedElement.SetAttributeValue("armorlevel", 0);
+                             // Also reset in-game armor
+                            }
+
+
+
+                            var weaponsConditions = pedElement.Element("WeaponsConditions");
+                            if (weaponsConditions != null)
+                            {
+                                foreach (var weapon in weaponsConditions.Elements())
+                                {
+                                    var shotsAttr = weapon.Attribute("shots");
+
+                                    // Only update if missing or not already 0
+                                    if (shotsAttr == null || !int.TryParse(shotsAttr.Value, out var shots) || shots != 0)
+                                    {
+                                        weapon.SetAttributeValue("shots", 0);
+                                    }
+                                }
+                            }
+
+                            var hungerElement = pedElement.Element("hunger");
+                            if (hungerElement != null)
+                            {
+                                var foodElement = hungerElement.Element("food");
+                                if (foodElement != null)
+                                {
+                                    foodElement.RemoveNodes(); // removes all child elements of <food>
+                                }
+
+                                var drinksElement = hungerElement.Element("drinks");
+                                if (drinksElement != null)
+                                {
+                                    drinksElement.RemoveNodes(); // removes all child elements of <drinks>
+                                }
+                            }
+
+
+                            Common.saveDoc();
+                        }
+
+                
+
+        // Original version kept for reference
+        /*
         public static void ClearedItemsWhenDeadXML()
+                {
+                    var ped = Game.Player.Character;
+                    if (ped == null || !ped.Exists()) return;
+
+                    string name = ((PedHash)ped.Model).ToString();
+                    if (char.IsDigit(name[0])) name = "CustomPed_" + name;
+
+                    // Ensure WeaponList and ped element exist
+                    var weaponList = Common.doc.Element("WeaponList");
+                    if (weaponList == null)
+                    {
+                        weaponList = new XElement("WeaponList");
+                        Common.doc.Add(weaponList);
+                    }
+
+                    var pedElement = weaponList.Element(name);
+                    if (pedElement == null)
+                    {
+                        pedElement = new XElement(name);
+                        weaponList.Add(pedElement);
+                    }
+
+                    // Remove attachments
+                    string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
+                    foreach (var attachment in attachments)
+                    {
+                        var attr = pedElement.Attribute(attachment);
+                        if (attr == null || !bool.TryParse(attr.Value, out var hasAttachment) || hasAttachment)
+                        {
+                            pedElement.SetAttributeValue(attachment, false);
+                        }
+                    }
+
+
+
+                    // Remove inventory bag
+                    if (InventoryBag.doesPedHasInventoryBag(ped) && InventoryBag.doesPedWearingBag(ped))
+                    {
+                        // if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.IsAttached())
+                        //   {
+                        //     InventoryBag.cur_bag.Delete();
+                        //}
+                        //else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
+                        //{
+                        //   InventoryBag.prev_bag.Delete();
+                        //}
+
+                        var bagAttr = pedElement.Attribute("bag");
+                        if (bagAttr == null || !bool.TryParse(bagAttr.Value, out var hasBag) || hasBag)
+                        {
+                            pedElement.SetAttributeValue("bag", false);
+                        }
+
+
+                        Common.curPlayer = ped;
+                        Common.update_inventory_status(ped);
+
+                    }
+
+                    // Remove holster
+                    var holsterAttr = pedElement.Attribute("holster");
+                    if (holsterAttr == null || !bool.TryParse(holsterAttr.Value, out var hasHolster) || hasHolster)
+                    {
+                        pedElement.SetAttributeValue("holster", false);
+                    }
+
+                    // Remove vest only if not already false
+                    var vestAttr = pedElement.Attribute("vest");
+                    if (vestAttr == null || !bool.TryParse(vestAttr.Value, out var hasVest) || hasVest)
+                    {
+                        pedElement.SetAttributeValue("vest", false);
+                    }
+
+
+
+
+
+                    var weaponsConditions = pedElement.Element("WeaponsConditions");
+                    if (weaponsConditions != null)
+                    {
+                        foreach (var weapon in weaponsConditions.Elements())
+                        {
+                            var shotsAttr = weapon.Attribute("shots");
+
+                            // Only update if missing or not already 0
+                            if (shotsAttr == null || !int.TryParse(shotsAttr.Value, out var shots) || shots != 0)
+                            {
+                                weapon.SetAttributeValue("shots", 0);
+                            }
+                        }
+                    }
+
+                    var hungerElement = pedElement.Element("hunger");
+                    if (hungerElement != null)
+                    {
+                        var foodElement = hungerElement.Element("food");
+                        if (foodElement != null)
+                        {
+                            foodElement.RemoveNodes(); // removes all child elements of <food>
+                        }
+
+                        var drinksElement = hungerElement.Element("drinks");
+                        if (drinksElement != null)
+                        {
+                            drinksElement.RemoveNodes(); // removes all child elements of <drinks>
+                        }
+                    }
+
+
+                    Common.saveDoc();
+                }
+         */       
+        private static void ClearBoolAttribute(XElement element, string attrName)
+        {
+            var attr = element.Attribute(attrName);
+            if (attr == null || !bool.TryParse(attr.Value, out var val) || val)
+                element.SetAttributeValue(attrName, false);
+        }
+
+
+        public static bool GetAttachmentState(string attachmentName)
         {
             var ped = Game.Player.Character;
-            if (ped == null || !ped.Exists()) return;
+            if (ped == null || !ped.Exists()) return false;
 
             string name = ((PedHash)ped.Model).ToString();
             if (char.IsDigit(name[0])) name = "CustomPed_" + name;
 
-            // Ensure WeaponList and ped element exist
             var weaponList = Common.doc.Element("WeaponList");
-            if (weaponList == null)
-            {
-                weaponList = new XElement("WeaponList");
-                Common.doc.Add(weaponList);
-            }
+            if (weaponList == null) return false;
 
             var pedElement = weaponList.Element(name);
-            if (pedElement == null)
-            {
-                pedElement = new XElement(name);
-                weaponList.Add(pedElement);
-            }
+            if (pedElement == null) return false;
 
-            // Remove attachments
-            string[] attachments = { "Scope", "Silencer", "Grip", "Flashlight", "ExtendedMagazine" };
-            foreach (var attachment in attachments)
-            {
-                var attr = pedElement.Attribute(attachment);
-                if (attr == null || (bool.TryParse(attr.Value, out var hasAttachment) && hasAttachment))
-                {
-                    pedElement.SetAttributeValue(attachment, false);
-                }
-            }
+            var attr = pedElement.Attribute(attachmentName);
+            if (attr == null) return false;
 
-            // Remove inventory bag
-            if (InventoryBag.doesPedHasInventoryBag(ped) && InventoryBag.doesPedWearingBag(ped))
-            {
-                if (InventoryBag.cur_bag != null && InventoryBag.cur_bag.IsAttached())
-                {
-                    InventoryBag.cur_bag.Delete();
-                }
-                else if (InventoryBag.prev_bag != null && InventoryBag.prev_bag.Exists() && InventoryBag.prev_bag.IsAttached())
-                {
-                    InventoryBag.prev_bag.Delete();
-                }
-
-                var bagAttr = pedElement.Attribute("bag");
-                if (bagAttr == null || (bool.TryParse(bagAttr.Value, out var hasBag) && hasBag))
-                {
-                    pedElement.SetAttributeValue("bag", false);
-                }
-
-                Common.curPlayer = ped;
-                Common.update_inventory_status(ped);
-                Common.clearTrash();
-            }
-
-            // Remove holster
-            var holsterAttr = pedElement.Attribute("holster");
-            if (holsterAttr == null || (bool.TryParse(holsterAttr.Value, out var hasHolster) && hasHolster))
-            {
-                pedElement.SetAttributeValue("holster", false);
-            }
-
-            var weaponsConditions = pedElement.Element("WeaponsConditions");
-            if (weaponsConditions != null)
-            {
-                foreach (var weapon in weaponsConditions.Elements())
-                {
-                    weapon.SetAttributeValue("shots", 0);
-                }
-            }
-            var hungerElement = pedElement.Element("hunger");
-            if (hungerElement != null)
-            {
-                var foodElement = hungerElement.Element("food");
-                if (foodElement != null)
-                {
-                    foodElement.RemoveNodes(); // removes all child elements of <food>
-                }
-
-                var drinksElement = hungerElement.Element("drinks");
-                if (drinksElement != null)
-                {
-                    drinksElement.RemoveNodes(); // removes all child elements of <drinks>
-                }
-            }
-
-
-            Common.saveDoc();
+            return bool.TryParse(attr.Value, out var state) && state;
         }
+
 
         /*
         public static void ClearedItemsWhenDeadXML()
         {
-            var ped = Game.Player.Character;
+            var ped = player;
             if (ped == null || !ped.Exists()) return;
 
             string name = ((PedHash)ped.Model).ToString();
@@ -1730,7 +1980,7 @@ namespace GTAExpansion
           
         public static void UpdateAttachment(string attachmentName, bool state)
         {
-            var ped = Game.Player.Character;
+            var ped = player;
             if (ped == null || !ped.Exists()) return;
 
             string name = ((PedHash)ped.Model).ToString();
@@ -1790,6 +2040,49 @@ namespace GTAExpansion
 
         public static void clearTrash()
         {
+            Ped player = Game.Player.Character;
+            var modelsToClear = new[]
+            {
+        InventoryBag.bagModel,
+        InventoryBag.bagModelFull,
+        InventoryBag.stashedBagModel
+    };
+
+            foreach (var model in modelsToClear)
+            {
+                foreach (var prop in World.GetAllProps((Model)model))
+                {
+                    bool isNotCurrentBag = (Entity)prop != (Entity)InventoryBag.cur_bag;
+                    bool isNotDroppedBag = (Entity)prop != InventoryBag.getDroppedBag(player);
+                    bool isLooseOrAttachedToPlayer = !prop.IsAttached() || prop.IsAttachedTo((Entity)player);
+
+                    if (isNotCurrentBag && isNotDroppedBag && isLooseOrAttachedToPlayer)
+                    {
+                        prop.Delete();
+                    }
+                }
+            }
+
+            if (!InventoryBag.drawStrap)
+                return;
+
+            foreach (var prop in World.GetAllProps((Model)"prop_cs_heist_bag_strap_01"))
+            {
+                if (!prop.IsAttached() &&
+                    !Function.Call<bool>(Hash.IS_ENTITY_A_MISSION_ENTITY, (InputArgument)(Entity)prop))
+                {
+                    prop.Delete();
+                }
+            }
+        }
+
+
+
+
+        /*
+        private static void clearTrash() // Original method kept for reference
+        { 
+        Ped player = Game.Player.Character;
             Prop[] allProps1 = World.GetAllProps((Model)InventoryBag.bagModel);
             Prop[] allProps2 = World.GetAllProps((Model)InventoryBag.bagModelFull);
             Prop[] allProps3 = World.GetAllProps((Model)InventoryBag.stashedBagModel);
@@ -1797,7 +2090,7 @@ namespace GTAExpansion
             {
                 foreach (Prop prop in allProps1)
                 {
-                    if ((Entity)prop != (Entity)InventoryBag.cur_bag && (Entity)prop != InventoryBag.getDroppedBag(Game.Player.Character) && !prop.IsAttached() || prop.IsAttachedTo((Entity)Game.Player.Character) && (Entity)prop != (Entity)InventoryBag.cur_bag)
+                    if ((Entity)prop != (Entity)InventoryBag.cur_bag && (Entity)prop != InventoryBag.getDroppedBag(player) && !prop.IsAttached() || prop.IsAttachedTo((Entity)player) && (Entity)prop != (Entity)InventoryBag.cur_bag)
                         prop.Delete();
                 }
             }
@@ -1805,7 +2098,7 @@ namespace GTAExpansion
             {
                 foreach (Prop prop in allProps2)
                 {
-                    if ((Entity)prop != (Entity)InventoryBag.cur_bag && (Entity)prop != InventoryBag.getDroppedBag(Game.Player.Character) && !prop.IsAttached() || prop.IsAttachedTo((Entity)Game.Player.Character) && (Entity)prop != (Entity)InventoryBag.cur_bag)
+                    if ((Entity)prop != (Entity)InventoryBag.cur_bag && (Entity)prop != InventoryBag.getDroppedBag(player) && !prop.IsAttached() || prop.IsAttachedTo((Entity)player) && (Entity)prop != (Entity)InventoryBag.cur_bag)
                         prop.Delete();
                 }
             }
@@ -1813,7 +2106,7 @@ namespace GTAExpansion
             {
                 foreach (Prop prop in allProps3)
                 {
-                    if ((Entity)prop != (Entity)InventoryBag.cur_bag && (Entity)prop != InventoryBag.getDroppedBag(Game.Player.Character) && !prop.IsAttached() || prop.IsAttachedTo((Entity)Game.Player.Character) && (Entity)prop != (Entity)InventoryBag.cur_bag)
+                    if ((Entity)prop != (Entity)InventoryBag.cur_bag && (Entity)prop != InventoryBag.getDroppedBag(player) && !prop.IsAttached() || prop.IsAttachedTo((Entity)player) && (Entity)prop != (Entity)InventoryBag.cur_bag)
                         prop.Delete();
                 }
             }
@@ -1828,5 +2121,6 @@ namespace GTAExpansion
                     prop.Delete();
             }
         }
+        */
     }
 }

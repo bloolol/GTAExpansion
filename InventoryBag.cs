@@ -202,6 +202,7 @@ namespace GTAExpansion
 
         public static void Setup(Ped ped)
         {
+            Ped player = Game.Player.Character;
             InventoryBag.modMenuPool = new MenuPool();
             InventoryBag.mainMenu = new UIMenu("Inventory Menu", "Select option");
             InventoryBag.modMenuPool.Add(InventoryBag.mainMenu);
@@ -555,7 +556,7 @@ namespace GTAExpansion
                     if (!ped.IsSittingInVehicle() || ped.IsSittingInVehicle() && !ped.CurrentVehicle.IsBicycle && !ped.CurrentVehicle.IsBike && !ped.CurrentVehicle.IsQuadBike)
                     {
                         InventoryBag.inMenu = false;
-                        Game.Player.Character.Task.ClearAll();
+                        player.Task.ClearAll();
                         InventoryBag.bagRemove(InventoryBag.bagModelReturn(ped), ped);
                     }
                     else
@@ -584,7 +585,7 @@ namespace GTAExpansion
                 InventoryBag.mainMenuListString.Clear();
                 InventoryBag.stashedWeapons.Clear();
                 InventoryBag.inMenu = false;
-                InventoryBag.weaponInventoryAnim(InventoryBag.bagModelReturn(Game.Player.Character), Game.Player.Character);
+                InventoryBag.weaponInventoryAnim(InventoryBag.bagModelReturn(player), player);
             });
         }
 
@@ -598,6 +599,7 @@ namespace GTAExpansion
 
         public static void checkEquipedGear(Ped ped)
         {
+            Ped player = Game.Player.Character;
             if (Function.Call<int>(Hash.GET_PED_PARACHUTE_STATE, (InputArgument)(Entity)ped) != -1 || Function.Call<bool>(Hash.IS_PED_IN_PARACHUTE_FREE_FALL, (InputArgument)(Entity)ped) || Function.Call<bool>(Hash.GET_IS_PED_GADGET_EQUIPPED, (InputArgument)(Entity)ped, (InputArgument)4222310262U))
             {
                 if (InventoryBag.skyDiving)
@@ -614,7 +616,7 @@ namespace GTAExpansion
                         InventoryBag.skydive(ped, InventoryBag.bagModelReturn(ped), false);
                     InventoryBag.skyDiving = false;
                 }
-                else if (!Game.Player.Character.IsSittingInVehicle() && !InventoryBag.inMenu && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)ped, (InputArgument)"anim@heists@money_grab@duffel", (InputArgument)"exit", (InputArgument)3) || Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)ped, (InputArgument)"anim@heists@money_grab@duffel", (InputArgument)"exit", (InputArgument)3) && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)ped, (InputArgument)"anim@heists@money_grab@duffel", (InputArgument)"exit") >= 0.5)
+                else if (!player.IsSittingInVehicle() && !InventoryBag.inMenu && !Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)ped, (InputArgument)"anim@heists@money_grab@duffel", (InputArgument)"exit", (InputArgument)3) || Function.Call<bool>(Hash.IS_ENTITY_PLAYING_ANIM, (InputArgument)(Entity)ped, (InputArgument)"anim@heists@money_grab@duffel", (InputArgument)"exit", (InputArgument)3) && (double)Function.Call<float>(Hash.GET_ENTITY_ANIM_CURRENT_TIME, (InputArgument)(Entity)ped, (InputArgument)"anim@heists@money_grab@duffel", (InputArgument)"exit") >= 0.5)
                     InventoryBag.AttachBag(InventoryBag.bagModelReturn(ped), ped);
                 if (ped.Model == (Model)PedHash.Michael)
                 {
@@ -1378,6 +1380,7 @@ namespace GTAExpansion
 
         public static void looseBagFunc(Ped ped, Prop bag)
         {
+            Ped player = Game.Player.Character;
             string name = ((PedHash)ped.Model).ToString();
             if (char.IsDigit(name[0]))
                 name = "CustomPed_" + name;
@@ -1417,7 +1420,7 @@ namespace GTAExpansion
             Screen.ShowHelpTextThisFrame("~BLIP_INFO_ICON~ ~r~You've lost~w~ your gear");
             Function.Call(Hash.SET_TEXT_COLOUR, (InputArgument)(int)byte.MaxValue, (InputArgument)0, (InputArgument)0, (InputArgument)100);
             Main.Notify("~r~You've lost your gear", "IBAG", (int)byte.MaxValue, 0, 0, NotificationIcon.Ammunation);
-            if (!((Entity)bag != (Entity)null) || !bag.IsAttachedTo((Entity)Game.Player.Character))
+            if (!((Entity)bag != (Entity)null) || !bag.IsAttachedTo((Entity)player))
                 return;
             bag.MarkAsNoLongerNeeded();
             bag.Detach();

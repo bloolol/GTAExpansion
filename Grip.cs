@@ -75,6 +75,8 @@ namespace GTAExpansion
 
         public static void gripcheck()
         {
+            if (Common.GetAttachmentState("Grip") == true)
+                return;
             var player = Game.Player.Character;
             var weaponHash = player.Weapons.Current.Hash;
 

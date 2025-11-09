@@ -88,6 +88,8 @@ namespace GTAExpansion
         }
         public static void silencercheck()
         {
+            if (Common.GetAttachmentState("Silencer") == true)
+                return;
 
             var player = Game.Player.Character;
             var weaponHash = player.Weapons.Current.Hash;

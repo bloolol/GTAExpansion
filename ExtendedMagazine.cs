@@ -69,6 +69,8 @@ namespace GTAExpansion
 
         public static void extendedmagazinecheck()
         {
+            if (Common.GetAttachmentState("ExtendedMagazine") == true)
+                return;
             Ped player = Game.Player.Character;
             WeaponHash currentWeapon = player.Weapons.Current.Hash;
 

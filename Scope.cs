@@ -93,6 +93,8 @@ namespace GTAExpansion
         }
         public static void scopecheck()
         {
+            if (Common.GetAttachmentState("Scope") == true)
+                return;
             var player = Game.Player.Character;
             var weaponHash = player.Weapons.Current.Hash;
             foreach (WeaponComponentHash scope in Scope.scopes)

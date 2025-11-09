@@ -78,6 +78,8 @@ namespace GTAExpansion
         }
         public static void flashlightcheck()
         {
+            if (Common.GetAttachmentState("Flashlight") == true)
+                return;
             var player = Game.Player.Character;
             var weaponHash = player.Weapons.Current.Hash;
             foreach (WeaponComponentHash flashlight in Flashlight.flashlights)
