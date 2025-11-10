@@ -347,7 +347,7 @@ namespace GTAExpansion
                     }
                     if (InventoryBag.bag_module_active)
                     {
-                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)InventoryBag.bag_coords_update_btn))
+                        if (Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, (InputArgument)0, (InputArgument)InventoryBag.bag_coords_update_btn) && InventoryBag.hasBag)
                         {
                             Common.inMainMenu = false;
                             InventoryBag.checkEquipedGear(Player);
@@ -1486,80 +1486,91 @@ namespace GTAExpansion
                     }
                 }
             }
-            if (HungerSystem.hungerModuleActive && HungerSystem.hungerTimeRef < Game.GameTime)
+            if (HungerSystem.hungerModuleActive)
             {
-                HungerSystem.hungerTimeRef = Game.GameTime + 30000;
-                HungerSystem.curHungerLvl = HungerSystem.savePedHungerLvl(Player, HungerSystem.getPedHungerLvl(Player, Common.doc) - 1, HungerSystem.hunger_lvl_max, Common.doc);
                 HungerSystem.hungerBar.Percentage = HungerSystem.curHungerLvl > 0 ? (float)((double)HungerSystem.curHungerLvl / (double)HungerSystem.hunger_lvl_max * 100.0) : 0.0f;
-                if (HungerSystem.curHungerLvl < HungerSystem.hunger_lvl_max / 100 * 50)
+
+                if (HungerSystem.hungerTimeRef > Game.GameTime)
                 {
-                    if (HungerSystem.curHungerLvl < HungerSystem.hunger_lvl_max / 100 * 25 && Player.IsAlive)
+                    HungerSystem.hungerTimeRef = Game.GameTime + 30000;
+                    HungerSystem.curHungerLvl = HungerSystem.savePedHungerLvl(Player, HungerSystem.getPedHungerLvl(Player, Common.doc) - 1, HungerSystem.hunger_lvl_max, Common.doc);
+                    //HungerSystem.hungerBar.Percentage = HungerSystem.curHungerLvl > 0 ? (float)((double)HungerSystem.curHungerLvl / (double)HungerSystem.hunger_lvl_max * 100.0) : 0.0f;
+
+                    if (HungerSystem.curHungerLvl < HungerSystem.hunger_lvl_max / 100 * 50)
                     {
-                        
-                        HTools.Main.soundFX(Player, "StomachGrowling.wav", Common.assetFolder, 13f);
-                        HungerSystem.hungerBar.ForegroundColor = Color.Red;
-                    }
-                    if (!HTools.Main.barPool.ToList().Contains(HungerSystem.hungerBar))
-                        HTools.Main.barPool.Add(HungerSystem.hungerBar);
-                }
-                else if (HTools.Main.barPool.ToList().Contains(HungerSystem.hungerBar))
-                    HTools.Main.barPool.Remove(HungerSystem.hungerBar);
-                if (HungerSystem.curHungerLvl <= HungerSystem.criticalHungerLvl)
-                {
-                    Player.HealthFloat -= 0.5f;
-                    if (!HungerSystem.isHungry)
-                    {
-                        HTools.Main.Notify("You're ~r~starving~w~.~n~Eat some ~g~food~w~ using the ~b~Main ~y~Menu~w~", "Health Report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
-                        HTools.Main.startBleeding(Player, false, useInjuryAnim: false);
-                    }
-                    HungerSystem.isHungry = true;
-                }
-                else
-                {
-                    if (HungerSystem.isHungry)
-                        HTools.Main.stopBleeding(Player, false);
-                    HungerSystem.isHungry = false;
-                }
-                if (HungerSystem.isHungry && Player.IsAlive)
-                    HTools.Main.soundFX(Player, "StomachGrowling.wav", Common.assetFolder, 13f);
-            }
-            if (HungerSystem.hungerModuleActive && HungerSystem.thirstTimeRef < Game.GameTime)
-            {
-                HungerSystem.thirstTimeRef = Game.GameTime + 30000;
-                HungerSystem.curThirstLvl = HungerSystem.savePedThirstLvl(Player, HungerSystem.getPedThirstLvl(Player, Common.doc) - 1, HungerSystem.thirst_lvl_max, Common.doc);
-                HungerSystem.thirstBar.Percentage = HungerSystem.curThirstLvl > 0 ? (float)((double)HungerSystem.curThirstLvl / (double)HungerSystem.thirst_lvl_max * 100.0) : 0.0f;
-                if (HungerSystem.curThirstLvl < HungerSystem.thirst_lvl_max / 100 * 50)
-                {
-                    if (HungerSystem.curThirstLvl < HungerSystem.thirst_lvl_max / 100 * 25 && Player.IsAlive)
-                    {
-                        if (!HungerSystem.isHungry)
+                        if (HungerSystem.curHungerLvl < HungerSystem.hunger_lvl_max / 100 * 25 && Player.IsAlive)
+                        {
+
                             HTools.Main.soundFX(Player, "StomachGrowling.wav", Common.assetFolder, 13f);
-                        HungerSystem.thirstBar.ForegroundColor = Color.Red;
+                            HungerSystem.hungerBar.ForegroundColor = Color.Red;
+                        }
+                        if (!HTools.Main.barPool.ToList().Contains(HungerSystem.hungerBar))
+                            HTools.Main.barPool.Add(HungerSystem.hungerBar);
                     }
-                    if (!HTools.Main.barPool.ToList().Contains(HungerSystem.thirstBar))
-                        HTools.Main.barPool.Add(HungerSystem.thirstBar);
-                }
-                else if (HTools.Main.barPool.ToList().Contains(HungerSystem.thirstBar))
-                    HTools.Main.barPool.Remove(HungerSystem.thirstBar);
-                if (HungerSystem.curThirstLvl <= HungerSystem.criticalThirstLvl)
-                {
-                    Player.HealthFloat -= 0.5f;
-                    if (!HungerSystem.isThirsty)
+                    else if (HTools.Main.barPool.ToList().Contains(HungerSystem.hungerBar))
+                        HTools.Main.barPool.Remove(HungerSystem.hungerBar);
+                    if (HungerSystem.curHungerLvl <= HungerSystem.criticalHungerLvl)
                     {
-                        HTools.Main.Notify("You're ~r~dehydrated~w~.~n~Drink ~g~fluids~w~ using the ~b~Main ~y~Menu~w~", "Health Report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
-                        HTools.Main.startBleeding(Player, false, useInjuryAnim: false);
+                        Player.HealthFloat -= 0.5f;
+                        if (!HungerSystem.isHungry)
+                        {
+                            HTools.Main.Notify("You're ~r~starving~w~.~n~Eat some ~g~food~w~ using the ~b~Main ~y~Menu~w~", "Health Report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
+                            HTools.Main.startBleeding(Player, false, useInjuryAnim: false);
+                        }
+                        HungerSystem.isHungry = true;
                     }
-                    HungerSystem.isThirsty = true;
+                    else
+                    {
+                        if (HungerSystem.isHungry)
+                            HTools.Main.stopBleeding(Player, false);
+                        HungerSystem.isHungry = false;
+                    }
+                    if (HungerSystem.isHungry && Player.IsAlive)
+                        HTools.Main.soundFX(Player, "StomachGrowling.wav", Common.assetFolder, 13f);
                 }
-                else
+            }
+            if (HungerSystem.hungerModuleActive)
+            {
+                HungerSystem.thirstBar.Percentage = HungerSystem.curThirstLvl > 0 ? (float)((double)HungerSystem.curThirstLvl / (double)HungerSystem.thirst_lvl_max * 100.0) : 0.0f;
+
+                if (HungerSystem.thirstTimeRef < Game.GameTime)
                 {
-                    if (HungerSystem.isThirsty)
-                        HTools.Main.stopBleeding(Player, false);
-                    HungerSystem.isThirsty = false;
+                    HungerSystem.thirstTimeRef = Game.GameTime + 30000;
+                    HungerSystem.curThirstLvl = HungerSystem.savePedThirstLvl(Player, HungerSystem.getPedThirstLvl(Player, Common.doc) - 1, HungerSystem.thirst_lvl_max, Common.doc);
+                    //HungerSystem.thirstBar.Percentage = HungerSystem.curThirstLvl > 0 ? (float)((double)HungerSystem.curThirstLvl / (double)HungerSystem.thirst_lvl_max * 100.0) : 0.0f;
+                    if (HungerSystem.curThirstLvl < HungerSystem.thirst_lvl_max / 100 * 50)
+                    {
+                        if (HungerSystem.curThirstLvl < HungerSystem.thirst_lvl_max / 100 * 25 && Player.IsAlive)
+                        {
+                            if (!HungerSystem.isHungry)
+                                HTools.Main.soundFX(Player, "StomachGrowling.wav", Common.assetFolder, 13f);
+                            HungerSystem.thirstBar.ForegroundColor = Color.Red;
+                        }
+                        if (!HTools.Main.barPool.ToList().Contains(HungerSystem.thirstBar))
+                            HTools.Main.barPool.Add(HungerSystem.thirstBar);
+                    }
+                    else if (HTools.Main.barPool.ToList().Contains(HungerSystem.thirstBar))
+                        HTools.Main.barPool.Remove(HungerSystem.thirstBar);
+                    if (HungerSystem.curThirstLvl <= HungerSystem.criticalThirstLvl)
+                    {
+                        Player.HealthFloat -= 0.5f;
+                        if (!HungerSystem.isThirsty)
+                        {
+                            HTools.Main.Notify("You're ~r~dehydrated~w~.~n~Drink ~g~fluids~w~ using the ~b~Main ~y~Menu~w~", "Health Report", 0, (int)byte.MaxValue, 0, NotificationIcon.LesterDeathwish);
+                            HTools.Main.startBleeding(Player, false, useInjuryAnim: false);
+                        }
+                        HungerSystem.isThirsty = true;
+                    }
+                    else
+                    {
+                        if (HungerSystem.isThirsty)
+                            HTools.Main.stopBleeding(Player, false);
+                        HungerSystem.isThirsty = false;
+                    }
+                    if (HungerSystem.isThirsty && Player.IsAlive && !HungerSystem.isHungry)
+
+                        HTools.Main.soundFX(Player, "StomachGrowling.wav", Common.assetFolder, 13f);
                 }
-                if (HungerSystem.isThirsty && Player.IsAlive && !HungerSystem.isHungry)
-                    
-                HTools.Main.soundFX(Player, "StomachGrowling.wav", Common.assetFolder, 13f);
             }
             if (WeaponHolster.holster_module_active)
             {

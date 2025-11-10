@@ -20,6 +20,7 @@ namespace GTAExpansion
         public static bool isHeadsetBought = false;
         public static int HeadsetPrice = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<int>("PRICES", "EARPHONES_PRICE", 100);
         public static int timeReference = 0;
+        public static bool headset_module_active = ScriptSettings.Load("scripts\\Expansion\\Expansion.ini").GetValue<bool>("HEADSET_SETTINGS", "HEADSET_MODULE_ACTIVE", true);
 
 
         public static void PlayerBoughtHeadset(Ped ped)

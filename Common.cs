@@ -1712,13 +1712,13 @@ namespace GTAExpansion
 
             // Headset only if not already false
                              var headsetAttr = pedElement.Attribute("headset");
-                            if (vestAttr == null || !bool.TryParse(vestAttr.Value, out var hasHeadset) || hasHeadset)
+                            if (headsetAttr == null || !bool.TryParse(headsetAttr.Value, out var hasHeadset) || hasHeadset)
                             {
                             pedElement.SetAttributeValue("headset", false);
                             }
 
             // Reset armor level if tag is present and not already zero
-            var armorAttr = pedElement.Attribute("armorlevel");
+                            var armorAttr = pedElement.Attribute("armorlevel");
                             if (armorAttr != null && (!int.TryParse(armorAttr.Value, out var armorLevel) || armorLevel != 0))
                             {
                             pedElement.SetAttributeValue("armorlevel", 0);
